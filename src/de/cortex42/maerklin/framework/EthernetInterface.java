@@ -33,7 +33,7 @@ public class EthernetInterface {
     }
 
     /**
-     * Sends a de.cortex42.maerklin.framework.CANPacket as UDP packet to the target.
+     * Sends a CANPacket as UDP packet to the target.
      * @param canPacket
      * @param targetAddress
      * @param port

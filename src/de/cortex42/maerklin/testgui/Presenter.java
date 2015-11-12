@@ -42,59 +42,19 @@ public class Presenter {
     Geräte-UID Eindeutig vergebene Universal ID.
     Loc-ID (=Local ID, nicht Locomotive ID) Aus dem Protokoll und der Adresse berechnete Lokale ID.
     MFX-UID MFX Universal ID, eindeutige Kennung eines mfx Teilnehmers.
-
+    (Loc-ID = SID!)
     Die Lage der Loc-ID (Local-ID, NICHT Locomotive-ID) im Adressraum bestimmt das Protokoll (S. 8)
 
 
     Beispiel (Hex):
     Märklin Motorola mit Adresse 2: Basis: 00 00 00 00 Plus Adresse: 00 00 00 02
     MM2 Zubehör mit Adresse 3: Basis: 00 00 30 00 Plus Adresse: 00 00 30 03
-
-    Aus GBox2Eth.CPP:
-    / Das Programm reagiert auf die Erkennung eines mfx-Dekoders und vergibt eine SID
-			if ((passive_mode == 0) && ((can_msg.Id & 0xFFFF0000) == 0x00030000UL) && (can_msg.MsgLen == 5))
-			{
-				out_msg.MsgFlags = 0L;
-				out_msg.MsgEFF = 1;
-				out_msg.Id = 0x040301UL;
-				out_msg.MsgLen = 6;
-				out_msg.MsgData[0] = can_msg.MsgData[0];
-				out_msg.MsgData[1] = can_msg.MsgData[1];
-				out_msg.MsgData[2] = can_msg.MsgData[2];
-				out_msg.MsgData[3] = can_msg.MsgData[3];
-				out_msg.MsgData[4] = (nextmfxnr() >> 8) & 0x00FF;
-				out_msg.MsgData[5] = lastmfxnr() & 0x00FF;
-				WaitForSingleObject(can_mutex, INFINITE);
-				CanTransmit(0, &out_msg, 1); // Fehler ignorieren
-				ReleaseMutex(can_mutex);
-				uid = can_msg.MsgData[3] | (can_msg.MsgData[2] << 8) | (can_msg.MsgData[1] << 16) | (can_msg.MsgData[0] << 24);
-				udp_frame[0] = (out_msg.Id >> 24) & 0x000000FF;
-				udp_frame[1] = (out_msg.Id >> 16) & 0x000000FF;
-				udp_frame[2] = (out_msg.Id >> 8) & 0x000000FF;
-				udp_frame[3] = out_msg.Id & 0x000000FF;
-				udp_frame[4] = out_msg.MsgLen;
-				for (i = 0; i < 8; ++i)
-				{
-					if (i < out_msg.MsgLen)
-						udp_frame[5+i] = out_msg.MsgData[i];
-					else
-						udp_frame[5+i] = 0;
-				}
-				WaitForSingleObject(udp_mutex, INFINITE);
-				sendto(sock_out, udp_frame, 13, 0, (struct sockaddr*)&serv_out, sizeof(serv_out));
-				ReleaseMutex(udp_mutex);
-				printf("\nNeuer mfx-Dekoder (UID %lX) angemeldet, Nummer: %d\n> ", uid, lastmfxnr());
-			}
-     */
+    */
 
     //todo Anfordern Config Data (S. 46), Format der Konfigurationsdateien der CS2
     //get config: https://github.com/GBert/railroad/blob/6c3519682aabf6c19438c8a5824db0f7e2f11dd4/can2udp/src/get-cs-config.c
-    //todo lok discovery
 
-    //todo loks finden:
-    //mfx: loc discovery, mfx seek?, anfordern config data (aus der CS2 auslesen)
-
-    //todo funktionen finden
+    //todo check hashes (S. 6)
 
     //Device ID 0040 = S88 Link
     //Decoder m83 Weichen
