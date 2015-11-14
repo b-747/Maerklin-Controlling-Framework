@@ -83,12 +83,12 @@ public final class CS2CANCommands {
     /*---FUNCTION---*/
     public static final byte FUNCTION_OFF = 0x00;
     public static final byte FUNCTION_ON = 0x01;
-    /*---EQUIPMENT---*/
-    public static final byte EQUIPMENT_OFF = 0x00;
-    public static final byte EQUIPMENT_ON = 0x01;
     /*---EQUIPMENT_POSITION---*/
-    public static final byte POSITION_OFF = 0x00;
-    public static final byte POSITION_ON = 0x01;
+    public static final byte EQUIPMENT_POSITION_OFF = 0x00;
+    public static final byte EQUIPMENT_POSITION_ON = 0x01;
+    /*---EQUIPMENT POWER---*/
+    public static final byte EQUIPMENT_POWER_OFF = 0x00;
+    public static final byte EQUIPMENT_POWER_ON = 0x01;
 
     private CS2CANCommands(){
         /* ... */
@@ -233,6 +233,29 @@ public final class CS2CANCommands {
         );
     }
 
+    public static CANPacket stop(byte[] uid){
+        if(uid.length != 4){
+            throw new IllegalArgumentException("uid must have 4 bytes instead of "+uid.length);
+        }
+
+        return new CANPacket(
+                PRIORITY,
+                SYSTEM,
+                HASH,
+                SYSTEM_STOP_AND_GO_DLC,
+                new byte[]{
+                        uid[0],
+                        uid[1],
+                        uid[2],
+                        uid[3],
+                        SYSTEM_STOP_SUBCMD,
+                        (byte)0x00,
+                        (byte)0x00,
+                        (byte)0x00
+                }
+        );
+    }
+
     public static CANPacket go(){
         return new CANPacket(
                 PRIORITY,
@@ -244,6 +267,29 @@ public final class CS2CANCommands {
                         (byte)0x00,
                         (byte)0x00,
                         (byte)0x00,
+                        SYSTEM_GO_SUBCMD,
+                        (byte)0x00,
+                        (byte)0x00,
+                        (byte)0x00
+                }
+        );
+    }
+
+    public static CANPacket go(byte[] uid){
+        if(uid.length != 4){
+            throw new IllegalArgumentException("uid must have 4 bytes instead of "+uid.length);
+        }
+
+        return new CANPacket(
+                PRIORITY,
+                SYSTEM,
+                HASH,
+                SYSTEM_STOP_AND_GO_DLC,
+                new byte[]{
+                        uid[0],
+                        uid[1],
+                        uid[2],
+                        uid[3],
                         SYSTEM_GO_SUBCMD,
                         (byte)0x00,
                         (byte)0x00,
@@ -337,7 +383,17 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket toggleEquipment(byte[] id, byte position, byte toggle){
+
+    //Schaltvorgang: Position angeben und Strom an, dann gleiche Position und Strom aus
+
+    /**
+     *
+     * @param id
+     * @param position 1 = straight
+     * @param powerToggle
+     * @return
+     */
+    public static CANPacket toggleEquipment(byte[] id, byte position, byte powerToggle){
         if(id.length != 4){
             throw new IllegalArgumentException("id must have 4 bytes instead of "+id.length);
         }
@@ -353,7 +409,7 @@ public final class CS2CANCommands {
                         id[2],
                         id[3],
                         position,
-                        toggle,
+                        powerToggle,
                         (byte)0x00,
                         (byte)0x00
                 }
@@ -452,10 +508,21 @@ public final class CS2CANCommands {
                 S88_EVENT,
                 HASH,
                 S88_EVENT_QUERY_DLC,
-                new byte[8]
+                new byte[]{
+                        deviceId[0],
+                        deviceId[1],
+                        contactId[0],
+                        contactId[1],
+                        (byte)0,
+                        (byte)0,
+                        (byte)0,
+                        (byte)0
+                }
         );
     }
 
+
+    //mfx seek klappt nicht
     //todo evtl noch uid und geräteid mitgeben (testen)
     public static CANPacket mfxSeek1(){
         return new CANPacket(

@@ -24,8 +24,8 @@ public class Presenter {
     private static final byte LIGHT_FUNCTION = (byte)0x00; //Light function of MM loc
     private static final byte[] EQUIPMENT_0 = new byte[]{0x00, 0x00, 0x30, 0x00};
     private static final byte[] EQUIPMENT_1 = new byte[]{0x00, 0x00, 0x30, 0x05};
-    private static final int CS2_PORT = 15730;
-    private static final int PC_PORT = 15731;
+    private static final int PC_PORT = 15730;
+    private static final int CS2_PORT = 15731;
     private static final String CS2_IP_ADDRESS = "192.168.16.2";
 
     private final PacketListener debugPacketListener = packetEvent -> {
@@ -59,6 +59,10 @@ public class Presenter {
     //Device ID 0040 = S88 Link
     //Decoder m83 Weichen
     //m84 Gleisabschaltung
+
+    //todo fahrstufen berechnen!
+
+    //todo weiche an/aus und stromschalter: Zeit zwischen Schalten = 200ms
 
     public Presenter(View view){
         this.view = view;

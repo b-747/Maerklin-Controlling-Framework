@@ -3,7 +3,6 @@ package de.cortex42.maerklin.framework;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortPacketListener;
-import de.cortex42.maerklin.testgui.DebugOutput; //todo
 
 import java.util.ArrayList;
 
@@ -65,19 +64,16 @@ public class SerialPortInterface {
         }*/
     }
 
-    public void writeCANPacket(CANPacket canPacket){
+    /**
+     * @param canPacket
+     * @return false if not every byte was written
+     */
+    public boolean writeCANPacket(CANPacket canPacket) {
         byte[] bytesToWrite = canPacket.getBytes();
 
         int bytesWritten = serialPort.writeBytes(bytesToWrite, bytesToWrite.length);
 
-        if(bytesWritten != bytesToWrite.length) {
-           DebugOutput.write(String.format("Error: Wrote %d Bytes instead of %d Bytes.", bytesWritten, bytesToWrite.length));
-        }else{
-            DebugOutput.write(String.format("----Wrote: %s\n\t%s",
-                            canPacket.getString(),
-                            CANPacketInterpreter.interpretCANPacket(canPacket))
-            );
-        }
+        return bytesWritten == bytesToWrite.length;
     }
 
     private final class CANPacketListener implements SerialPortPacketListener{

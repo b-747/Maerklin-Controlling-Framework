@@ -1,7 +1,10 @@
 package de.cortex42.maerklin.framework;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 /**
@@ -29,6 +32,7 @@ public class EthernetInterface {
     }
 
     public void cleanUp(){
+        stopListening();
         datagramSocket.close();
     }
 
@@ -45,6 +49,18 @@ public class EthernetInterface {
         DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(targetAddress), port);
 
         datagramSocket.send(datagramPacket);
+    }
+
+    public CANPacket readCANPacket() {
+        DatagramPacket datagramPacket = new DatagramPacket(new byte[CANPacket.CAN_PACKET_SIZE], CANPacket.CAN_PACKET_SIZE);
+
+        try {
+            datagramSocket.receive(datagramPacket);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new CANPacket(datagramPacket.getData());
     }
 
     public void addPacketListener(PacketListener packetListener){
@@ -65,7 +81,7 @@ public class EthernetInterface {
         if(!isListening) {
             isListening = true;
 
-            thread = new Thread(new Runnable() {
+            (thread = new Thread(new Runnable() {
                 public void run() {
                     while (isListening) {
                         DatagramPacket datagramPacket = new DatagramPacket(new byte[CANPacket.CAN_PACKET_SIZE], CANPacket.CAN_PACKET_SIZE);
@@ -83,7 +99,7 @@ public class EthernetInterface {
                         }
                     }
                 }
-            });
+            })).start();
         }
     }
 
