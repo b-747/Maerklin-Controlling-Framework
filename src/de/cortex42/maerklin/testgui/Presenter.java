@@ -15,62 +15,58 @@ public class Presenter {
     private SerialPortInterface serialPortInterface = SerialPortInterface.getInstance();
     private EthernetInterface ethernetInterface;
     private boolean isEthernet;
-    private byte[] selectedLocId;
+    private int selectedLocId;
 
-    //todo
-    private static final byte[] MM_LOC_ID = new byte[]{0x00, 0x00, 0x00, 0x4E}; //78 = BR 81 (MM)
-    private static final byte[] MFX_LOC_ID = new byte[]{0x00, 0x00, 0x40, 0x06}; //RE 460 076-3 (MFX)
-    private static final byte[] MFX_LOC_ID2 = new byte[]{0x00, 0x00, 0x40, 0x07}; //AE 6/6 11424
-    private static final byte LIGHT_FUNCTION = (byte)0x00; //Light function of MM loc
-    private static final byte[] EQUIPMENT_0 = new byte[]{0x00, 0x00, 0x30, 0x00};
-    private static final byte[] EQUIPMENT_1 = new byte[]{0x00, 0x00, 0x30, 0x05};
+    /*
+Im System besitzt jeder adressierbare Teilnehmer eine eindeutige 32 Bit Adresse.
+Dabei werden folgende UID unterschieden:
+Geräte-UID Eindeutig vergebene Universal ID.
+Loc-ID (=Local ID, nicht Locomotive ID) Aus dem Protokoll und der Adresse berechnete Lokale ID.
+MFX-UID MFX Universal ID, eindeutige Kennung eines mfx Teilnehmers.
+(Loc-ID = SID!)
+Die Lage der Loc-ID (Local-ID, NICHT Locomotive-ID) im Adressraum bestimmt das Protokoll (S. 8)
+
+
+Beispiel (Hex):
+Märklin Motorola mit Adresse 2: Basis: 00 00 00 00 Plus Adresse: 00 00 00 02
+MM2 Zubehör mit Adresse 3: Basis: 00 00 30 00 Plus Adresse: 00 00 30 03
+*/
+    private static final int MFX_RANGE = 16384; //new byte[]{0x00, 0x00, 0x40, 0x00};
+    private static final int MM_RANGE = 0; //new byte[]{0x00, 0x00, 0x00, 0x00};
+    private static final int MM2_EQUIPMENT_RANGE = 12288; //new byte[]{0x00, 0x00, 0x30, 0x00};
+
+    private static final int MM_LOC_ID = 78; //new byte[]{0x00, 0x00, 0x00, 0x4E}; //78 = BR 81 (MM)
+    private static final int MFX_LOC_ID = 6; //RE 460 076-3 (MFX)
+    private static final int MFX_LOC_ID2 = 7; //AE 6/6 11424
+
+    private static final int LIGHT_FUNCTION = 0;
+
     private static final int PC_PORT = 15730;
     private static final int CS2_PORT = 15731;
     private static final String CS2_IP_ADDRESS = "192.168.16.2";
+    private static final long DELAY = 250L;
 
-    private final PacketListener debugPacketListener = packetEvent -> {
-        CANPacket canPacket = packetEvent.getCANPacket();
+    private final PacketListener debugPacketListener = new PacketListener() {
+        @Override
+        public void packetEvent(PacketEvent packetEvent) {
+            CANPacket canPacket = packetEvent.getCANPacket();
 
-        DebugOutput.write(String.format("----Received: %s\n\t%s",
-                canPacket.getString(),
-                CANPacketInterpreter.interpretCANPacket(canPacket)));
+            DebugOutput.write(String.format("----Received: %s\n\t%s",
+                    canPacket.getString(),
+                    CANPacketInterpreter.interpretCANPacket(canPacket)));
+        }
     };
 
-    /*
-    Im System besitzt jeder adressierbare Teilnehmer eine eindeutige 32 Bit Adresse.
-    Dabei werden folgende UID unterschieden:
-    Geräte-UID Eindeutig vergebene Universal ID.
-    Loc-ID (=Local ID, nicht Locomotive ID) Aus dem Protokoll und der Adresse berechnete Lokale ID.
-    MFX-UID MFX Universal ID, eindeutige Kennung eines mfx Teilnehmers.
-    (Loc-ID = SID!)
-    Die Lage der Loc-ID (Local-ID, NICHT Locomotive-ID) im Adressraum bestimmt das Protokoll (S. 8)
-
-
-    Beispiel (Hex):
-    Märklin Motorola mit Adresse 2: Basis: 00 00 00 00 Plus Adresse: 00 00 00 02
-    MM2 Zubehör mit Adresse 3: Basis: 00 00 30 00 Plus Adresse: 00 00 30 03
-    */
-
-    //todo Anfordern Config Data (S. 46), Format der Konfigurationsdateien der CS2
-    //get config: https://github.com/GBert/railroad/blob/6c3519682aabf6c19438c8a5824db0f7e2f11dd4/can2udp/src/get-cs-config.c
 
     //todo check hashes (S. 6)
-
-    //Device ID 0040 = S88 Link
-    //Decoder m83 Weichen
-    //m84 Gleisabschaltung
-
-    //todo fahrstufen berechnen!
-
-    //todo weiche an/aus und stromschalter: Zeit zwischen Schalten = 200ms
 
     public Presenter(View view){
         this.view = view;
 
         view.addLoc("");
-        view.addLoc(Integer.toString(new BigInteger(MM_LOC_ID).intValue()));
-        view.addLoc(Integer.toString(new BigInteger(MFX_LOC_ID).intValue()));
-        view.addLoc(Integer.toString(new BigInteger(MFX_LOC_ID2).intValue()));
+        view.addLoc(Integer.toString(MM_LOC_ID));
+        view.addLoc(Integer.toString(MFX_LOC_ID));
+        view.addLoc(Integer.toString(MFX_LOC_ID2));
 
         //fill combobox with available interfaces
         view.addInterface("");
@@ -103,21 +99,24 @@ public class Presenter {
 
         //ugly..
         String selectedLoc = view.getSelectedLoc();
-        String mmLoc = Integer.toString(new BigInteger(MM_LOC_ID).intValue());
-        String mfxLoc1 = Integer.toString(new BigInteger(MFX_LOC_ID).intValue());
+        String mmLoc = Integer.toString(MM_LOC_ID);
+        String mfxLoc1 = Integer.toString(MFX_LOC_ID);
 
         if(Objects.equals(selectedLoc, mmLoc)){
-            selectedLocId = MM_LOC_ID;
+            selectedLocId = MM_RANGE | MM_LOC_ID;
         }else if(Objects.equals(selectedLoc, mfxLoc1)){
-            selectedLocId = MFX_LOC_ID;
+            selectedLocId = MFX_RANGE | MFX_LOC_ID;
         }else{
-            selectedLocId = MFX_LOC_ID2;
+            selectedLocId = MFX_RANGE | MFX_LOC_ID2;
         }
     }
 
     public void sendStart(){
         sendPacket(CS2CANCommands.newRegistration());
+        pause();
         sendPacket(CS2CANCommands.unlockRail());
+        pause();
+
         sendPacket(CS2CANCommands.go());
     }
 
@@ -130,7 +129,7 @@ public class Presenter {
     }
 
     public void sendLight(boolean on){
-        sendPacket(CS2CANCommands.toggleFunction(LIGHT_FUNCTION, selectedLocId, on? CS2CANCommands.FUNCTION_ON: CS2CANCommands.FUNCTION_OFF));
+        sendPacket(CS2CANCommands.toggleFunction(selectedLocId, LIGHT_FUNCTION, on ? CS2CANCommands.FUNCTION_ON : CS2CANCommands.FUNCTION_OFF));
     }
 
     public void sendVelocity(int velocity){
@@ -165,9 +164,12 @@ public class Presenter {
         );
 
         sendPacket(CS2CANCommands.queryVelocity(selectedLocId));
-        pause(50);
+        pause();
+
 
         sendPacket(CS2CANCommands.setDirection(selectedLocId, CS2CANCommands.DIRECTION_TOGGLE)); //toggle direction
+        pause();
+
         addPacketListener(
                 new PacketListener() {
                     @Override
@@ -202,9 +204,12 @@ public class Presenter {
                 }
         );
         sendVelocity(velocity[0]);
+        pause();
+
         sendStart();
-        sendPacket(CS2CANCommands.queryDirection()); //query new direction
-        //todo does not work...
+        pause();
+
+        sendPacket(CS2CANCommands.queryDirection(selectedLocId)); //query new direction
     }
 
     public void cleanUp(){
@@ -276,9 +281,9 @@ public class Presenter {
         }
     }
 
-    private void pause(long ms){
+    private void pause() {
         try {
-            Thread.sleep(ms);
+            Thread.sleep(DELAY);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

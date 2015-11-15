@@ -1,6 +1,8 @@
 package de.cortex42.maerklin.testgui;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.event.*;
 import java.util.Objects;
 
@@ -34,51 +36,87 @@ public class View {
     }
 
     public View() {
-        buttonStart.addActionListener(actionEvent -> presenter.sendStart());
-
-        buttonBootloaderGo.addActionListener(actionEvent -> presenter.sendBootloaderGo());
-
-        buttonStop.addActionListener(actionEvent -> presenter.sendStop());
-
-        lightCheckBox.addItemListener(itemEvent -> {
-            if(itemEvent.getStateChange() == ItemEvent.SELECTED){
-                presenter.sendLight(true);
-            }else{
-                presenter.sendLight(false);
+        buttonStart.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                presenter.sendStart();
             }
         });
 
-        speedSlider.addChangeListener(changeEvent -> {
-            Object source = changeEvent.getSource();
+        buttonBootloaderGo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                presenter.sendBootloaderGo();
+            }
+        });
 
-            if(source instanceof JSlider){
-                if(!speedSlider.getValueIsAdjusting()) {
-                    int velocity = speedSlider.getValue();
-                    presenter.sendVelocity(velocity);
-                    velocityTextField.setText(Integer.toString(velocity));
+        buttonStop.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                presenter.sendStop();
+            }
+        });
+
+        lightCheckBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent itemEvent) {
+                if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                    presenter.sendLight(true);
+                } else {
+                    presenter.sendLight(false);
                 }
             }
         });
 
-        buttonToggleDirection.addActionListener(actionEvent -> presenter.sendToggleDirection());
+        speedSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent changeEvent) {
+                Object source = changeEvent.getSource();
 
-        comboBoxInterface.addActionListener(actionEvent -> {
-            if (userAction
-                    && comboBoxInterface.getSelectedItem() != null
-                    && (!Objects.equals(comboBoxInterface.getSelectedItem(),""))) {
-                presenter.initialize();
-
-                enableControls();
+                if (source instanceof JSlider) {
+                    if (!speedSlider.getValueIsAdjusting()) {
+                        int velocity = speedSlider.getValue();
+                        presenter.sendVelocity(velocity);
+                        velocityTextField.setText(Integer.toString(velocity));
+                    }
+                }
             }
         });
 
-        comboBoxLoc.addActionListener(actionEvent -> {
-            if(userAction
-                    && comboBoxLoc.getSelectedItem() != null
-                    && (!Objects.equals(comboBoxLoc.getSelectedItem(),""))){
-                presenter.initialize();
+        buttonToggleDirection.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                presenter.sendToggleDirection();
+            }
+        });
 
-                enableControls();
+        comboBoxInterface.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (userAction
+                        && comboBoxLoc.getSelectedItem() != null
+                        && (!Objects.equals(comboBoxLoc.getSelectedItem(), ""))
+                        && comboBoxInterface.getSelectedItem() != null
+                        && (!Objects.equals(comboBoxInterface.getSelectedItem(), ""))) {
+                    presenter.initialize();
+
+                    View.this.enableControls();
+                }
+            }
+        });
+
+        comboBoxLoc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (userAction
+                        && comboBoxLoc.getSelectedItem() != null
+                        && (!Objects.equals(comboBoxLoc.getSelectedItem(), ""))
+                        && comboBoxInterface.getSelectedItem() != null
+                        && (!Objects.equals(comboBoxInterface.getSelectedItem(), ""))) {
+                    presenter.initialize();
+
+                    View.this.enableControls();
+                }
             }
         });
     }

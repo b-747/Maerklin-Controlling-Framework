@@ -21,6 +21,7 @@ public class ScriptElementSwitch extends ScriptElement {
 
     @Override
     public void execute() {
+/*
         try {
             EthernetInterface ethernetInterface = EthernetInterface.getInstance(15730);
             ethernetInterface.writeCANPacket(CS2CANCommands.toggleEquipment(new byte[]{0x00, 0x00, 0x30, (byte) (equipmentId & 0xFF)}, (byte) (position & 0xFF), CS2CANCommands.EQUIPMENT_POWER_ON), "192.168.16.2", 15731);
@@ -30,6 +31,7 @@ public class ScriptElementSwitch extends ScriptElement {
             e.printStackTrace();
         }
 
+*/
 
     }
 }

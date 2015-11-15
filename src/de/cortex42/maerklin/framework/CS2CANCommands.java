@@ -6,6 +6,12 @@ import java.math.BigInteger;
  * Created by ivo on 19.10.15.
  */
 public final class CS2CANCommands {
+
+    /**
+     * BIG ENDIAN
+     */
+
+
     /*---PRIORITY---*/
     public static final byte PRIORITY = 0x00;
     /*---HASH---*/
@@ -31,7 +37,6 @@ public final class CS2CANCommands {
     public static final byte SYSTEM_GO_SUBCMD = 0x01;
     public static final byte SYSTEM_RAIL_UNLOCK_SUBCMD = 0x08; //"Gleisprotokoll freischalten"
     public static final byte SYSTEM_MFX_REGISTRATION_COUNTER_SUBCMD = 0x09; //"System MFX Neuanmeldezähler setzen"
-    public static final byte SYSTEM_MFX_SEEK_SUBCMD = 0x30;
     /*---BOOTLOADER---*/
     public static final byte BOOTLOADER_MAGIC_BYTE = 0x11;
     /*---DLCs---*/
@@ -50,14 +55,11 @@ public final class CS2CANCommands {
     public static final byte EQUIPMENT_DLC = 0x06;
     public static final byte DISCOVERY_DISCOVER_ALL_DLC = 0x00;
     public static final byte DISCOVERY_DISCOVER_PROTOCOL_DLC = 0x01;
-    public static final byte DISCOVERY_POSITIVE_ANSWER_DLC = 0x05;     //answers to previous dlc (0x01)
+    public static final byte DISCOVERY_POSITIVE_ANSWER_DLC = 0x05; //answers to previous dlc (0x01)
     public static final byte DISCOVERY_NEGATIVE_ANSWER_DLC = 0x00;
     public static final byte MFX_BIND_DLC = 0x06;
     public static final byte S88_EVENT_QUERY_DLC = 0x04;
     public static final byte S88_EVENT_RESPONSE_DLC = 0x08;
-    public static final byte SYSTEM_MFX_SEEK_DLC1 = 0x06;
-    public static final byte SYSTEM_MFX_SEEK_DLC2 = 0x07;
-    public static final byte SYSTEM_MFX_SEEK_DLC3 = 0x08;
     public static final byte REQUEST_CONFIG_DATA_DLC = 0x08;
     public static final byte GET_CONFIG_DATA_STREAM_FIRST_PACKET_REQUEST_RESPONSE_DLC = 0x06;
     public static final byte GET_CONFIG_DATA_STREAM_FIRST_PACKET_CONFIG_CHANGED_DLC = 0x07;
@@ -123,21 +125,32 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket queryDirection(){
+    /**
+     *
+     * @param locId consists of the basic address (defines the protocol) and the number of the loc (see page 8 for details).
+     *              (example: MFX loc with number 3: MFX=0x4000 + 3 = 0x4003; upper two bytes are always 0!)
+     * @return
+     */
+    public static CANPacket queryDirection(int locId){
         return new CANPacket(
                 PRIORITY,
                 DIRECTION,
                 HASH,
                 DIRECTION_QUERY_DLC,
-                new byte[8] //all 0x00
+                new byte[]{
+                        (byte)((locId>>24) & 0xFF),
+                        (byte)((locId>>16) & 0xFF),
+                        (byte)((locId>>8) & 0xFF),
+                        (byte)(locId & 0xFF),
+                        (byte)0x00,
+                        (byte)0x00,
+                        (byte)0x00,
+                        (byte)0x00
+                }
         );
     }
 
-    public static CANPacket setDirection(byte[] locId, byte direction){
-        if(locId.length != 4){
-            throw new IllegalArgumentException("locId must have 4 bytes instead of "+locId.length);
-        }
-
+    public static CANPacket setDirection(int locId, int direction){
         if(direction > 3 || direction < 0){
             throw new IllegalArgumentException("direction must be between 0 and 3. (Error: "+ direction +").");
         }
@@ -148,11 +161,11 @@ public final class CS2CANCommands {
                 HASH,
                 DIRECTION_SET_DLC,
                 new byte[]{
-                        locId[0],
-                        locId[1],
-                        locId[2],
-                        locId[3],
-                        direction,
+                        (byte)((locId>>24) & 0xFF),
+                        (byte)((locId>>16) & 0xFF),
+                        (byte)((locId>>8) & 0xFF),
+                        (byte)(locId & 0xFF),
+                        (byte)(direction & 0xFF),
                         (byte)0x00,
                         (byte)0x00,
                         (byte)0x00
@@ -160,8 +173,8 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket queryFunction(byte function, byte[] locId){
-        if(function > 31){
+    public static CANPacket queryFunction(int locId, int function){
+        if(function > 31 || function < 0){
             throw new IllegalArgumentException("function must be between 0 and 31. (Error: "+function+").");
         }
 
@@ -171,11 +184,11 @@ public final class CS2CANCommands {
                 HASH,
                 FUNCTION_QUERY_DLC,
                 new byte[]{
-                        locId[0],
-                        locId[1],
-                        locId[2],
-                        locId[3],
-                        (byte)0x00,
+                        (byte)((locId>>24) & 0xFF),
+                        (byte)((locId>>16) & 0xFF),
+                        (byte)((locId>>8) & 0xFF),
+                        (byte)(locId & 0xFF),
+                        (byte)(function & 0xFF),
                         (byte)0x00,
                         (byte)0x00,
                         (byte)0x00
@@ -183,11 +196,7 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket toggleFunction(byte function, byte[] locId, byte toggle){
-        if(locId.length != 4){
-            throw new IllegalArgumentException("locId must have 4 bytes instead of "+locId.length);
-        }
-
+    public static CANPacket toggleFunction(int locId, int function, int toggle){
         if(function > 31 || function < 0){
             throw new IllegalArgumentException("function must be between 0 and 31. (Error: "+function+").");
         }
@@ -202,12 +211,12 @@ public final class CS2CANCommands {
                 HASH,
                 FUNCTION_SET_DLC,
                 new byte[]{
-                        locId[0],
-                        locId[1],
-                        locId[2],
-                        locId[3],
-                        function,
-                        toggle,
+                        (byte)((locId>>24) & 0xFF),
+                        (byte)((locId>>16) & 0xFF),
+                        (byte)((locId>>8) & 0xFF),
+                        (byte)(locId & 0xFF),
+                        (byte)(function & 0xFF),
+                        (byte)(toggle & 0xFF),
                         (byte)0x00,
                         (byte)0x00
                 }
@@ -233,21 +242,17 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket stop(byte[] uid){
-        if(uid.length != 4){
-            throw new IllegalArgumentException("uid must have 4 bytes instead of "+uid.length);
-        }
-
+    public static CANPacket stop(int uid){
         return new CANPacket(
                 PRIORITY,
                 SYSTEM,
                 HASH,
                 SYSTEM_STOP_AND_GO_DLC,
                 new byte[]{
-                        uid[0],
-                        uid[1],
-                        uid[2],
-                        uid[3],
+                        (byte)((uid>>24) & 0xFF),
+                        (byte)((uid>>16) & 0xFF),
+                        (byte)((uid>>8) & 0xFF),
+                        (byte)(uid & 0xFF),
                         SYSTEM_STOP_SUBCMD,
                         (byte)0x00,
                         (byte)0x00,
@@ -275,21 +280,17 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket go(byte[] uid){
-        if(uid.length != 4){
-            throw new IllegalArgumentException("uid must have 4 bytes instead of "+uid.length);
-        }
-
+    public static CANPacket go(int uid){
         return new CANPacket(
                 PRIORITY,
                 SYSTEM,
                 HASH,
                 SYSTEM_STOP_AND_GO_DLC,
                 new byte[]{
-                        uid[0],
-                        uid[1],
-                        uid[2],
-                        uid[3],
+                        (byte)((uid>>24) & 0xFF),
+                        (byte)((uid>>16) & 0xFF),
+                        (byte)((uid>>8) & 0xFF),
+                        (byte)(uid & 0xFF),
                         SYSTEM_GO_SUBCMD,
                         (byte)0x00,
                         (byte)0x00,
@@ -336,21 +337,17 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket queryVelocity(byte[] locId){
-        if(locId.length != 4){
-            throw new IllegalArgumentException("locId must have 4 bytes instead of "+locId.length);
-        }
-
+    public static CANPacket queryVelocity(int locId){
         return new CANPacket(
                 PRIORITY,
                 VELOCITY,
                 HASH,
                 VELOCITY_QUERY_DLC,
                 new byte[]{
-                        locId[0],
-                        locId[1],
-                        locId[2],
-                        locId[3],
+                        (byte)((locId>>24) & 0xFF),
+                        (byte)((locId>>16) & 0xFF),
+                        (byte)((locId>>8) & 0xFF),
+                        (byte)(locId & 0xFF),
                         (byte)0x00,
                         (byte)0x00,
                         (byte)0x00,
@@ -359,24 +356,20 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket setVelocity(byte[] locId, int velocity){
-        if(locId.length != 4){
-            throw new IllegalArgumentException("locId must have 4 bytes instead of "+locId.length);
-        }
-
+    public static CANPacket setVelocity(int locId, int velocity){
         return new CANPacket(
                 PRIORITY,
                 VELOCITY,
                 HASH,
                 VELOCITY_SET_DLC,
                 new byte[]{
-                        locId[0],
-                        locId[1],
-                        locId[2],
-                        locId[3],
+                        (byte)((locId>>24) & 0xFF),
+                        (byte)((locId>>16) & 0xFF),
+                        (byte)((locId>>8) & 0xFF),
+                        (byte)(locId & 0xFF),
                         //max velocity = 0x03E8 = 1000
-                        (byte)((velocity & 0x0000FF00) >> 8),
-                        (byte)(velocity & 0x000000FF),
+                        (byte)((velocity>>8) & 0xFF),
+                        (byte)(velocity & 0xFF),
                         (byte)0x00,
                         (byte)0x00
                 }
@@ -388,28 +381,24 @@ public final class CS2CANCommands {
 
     /**
      *
-     * @param id
+     * @param locId
      * @param position 1 = straight
      * @param powerToggle
      * @return
      */
-    public static CANPacket toggleEquipment(byte[] id, byte position, byte powerToggle){
-        if(id.length != 4){
-            throw new IllegalArgumentException("id must have 4 bytes instead of "+id.length);
-        }
-
+    public static CANPacket toggleEquipment(int locId, int position, int powerToggle){
         return new CANPacket(
                 PRIORITY,
                 EQUIPMENT,
                 HASH,
                 EQUIPMENT_DLC,
                 new byte[]{
-                        id[0],
-                        id[1],
-                        id[2],
-                        id[3],
-                        position,
-                        powerToggle,
+                        (byte)((locId>>24) & 0xFF),
+                        (byte)((locId>>16) & 0xFF),
+                        (byte)((locId>>8) & 0xFF),
+                        (byte)(locId & 0xFF),
+                        (byte)(position & 0xFF),
+                        (byte)(powerToggle & 0xFF),
                         (byte)0x00,
                         (byte)0x00
                 }
@@ -437,7 +426,7 @@ public final class CS2CANCommands {
      * @param protocol protocol id (see page 26 of the CS2 protocol)
      * @return
      */
-    public static CANPacket discoverSpecificLocs(byte protocol){
+    public static CANPacket discoverSpecificLocs(int protocol){
         if(protocol < 0 || protocol > 96){
             throw new IllegalArgumentException("protocol must be between 0 and 96 (Error: "+protocol+").");
         }
@@ -448,7 +437,7 @@ public final class CS2CANCommands {
                 HASH,
                 DISCOVERY_DISCOVER_PROTOCOL_DLC,
                 new byte[]{
-                        protocol,
+                        (byte)(protocol & 0xFF),
                         (byte)0x00,
                         (byte)0x00,
                         (byte)0x00,
@@ -467,52 +456,36 @@ public final class CS2CANCommands {
      * @param sid
      * @return
      */
-    public static CANPacket mfxBind(byte[] uid, byte[] sid){
-        if(uid.length != 4){
-            throw new IllegalArgumentException("uid must have 4 bytes instead of "+uid.length);
-        }
-
-        if(sid.length != 2){
-            throw new IllegalArgumentException("sid must have 2 bytes instead of "+sid.length);
-        }
-
+    public static CANPacket mfxBind(int uid, int sid){
         return new CANPacket(
                 PRIORITY,
                 MFX_BIND,
                 HASH,
                 MFX_BIND_DLC,
                 new byte[]{
-                        uid[0],
-                        uid[1],
-                        uid[2],
-                        uid[3],
-                        sid[0],
-                        sid[1],
+                        (byte)((uid>>24) & 0xFF),
+                        (byte)((uid>>16) & 0xFF),
+                        (byte)((uid>>8) & 0xFF),
+                        (byte)(uid & 0xFF),
+                        (byte)((sid>>8) & 0xFF),
+                        (byte)(sid & 0xFF),
                         (byte)0x00,
                         (byte)0x00
                 }
         );
     }
 
-    public static CANPacket s88QueryStatus(byte[] deviceId, byte[] contactId){
-        if(deviceId.length != 2){
-            throw new IllegalArgumentException("deviceId must have 2 bytes instead of "+deviceId.length);
-        }
-
-        if(contactId.length != 2){
-            throw new IllegalArgumentException("contactId must have 2 bytes instead of "+contactId.length);
-        }
-
+    public static CANPacket s88QueryStatus(int deviceId, int contactId){
         return new CANPacket(
                 PRIORITY,
                 S88_EVENT,
                 HASH,
                 S88_EVENT_QUERY_DLC,
                 new byte[]{
-                        deviceId[0],
-                        deviceId[1],
-                        contactId[0],
-                        contactId[1],
+                        (byte)((deviceId>>8) & 0xFF),
+                        (byte)(deviceId & 0xFF),
+                        (byte)((contactId>>8) & 0xFF),
+                        (byte)(contactId & 0xFF),
                         (byte)0,
                         (byte)0,
                         (byte)0,
@@ -521,69 +494,9 @@ public final class CS2CANCommands {
         );
     }
 
-
-    //mfx seek klappt nicht
-    //todo evtl noch uid und geräteid mitgeben (testen)
-    public static CANPacket mfxSeek1(){
-        return new CANPacket(
-                PRIORITY,
-                SYSTEM,
-                HASH,
-                SYSTEM_MFX_SEEK_DLC1,
-                new byte[]{
-                        (byte)0x00,
-                        (byte)0x00,
-                        (byte)0x00,
-                        (byte)0x00,
-                        SYSTEM_MFX_SEEK_SUBCMD,
-                        (byte)0x00,
-                        (byte)0x00,
-                        (byte)0x00
-                }
-        );
-    }
-
-    public static CANPacket mfxSeek2(){
-        return new CANPacket(
-                PRIORITY,
-                SYSTEM,
-                HASH,
-                SYSTEM_MFX_SEEK_DLC2,
-                new byte[]{
-                        (byte)0x00,
-                        (byte)0x00,
-                        (byte)0x00,
-                        (byte)0x00,
-                        SYSTEM_MFX_SEEK_SUBCMD,
-                        (byte)0x00,
-                        (byte)0x00,
-                        (byte)0x00
-                }
-        );
-    }
-
-    public static CANPacket mfxSeek3(){
-        return new CANPacket(
-                PRIORITY,
-                SYSTEM,
-                HASH,
-                SYSTEM_MFX_SEEK_DLC3,
-                new byte[]{
-                        (byte)0x00,
-                        (byte)0x00,
-                        (byte)0x00,
-                        (byte)0x00,
-                        SYSTEM_MFX_SEEK_SUBCMD,
-                        (byte)0x00,
-                        (byte)0x00,
-                        (byte)0x00
-                }
-        );
-    }
-
-    public static CANPacket requestConfigData(byte[] fileName){
-        if(fileName.length != 8){
-            throw new IllegalArgumentException("fileName must have 8 bytes instead of "+fileName.length);
+    public static CANPacket requestConfigData(String fileName){
+        if(fileName.length() > 8){
+            throw new IllegalArgumentException("max fileName length is 8. Length: "+fileName.length());
         }
 
         return new CANPacket(
@@ -591,7 +504,7 @@ public final class CS2CANCommands {
                 REQUEST_CONFIG_DATA,
                 HASH,
                 REQUEST_CONFIG_DATA_DLC,
-                fileName
+                fileName.getBytes()
         );
     }
 
@@ -603,30 +516,25 @@ public final class CS2CANCommands {
      * @param count
      * @return
      */
-    public static CANPacket readLocConfig(byte[] locId, byte cvIndex, byte[] cvNumber, byte count){
-        if(locId.length != 4){
-            throw new IllegalArgumentException("locId must have 4 bytes instead of "+locId.length);
-        }
-
+    public static CANPacket readLocConfig(int locId, int cvIndex, int cvNumber, int count){
         if(cvIndex < 0 || cvIndex > 63){
             throw new IllegalArgumentException("cvIndex must be between 0 and 63 (Error: "+cvIndex+").");
         }
 
-        if(cvNumber.length != 2){
-            throw new IllegalArgumentException("cvNumber must have 2 bytes instead of "+cvNumber.length);
+        if(cvNumber < 1 || cvNumber > 1024){
+            throw new IllegalArgumentException("cvNumber must be between 1 and 1024 (Error: "+cvNumber+").");
         }
 
-        int cvNumberValue = new BigInteger(cvNumber).intValue();
-        if(cvNumberValue < 1 || cvNumberValue > 1024){
-            throw new IllegalArgumentException("cvNumber must be between 1 and 1024 (Error: "+cvNumberValue+").");
+        if(count < 0 || count > 255){
+            throw new IllegalArgumentException("count must be between 0 and 255.");
         }
 
         //set upper 6 bits of d-byte 4 (note: cvIndex has max. 6 bits set) (by shifting the bits two to the left, the lower two bits are set to zero; these two bits are needed for cvNumber)
         byte byte4 = (byte)(cvIndex << 2);
-        //now set the lower 2 bits of d-byte 4 (bits 9 and 10 of cvNumberValue (max. 10 bits set) are shifted 8 to the right (to position 0 and 1))
-        byte4 = (byte)(byte4 | (cvNumberValue >>> 8)); //or (byte)(byte4 | (cvNumberValue & 0x0000FF00))
+        //now set the lower 2 bits of d-byte 4 (bits 9 and 10 of cvNumber (max. 10 bits set) are shifted 8 to the right (to position 0 and 1))
+        byte4 = (byte)(byte4 | (cvNumber >>> 8)); //or (byte)(byte4 | (cvNumberValue & 0x0000FF00))
 
-        byte byte5 = (byte)(cvNumberValue & 0x000000FF);
+        byte byte5 = (byte)(cvNumber & 0xFF);
 
         return new CANPacket(
                 PRIORITY,
@@ -634,13 +542,13 @@ public final class CS2CANCommands {
                 HASH,
                 READ_CONFIG_DLC,
                 new byte[]{
-                        locId[0],
-                        locId[1],
-                        locId[2],
-                        locId[3],
+                        (byte)((locId>>24) & 0xFF),
+                        (byte)((locId>>16) & 0xFF),
+                        (byte)((locId>>8) & 0xFF),
+                        (byte)(locId & 0xFF),
                         byte4,
                         byte5,
-                        count,
+                        (byte)(count & 0xFF),
                         (byte)0x00
                 }
         );
