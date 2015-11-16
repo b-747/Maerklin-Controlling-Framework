@@ -256,7 +256,7 @@ MM2 Zubehör mit Adresse 3: Basis: 00 00 30 00 Plus Adresse: 00 00 30 03
     private void sendPacket(CANPacket canPacket){
         if(isEthernet){
             try {
-                ethernetInterface.writeCANPacket(canPacket, CS2_IP_ADDRESS, PC_PORT);
+                ethernetInterface.writeCANPacket(canPacket, CS2_IP_ADDRESS, CS2_PORT);
             } catch (IOException e) {
                 e.printStackTrace();
             }

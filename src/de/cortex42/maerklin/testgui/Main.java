@@ -9,10 +9,10 @@ import java.awt.event.WindowEvent;
  */
 public class Main {
     public static void main(String[] args) {
-        JFrame frame = new JFrame("View");
+        final JFrame frame = new JFrame("View");
 
-        View view = new View();
-        Presenter presenter = new Presenter(view);
+        final View view = new View();
+        final Presenter presenter = new Presenter(view);
         view.setPresenter(presenter);
 
         frame.setContentPane(view.getPanel());
