@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public class Presenter {
     private final View view;
-    private SerialPortInterface serialPortInterface = SerialPortInterface.getInstance();
+    private final SerialPortInterface serialPortInterface = SerialPortInterface.getInstance();
     private EthernetInterface ethernetInterface;
     private boolean isEthernet;
     private int selectedLocId;
@@ -92,6 +92,8 @@ MM2 Zubehör mit Adresse 3: Basis: 00 00 30 00 Plus Adresse: 00 00 30 03
 
             if(!serialPortInterface.openPort(selectedInterface)){
                 DebugOutput.write("Could not open the port.");
+            }else{
+                DebugOutput.write("Port opened.");
             }
         }
 

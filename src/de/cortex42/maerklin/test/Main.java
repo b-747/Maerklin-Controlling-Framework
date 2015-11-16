@@ -35,6 +35,39 @@ public class Main {
             }
         };
 
+        final PacketListener[] configDataStreamPacketListener = new PacketListener[1];
+
+        final PacketListener configDataStreamFirstPacketListener = new PacketListener() {
+            @Override
+            public void packetEvent(PacketEvent packetEvent) {
+                CANPacket canPacket = packetEvent.getCANPacket();
+
+                if (canPacket.getCommand() == CS2CANCommands.GET_CONFIG_DATA_STREAM
+                        && canPacket.getDlc() == CS2CANCommands.GET_CONFIG_DATA_STREAM_FIRST_PACKET_REQUEST_RESPONSE_DLC) {
+                    //received the first packet in the stream
+
+                    //now get the file/stream length in bytes and the crc of the bytes
+                    byte[] data = canPacket.getData();
+                    byte[] fileLength = new byte[]{data[0], data[1], data[2], data[3]};
+                    byte[] crc = new byte[]{data[4], data[5]};
+
+                    //first packet received, now create another listener for the following data packets
+                    configDataStreamPacketListener[0] = new PacketListener() {
+                        @Override
+                        public void packetEvent(PacketEvent packetEvent) {
+                            CANPacket canPacket = packetEvent.getCANPacket();
+
+                            if (canPacket.getCommand() == CS2CANCommands.GET_CONFIG_DATA_STREAM
+                                    && canPacket.getDlc() == CS2CANCommands.GET_CONFIG_DATA_STREAM_PACKET_DLC) {
+                                //todo
+                            }
+                        }
+                    };
+                }
+            }
+        };
+
+
         EthernetInterface ethernetInterface = null;
 
         try {

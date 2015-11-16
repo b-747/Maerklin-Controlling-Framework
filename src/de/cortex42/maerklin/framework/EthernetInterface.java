@@ -51,18 +51,6 @@ public class EthernetInterface {
         datagramSocket.send(datagramPacket);
     }
 
-    public CANPacket readCANPacket() {
-        DatagramPacket datagramPacket = new DatagramPacket(new byte[CANPacket.CAN_PACKET_SIZE], CANPacket.CAN_PACKET_SIZE);
-
-        try {
-            datagramSocket.receive(datagramPacket);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return new CANPacket(datagramPacket.getData());
-    }
-
     public void addPacketListener(PacketListener packetListener){
         if(!packetListeners.contains(packetListener)) {
             packetListeners.add(packetListener);
@@ -72,9 +60,10 @@ public class EthernetInterface {
 
     public void removePacketListener(PacketListener packetListener){
         packetListeners.remove(packetListener);
-       /* if(packetListeners.size() == 0){
+
+        if(packetListeners.size() == 0){
             stopListening();
-        }*/
+        }
     }
 
     private void startListening(){
