@@ -11,7 +11,7 @@ public class ScriptElementWait extends ScriptElement {
     }
 
     @Override
-    public void execute() {
+    public void executeElement(ScriptContext scriptContext) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {

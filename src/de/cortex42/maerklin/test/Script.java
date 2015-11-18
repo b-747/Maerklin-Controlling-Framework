@@ -5,4 +5,8 @@ package de.cortex42.maerklin.test;
  */
 public class Script {
     public ScriptElement first;
+
+    public void execute(ScriptContext scriptContext) {
+        first.execute(scriptContext);
+    }
 }

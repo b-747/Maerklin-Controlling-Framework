@@ -93,13 +93,11 @@ public class CANPacket {
         return data;
     }
 
-    public byte[] getID(){
-        return new byte[]{
-                data[0],
-                data[1],
-                data[2],
-                data[3]
-        };
+    public int getID(){
+        return ((data[0] & 0xFF) << 24)
+                | ((data[1] & 0xFF) << 16)
+                | ((data[2] & 0xFF) << 8)
+                | (data[3] & 0xFF);
     }
 
     /**
