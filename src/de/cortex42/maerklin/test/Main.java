@@ -3,7 +3,6 @@ package de.cortex42.maerklin.test;
 import de.cortex42.maerklin.framework.*;
 import de.cortex42.maerklin.testgui.DebugOutput;
 
-import java.net.SocketException;
 import java.util.zip.DataFormatException;
 
 /**
@@ -102,30 +101,45 @@ public class Main {
             }
         };*/
 
-
+/*
         EthernetInterface ethernetInterface = null;
 
         try {
             ethernetInterface = EthernetInterface.getInstance(PC_PORT);
         } catch (SocketException e) {
             e.printStackTrace();
-        }
+        }*/
 
-        //ethernetInterface.addPacketListener(debugPacketListener);
+        SerialPortInterface serialPortInterface = SerialPortInterface.getInstance();
+        serialPortInterface.openPort(serialPortInterface.getAvailableSerialPorts().get(0));
+        serialPortInterface.addPacketListener(debugPacketListener);
 
-        //ethernetInterface.cleanUp();
+        serialPortInterface.writeCANPacket(CS2CANCommands.bootloaderGo());
+        pause();
+        serialPortInterface.writeCANPacket(CS2CANCommands.setVelocity(78, 0));
+        pause();
+        serialPortInterface.writeCANPacket(CS2CANCommands.newRegistration());
+        pause();
+        serialPortInterface.writeCANPacket(CS2CANCommands.unlockRail());
+        pause();
+        serialPortInterface.writeCANPacket(CS2CANCommands.go());
 
-      /*  byte[] configDataCompressBytes = DatatypeConverter.parseHexBinary(configDataStreamCompressedAsString);
-        int expectedBytes = 383;
-        int expectedCrc = 11809;*/
+        //Script script = TestScripts.getTestScript(new ScriptContext(ethernetInterface, CS2_IP_ADDRESS, CS2_PORT));
+        Script script = TestScripts.getLittleTestScript(new ScriptContext(serialPortInterface));
+        (new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (TestScripts.waitingTime1 <= 20000L) {
+                    try {
+                        Thread.sleep(1000L);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    TestScripts.waitingTime1 += 1000L;
+                }
+            }
+        })).start();
 
-//        byte[] configDataCompressBytes = DatatypeConverter.parseHexBinary("0000071E789CCD94");
-//        int expectedCrc = 2;
-//
-//        uncompressTest(configDataCompressBytes, expectedCrc);
-
-        Script script = TestScripts.getTestScript(new ScriptContext(ethernetInterface, CS2_IP_ADDRESS, CS2_PORT));
-        //Script script = TestScripts.getLittleTestScript(new ScriptContext(ethernetInterface, CS2_IP_ADDRESS, CS2_PORT));
         script.execute();
 
         while (true) ;
@@ -149,6 +163,14 @@ public class Main {
                 System.out.print((char) (b & 0xFF));
             }
         } catch (DataFormatException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void pause() {
+        try {
+            Thread.sleep(200L);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

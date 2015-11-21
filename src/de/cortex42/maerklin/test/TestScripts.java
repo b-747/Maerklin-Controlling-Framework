@@ -1,8 +1,10 @@
 package de.cortex42.maerklin.test;
 
 import de.cortex42.maerklin.framework.CS2CANCommands;
+import de.cortex42.maerklin.testgui.DebugOutput;
 
 import java.util.ArrayList;
+import java.util.function.BooleanSupplier;
 
 /**
  * Created by ivo on 13.11.15.
@@ -91,18 +93,79 @@ public class TestScripts {
         last = last.next = new ScriptElementWaitForContact(0x110007, CS2CANCommands.EQUIPMENT_POSITION_ON); //Erreichen von Kontakt 7
         last = last.next = new ScriptElementSetVelocity(0x4006, LANGSAM); //Lok 6 wird langsam
         last = last.next = new ScriptElementWaitForContact(0x110003, CS2CANCommands.EQUIPMENT_POSITION_ON); //Erreichen von Kontakt 3
-        last.next = new ScriptElementSetVelocity(0x4006, STOPP); //Lok 6 hält an*/
+        last.next = new ScriptElementSetVelocity(0x4006, STOPP); //Lok 6 hält an
 
         return s;
     }
 
+    public static volatile long waitingTime1 = 0L;
+
     public static Script getLittleTestScript(ScriptContext scriptContext) {
         ScriptElement last;
-        Script s = new Script(scriptContext);
+        Script script = new Script(scriptContext);
 
-        last = s.first = new ScriptElementSetVelocity(0x4005, LANGSAM);
-        last.next = new ScriptElementSetVelocity(0x4006, SCHNELL);
+        last = script.first = new ScriptElementGo();
+        last = last.next = new ScriptElementSetVelocity(78, LANGSAM);
 
-        return s;
+        ScriptConditionChecker scriptConditionChecker1 = new ScriptConditionChecker(new ScriptCondition(new BooleanSupplier() {
+            @Override
+            public boolean getAsBoolean() {
+
+                while (waitingTime1 < 5000L) ;
+                DebugOutput.write("ScriptConditionChecker1, waitingtime: " + waitingTime1);
+                return waitingTime1 >= 5000L;
+            }
+        }));
+        scriptConditionChecker1.next = new ScriptElementSetVelocity(78, MITTELSCHNELL);
+        scriptConditionChecker1.and(new ScriptConditionChecker(new ScriptCondition(new BooleanSupplier() { //scriptConditionChecker1 blocks until both area true
+            @Override
+            public boolean getAsBoolean() {
+
+                while (waitingTime1 < 10000L) ;
+                DebugOutput.write("ScriptConditionChecker2, waitingtime: " + waitingTime1);
+
+                return waitingTime1 >= 10000L;
+            }
+        })));
+
+       /* ScriptConditionChecker scriptConditionChecker2 = new ScriptConditionChecker(new ScriptCondition(new BooleanSupplier() {
+            @Override
+            public boolean getAsBoolean() {
+
+                while(waitingTime1< 10000L);
+                DebugOutput.write("ScriptConditionChecker2, waitingtime: "+waitingTime1);
+
+                return waitingTime1 >= 10000L;
+            }
+        }));
+        scriptConditionChecker2.next = new ScriptElementSetVelocity(78, SCHNELL);*/
+
+        ScriptConditionChecker scriptConditionChecker3 = new ScriptConditionChecker(new ScriptCondition(new BooleanSupplier() {
+            @Override
+            public boolean getAsBoolean() {
+
+                while (waitingTime1 < 15000L) ;
+                DebugOutput.write("ScriptConditionChecker3, waitingtime: " + waitingTime1);
+
+                return waitingTime1 >= 15000;
+            }
+        }));
+        scriptConditionChecker3.next = new ScriptElementSetVelocity(78, LANGSAM);
+
+        ArrayList<ScriptConditionChecker> scriptConditionCheckers = new ArrayList<>(3);
+        scriptConditionCheckers.add(scriptConditionChecker1);
+        //scriptConditionCheckers.add(scriptConditionChecker2);
+        scriptConditionCheckers.add(scriptConditionChecker3);
+
+        last = last.next = new ScriptParallel(scriptConditionCheckers);
+        last = last.next = new ScriptElementSetVelocity(78, STOPP);
+        last = last.next = new ScriptElementWait(250L);
+        last = last.next = new ScriptElementSetDirection(78, CS2CANCommands.DIRECTION_FORWARD);
+        last = last.next = new ScriptElementWait(250L);
+        last = last.next = new ScriptElementSetVelocity(78, LANGSAM);
+        last = last.next = new ScriptElementWait(5000L);
+        last.next = new ScriptElementStop();
+
+        return script;
     }
 }

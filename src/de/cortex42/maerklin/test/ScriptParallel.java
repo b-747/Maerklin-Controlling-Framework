@@ -14,10 +14,10 @@ public class ScriptParallel extends ScriptElement {
 
     @Override
     public void executeElement(ScriptContext scriptContext) {
-        int scriptConditionCount = scriptConditionCheckers.size();
-        final WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
+        final int scriptConditionCheckerCount = scriptConditionCheckers.size();
+        boolean scriptConditionsResult = true;
 
-        final Thread[] threads = new Thread[scriptConditionCount];
+        final Thread[] threads = new Thread[scriptConditionCheckerCount];
 
         for (int i = 0; i < threads.length; i++) {
             final int finalI = i;
@@ -25,15 +25,7 @@ public class ScriptParallel extends ScriptElement {
             threads[i] = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    boolean result = scriptConditionCheckers.get(finalI).check();
-
-                    if (result) {
-                        scriptConditionCheckers.get(finalI).execute(scriptContext);
-                    }
-
-                    synchronized (waitingThreadExchangeObject) {
-                        waitingThreadExchangeObject.value &= result;
-                    }
+                    scriptConditionCheckers.get(finalI).execute(scriptContext);
                 }
             });
             threads[i].start();
@@ -43,9 +35,12 @@ public class ScriptParallel extends ScriptElement {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+            scriptConditionsResult &= scriptConditionCheckers.get(finalI).isConditionMet(); //if one of the conditions was not met, then scriptConditionsResult is false
         }
 
-        if (!waitingThreadExchangeObject.value) {
+
+        if (!scriptConditionsResult) {
             next = null; //stop further execution
         }
     }

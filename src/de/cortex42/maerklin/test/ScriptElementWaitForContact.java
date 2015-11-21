@@ -32,12 +32,11 @@ public class ScriptElementWaitForContact extends ScriptElement {
                                 && canPacket.getID() == contactId
                                 && ((canPacket.getData()[5] & 0xFF) == switchOverTo)) {
 
-                            waitingThreadExchangeObject.value = true;
-                            scriptContext.removePacketListener(this);
-
                             synchronized (waitingThreadExchangeObject) {
+                                waitingThreadExchangeObject.value = true;
                                 waitingThreadExchangeObject.notify();
                             }
+                            scriptContext.removePacketListener(this);
                         }
                     }
                 });

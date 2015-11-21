@@ -30,43 +30,32 @@ public class ScriptBooleanSupplierTrainVelocity implements BooleanSupplier {
     private boolean check() {
         final WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
-        Thread thread = new Thread(new Runnable() {
+        scriptContext.addPacketListener(new PacketListener() {
             @Override
-            public void run() {
-                scriptContext.addPacketListener(new PacketListener() {
-                    @Override
-                    public void packetEvent(PacketEvent packetEvent) {
-                        CANPacket canPacket = packetEvent.getCANPacket();
+            public void packetEvent(PacketEvent packetEvent) {
+                CANPacket canPacket = packetEvent.getCANPacket();
 
-                        if (canPacket.getCommand() == (CS2CANCommands.VELOCITY + 1)
-                                && canPacket.getDlc() == CS2CANCommands.VELOCITY_SET_DLC) {
-                            int velocity = (((canPacket.getData()[4] & 0xFF) << 8) | (canPacket.getData()[5] & 0xFF));
+                if (canPacket.getCommand() == (CS2CANCommands.VELOCITY + 1)
+                        && canPacket.getDlc() == CS2CANCommands.VELOCITY_SET_DLC) {
+                    int velocityValue = (((canPacket.getData()[4] & 0xFF) << 8) | (canPacket.getData()[5] & 0xFF));
 
-                            if (velocity == ScriptBooleanSupplierTrainVelocity.this.velocity) {
-                                waitingThreadExchangeObject.value = true;
-                                scriptContext.removePacketListener(this);
-                            }
-                        }
-                    }
-                });
+                    if (velocityValue == velocity) {
+                        waitingThreadExchangeObject.value = true;
 
-                while (!waitingThreadExchangeObject.value) {
-                    scriptContext.writeCANPacket(CS2CANCommands.queryVelocity(locId));
-
-                    try {
-                        Thread.sleep(DELAY);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        scriptContext.removePacketListener(this);
                     }
                 }
             }
         });
-        thread.start();
 
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (!waitingThreadExchangeObject.value) {
+            scriptContext.writeCANPacket(CS2CANCommands.queryVelocity(locId));
+
+            try {
+                Thread.sleep(DELAY);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         return waitingThreadExchangeObject.value;
