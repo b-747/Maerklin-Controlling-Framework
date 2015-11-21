@@ -238,7 +238,8 @@ MM2 Zubehör mit Adresse 3: Basis: 00 00 30 00 Plus Adresse: 00 00 30 03
                             command = (byte)(command & ~CS2CANCommands.RESPONSE);
                         }
 
-                        if (command != CS2CANCommands.VELOCITY) {
+                        if (command != CS2CANCommands.VELOCITY
+                                && packetEvent.getCANPacket().getDlc() != CS2CANCommands.VELOCITY_SET_DLC) {
                             return;
                         }
 

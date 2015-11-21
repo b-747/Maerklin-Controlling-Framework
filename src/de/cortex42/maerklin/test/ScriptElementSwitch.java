@@ -21,27 +21,20 @@ public class ScriptElementSwitch extends ScriptElement {
         this.switchDelay = switchDelay;
     }
 
-    //todo lock SerialPortInterface?
-
     @Override
     public void executeElement(ScriptContext scriptContext) {
-        (new Thread(new Runnable() {
-            @Override
-            public void run() {
-                scriptContext.writeCANPacket(
-                        CS2CANCommands.toggleEquipment(equipmentId, position, CS2CANCommands.EQUIPMENT_POWER_ON)
-                );
+        scriptContext.writeCANPacket(
+                CS2CANCommands.toggleEquipment(equipmentId, position, CS2CANCommands.EQUIPMENT_POWER_ON)
+        );
 
-                try {
-                    Thread.sleep(switchDelay);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        try {
+            Thread.sleep(switchDelay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-                scriptContext.writeCANPacket(
-                        CS2CANCommands.toggleEquipment(equipmentId, position, CS2CANCommands.EQUIPMENT_POWER_OFF)
-                );
-            }
-        })).start();
+        scriptContext.writeCANPacket(
+                CS2CANCommands.toggleEquipment(equipmentId, position, CS2CANCommands.EQUIPMENT_POWER_OFF)
+        );
     }
 }

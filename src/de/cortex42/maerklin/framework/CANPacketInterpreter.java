@@ -43,8 +43,8 @@ public final class CANPacketInterpreter {
                     case CS2CANCommands.PING_RESPONSE_DLC:
                         stringBuilder.append("RESPONSE ");
                         stringBuilder.append(String.format(
-                                "SENDER UID %s, SW VERSION %s, DEVICE ID %s",
-                                DatatypeConverter.printHexBinary(canPacket.getID()),
+                                "SENDER UID %d, SW VERSION %s, DEVICE ID %s",
+                                canPacket.getID(),
                                 DatatypeConverter.printHexBinary(new byte[]{data[4], data[5]}),
                                 DatatypeConverter.printHexBinary(new byte[]{data[6], data[7]}))
                         );
@@ -62,12 +62,12 @@ public final class CANPacketInterpreter {
 
                 if(dlc == CS2CANCommands.DIRECTION_QUERY_DLC){
                     stringBuilder.append("QUERY ");
-                    stringBuilder.append(String.format("LOC ID %s ",
-                            DatatypeConverter.printHexBinary(canPacket.getID()))
+                    stringBuilder.append(String.format("LOC ID %d ",
+                            canPacket.getID())
                     );
                 }else if(dlc == CS2CANCommands.DIRECTION_SET_DLC){
-                    stringBuilder.append(String.format("LOC ID %s ",
-                            DatatypeConverter.printHexBinary(canPacket.getID()))
+                    stringBuilder.append(String.format("LOC ID %d ",
+                            canPacket.getID())
                     );
 
                     stringBuilder.append("DIRECTION ");
@@ -140,16 +140,16 @@ public final class CANPacketInterpreter {
 
                     case CS2CANCommands.SYSTEM_STOP_SUBCMD:
                         stringBuilder.append("STOP ");
-                        stringBuilder.append(String.format("UID %s ",
-                                DatatypeConverter.printHexBinary(canPacket.getID()))
+                        stringBuilder.append(String.format("UID %d ",
+                                canPacket.getID())
                         );
 
                         break;
 
                     case CS2CANCommands.SYSTEM_GO_SUBCMD:
                         stringBuilder.append("GO ");
-                        stringBuilder.append(String.format("UID %s ",
-                                DatatypeConverter.printHexBinary(canPacket.getID()))
+                        stringBuilder.append(String.format("UID %d ",
+                                canPacket.getID())
                         );
 
                         break;
@@ -183,8 +183,8 @@ public final class CANPacketInterpreter {
 
                     case CS2CANCommands.VELOCITY_QUERY_DLC:
                         stringBuilder.append("QUERY ");
-                        stringBuilder.append(String.format("LOC ID %s ",
-                                DatatypeConverter.printHexBinary(canPacket.getID()))
+                        stringBuilder.append(String.format("LOC ID %d ",
+                                canPacket.getID())
                         );
                         break;
 
@@ -195,8 +195,8 @@ public final class CANPacketInterpreter {
                             stringBuilder.append("SET ");
                         }
 
-                        stringBuilder.append(String.format("LOC ID %s ",
-                                DatatypeConverter.printHexBinary(canPacket.getID()))
+                        stringBuilder.append(String.format("LOC ID %d ",
+                               canPacket.getID())
                         );
 
                         byte[] velocity = new byte[]{data[4], data[5]};

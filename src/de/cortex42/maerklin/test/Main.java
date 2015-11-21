@@ -3,7 +3,7 @@ package de.cortex42.maerklin.test;
 import de.cortex42.maerklin.framework.*;
 import de.cortex42.maerklin.testgui.DebugOutput;
 
-import javax.xml.bind.DatatypeConverter;
+import java.net.SocketException;
 import java.util.zip.DataFormatException;
 
 /**
@@ -37,7 +37,7 @@ public class Main {
             }
         };
 
-        final PacketListener[] configDataStreamPacketListener = new PacketListener[1];
+        //final PacketListener[] configDataStreamPacketListener = new PacketListener[1];
 
         /*final PacketListener configDataStreamFirstPacketListener = new PacketListener() {
             @Override
@@ -103,27 +103,32 @@ public class Main {
         };*/
 
 
-//        EthernetInterface ethernetInterface = null;
-//
-//        try {
-//            ethernetInterface = EthernetInterface.getInstance(PC_PORT);
-//        } catch (SocketException e) {
-//            e.printStackTrace();
-//        }
-//
-//        ethernetInterface.addPacketListener(debugPacketListener);
-//
-//        while (true) ;
+        EthernetInterface ethernetInterface = null;
+
+        try {
+            ethernetInterface = EthernetInterface.getInstance(PC_PORT);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+        //ethernetInterface.addPacketListener(debugPacketListener);
+
         //ethernetInterface.cleanUp();
 
       /*  byte[] configDataCompressBytes = DatatypeConverter.parseHexBinary(configDataStreamCompressedAsString);
         int expectedBytes = 383;
         int expectedCrc = 11809;*/
 
-        byte[] configDataCompressBytes = DatatypeConverter.parseHexBinary("0000071E789CCD94");
-        int expectedCrc = 2;
+//        byte[] configDataCompressBytes = DatatypeConverter.parseHexBinary("0000071E789CCD94");
+//        int expectedCrc = 2;
+//
+//        uncompressTest(configDataCompressBytes, expectedCrc);
 
-        uncompressTest(configDataCompressBytes, expectedCrc);
+        Script script = TestScripts.getTestScript(new ScriptContext(ethernetInterface, CS2_IP_ADDRESS, CS2_PORT));
+        //Script script = TestScripts.getLittleTestScript(new ScriptContext(ethernetInterface, CS2_IP_ADDRESS, CS2_PORT));
+        script.execute();
+
+        while (true) ;
     }
 
     public static void uncompressTest(byte[] data, int expectedCRC) {

@@ -19,30 +19,37 @@ public class ScriptElementWaitForContact extends ScriptElement {
 
     @Override
     public void executeElement(ScriptContext scriptContext) {
-        (new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final boolean[] contactReached = {false};
+        final WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
-                scriptContext.addPacketListener(
-                        new PacketListener() {
-                            @Override
-                            public void packetEvent(PacketEvent packetEvent) {
-                                CANPacket canPacket = packetEvent.getCANPacket();
+        scriptContext.addPacketListener(
+                new PacketListener() {
+                    @Override
+                    public void packetEvent(PacketEvent packetEvent) {
+                        CANPacket canPacket = packetEvent.getCANPacket();
 
-                                if (canPacket.getCommand() == (CS2CANCommands.S88_EVENT & 1) //for response bit
-                                        && canPacket.getDlc() == CS2CANCommands.S88_EVENT_RESPONSE_DLC
-                                        && canPacket.getID() == contactId
-                                        && ((canPacket.getData()[5] & 0xFF) == switchOverTo)) {
+                        if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT //for response bit
+                                && canPacket.getDlc() == CS2CANCommands.S88_EVENT_RESPONSE_DLC
+                                && canPacket.getID() == contactId
+                                && ((canPacket.getData()[5] & 0xFF) == switchOverTo)) {
 
-                                    contactReached[0] = true;
-                                    scriptContext.removePacketListener(this);
-                                }
+                            waitingThreadExchangeObject.value = true;
+                            scriptContext.removePacketListener(this);
+
+                            synchronized (waitingThreadExchangeObject) {
+                                waitingThreadExchangeObject.notify();
                             }
-                        });
+                        }
+                    }
+                });
 
-                while (!contactReached[0]) ; //"sleep" until contact is reached
+        while (!waitingThreadExchangeObject.value) {
+            synchronized (waitingThreadExchangeObject) {
+                try {
+                    waitingThreadExchangeObject.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        })).start();
+        }
     }
 }

@@ -1,7 +1,5 @@
 package de.cortex42.maerklin.framework;
 
-import java.math.BigInteger;
-
 /**
  * Created by ivo on 19.10.15.
  */
@@ -475,15 +473,15 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket s88QueryStatus(int deviceId, int contactId){
+    public static CANPacket s88QueryStatus(int contactId) {
         return new CANPacket(
                 PRIORITY,
                 S88_EVENT,
                 HASH,
                 S88_EVENT_QUERY_DLC,
                 new byte[]{
-                        (byte)((deviceId>>8) & 0xFF),
-                        (byte)(deviceId & 0xFF),
+                        (byte) ((contactId >> 24) & 0xFF),
+                        (byte) ((contactId >> 16) & 0xFF),
                         (byte)((contactId>>8) & 0xFF),
                         (byte)(contactId & 0xFF),
                         (byte)0,
