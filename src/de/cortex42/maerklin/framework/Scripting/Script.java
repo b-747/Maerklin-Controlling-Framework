@@ -1,5 +1,7 @@
 package de.cortex42.maerklin.framework.Scripting;
 
+import de.cortex42.maerklin.framework.FrameworkException;
+
 /**
  * Created by ivo on 13.11.15.
  */
@@ -11,7 +13,7 @@ public class Script {
         this.scriptContext = scriptContext;
     }
 
-    public void execute() {
+    public void execute() throws FrameworkException {
         first.execute(scriptContext);
     }
 }

@@ -143,7 +143,11 @@ public class Main {
         })).start();
         */
 
-        script.execute();
+        try {
+            script.execute();
+        } catch (FrameworkException e) {
+            System.out.println(e.getMessage());
+        }
 
         while (true) ;
     }
