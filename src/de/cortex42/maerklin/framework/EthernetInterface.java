@@ -1,10 +1,7 @@
 package de.cortex42.maerklin.framework;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 import java.util.ArrayList;
 
 /**
@@ -15,11 +12,12 @@ public class EthernetInterface {
     private DatagramSocket datagramSocket = null;
 
     private final ArrayList<PacketListener> packetListeners = new ArrayList<>();
+    private final ArrayList<EthernetInterfacePacketListenerExceptionHandler> ethernetInterfacePacketListenerExceptionHandlers = new ArrayList<>();
     private boolean isListening = false;
-    private Thread thread = null;
 
     private static EthernetInterface instance = null;
-    public static EthernetInterface getInstance(int port) throws SocketException {
+
+    synchronized public static EthernetInterface getInstance(int port) throws FrameworkException {
         if(instance == null){
             instance = new EthernetInterface(port);
         }
@@ -27,11 +25,15 @@ public class EthernetInterface {
         return instance;
     }
 
-    private EthernetInterface(int port) throws SocketException {
-        datagramSocket = new DatagramSocket(port);
+    private EthernetInterface(int port) throws FrameworkException {
+        try {
+            datagramSocket = new DatagramSocket(port);
+        } catch (SocketException e) {
+            throw new FrameworkException(e);
+        }
     }
 
-    public void cleanUp(){
+    synchronized public void cleanUp() {
         stopListening();
         datagramSocket.close();
     }
@@ -43,25 +45,45 @@ public class EthernetInterface {
      * @param port
      * @throws IOException, UnknownHostException, SocketException
      */
-    public void writeCANPacket(CANPacket canPacket, String targetAddress, int port) throws IOException {
+    synchronized public void writeCANPacket(CANPacket canPacket, String targetAddress, int port) throws FrameworkException {
         byte[] bytes = canPacket.getBytes();
 
-        DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(targetAddress), port);
+        DatagramPacket datagramPacket;
+        try {
+            datagramPacket = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(targetAddress), port);
+        } catch (UnknownHostException e) {
+            throw new FrameworkException(e);
+        }
 
-        datagramSocket.send(datagramPacket);
+        try {
+            datagramSocket.send(datagramPacket);
+        } catch (IOException e) {
+            throw new FrameworkException(e);
+        }
     }
 
-    public void addPacketListener(PacketListener packetListener){
+    synchronized public void addEthernetInterfacePacketListenerExceptionHandler(EthernetInterfacePacketListenerExceptionHandler ethernetInterfacePacketListenerExceptionHandler) {
+        if (!ethernetInterfacePacketListenerExceptionHandlers.contains(ethernetInterfacePacketListenerExceptionHandler)) {
+            ethernetInterfacePacketListenerExceptionHandlers.add(ethernetInterfacePacketListenerExceptionHandler);
+        }
+    }
+
+    synchronized public void removeEthernetInterfacePacketListenerExceptionHandler(EthernetInterfacePacketListenerExceptionHandler ethernetInterfacePacketListenerExceptionHandler) {
+        ethernetInterfacePacketListenerExceptionHandlers.remove(ethernetInterfacePacketListenerExceptionHandler);
+    }
+
+    synchronized public void addPacketListener(PacketListener packetListener) {
         if(!packetListeners.contains(packetListener)) {
             packetListeners.add(packetListener);
         }
+
         startListening();
     }
 
-    public void removePacketListener(PacketListener packetListener){
+    synchronized public void removePacketListener(PacketListener packetListener) {
         packetListeners.remove(packetListener);
 
-        if(packetListeners.size() == 0){
+        if (packetListeners.isEmpty()) {
             stopListening();
         }
     }
@@ -70,7 +92,7 @@ public class EthernetInterface {
         if(!isListening) {
             isListening = true;
 
-            (thread = new Thread(new Runnable() {
+            Thread thread = new Thread(new Runnable() {
                 public void run() {
                     while (isListening) {
                         DatagramPacket datagramPacket = new DatagramPacket(new byte[CANPacket.CAN_PACKET_SIZE], CANPacket.CAN_PACKET_SIZE);
@@ -78,7 +100,15 @@ public class EthernetInterface {
                         try {
                             datagramSocket.receive(datagramPacket);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            FrameworkException frameworkException = new FrameworkException(e);
+                            cleanUp(); //stop listening and close socket
+
+                            //inform packetlistener users about error
+                            for (int i = 0; i < ethernetInterfacePacketListenerExceptionHandlers.size(); i++) {
+                                ethernetInterfacePacketListenerExceptionHandlers.get(i).onPacketListenerException(frameworkException);
+                            }
+
+                            break;
                         }
 
                         CANPacket canPacket = new CANPacket(datagramPacket.getData());
@@ -88,7 +118,9 @@ public class EthernetInterface {
                         }
                     }
                 }
-            })).start();
+            });
+
+            thread.start();
         }
     }
 

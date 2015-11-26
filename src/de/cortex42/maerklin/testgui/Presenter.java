@@ -2,9 +2,7 @@ package de.cortex42.maerklin.testgui;
 
 import de.cortex42.maerklin.framework.*;
 
-import java.io.IOException;
 import java.math.BigInteger;
-import java.net.SocketException;
 import java.util.Objects;
 
 /**
@@ -17,20 +15,6 @@ public class Presenter {
     private boolean isEthernet;
     private int selectedLocId;
 
-    /*
-Im System besitzt jeder adressierbare Teilnehmer eine eindeutige 32 Bit Adresse.
-Dabei werden folgende UID unterschieden:
-Geräte-UID Eindeutig vergebene Universal ID.
-Loc-ID (=Local ID, nicht Locomotive ID) Aus dem Protokoll und der Adresse berechnete Lokale ID.
-MFX-UID MFX Universal ID, eindeutige Kennung eines mfx Teilnehmers.
-(Loc-ID = SID!)
-Die Lage der Loc-ID (Local-ID, NICHT Locomotive-ID) im Adressraum bestimmt das Protokoll (S. 8)
-
-
-Beispiel (Hex):
-Märklin Motorola mit Adresse 2: Basis: 00 00 00 00 Plus Adresse: 00 00 00 02
-MM2 Zubehör mit Adresse 3: Basis: 00 00 30 00 Plus Adresse: 00 00 30 03
-*/
     private static final int MFX_RANGE = 16384; //new byte[]{0x00, 0x00, 0x40, 0x00};
     private static final int MM_RANGE = 0; //new byte[]{0x00, 0x00, 0x00, 0x00};
     private static final int MM2_EQUIPMENT_RANGE = 12288; //new byte[]{0x00, 0x00, 0x30, 0x00};
@@ -84,7 +68,7 @@ MM2 Zubehör mit Adresse 3: Basis: 00 00 30 00 Plus Adresse: 00 00 30 03
 
             try {
                 ethernetInterface = EthernetInterface.getInstance(CS2_PORT);
-            } catch (SocketException e) {
+            } catch (FrameworkException e) {
                 e.printStackTrace();
             }
         }else{
@@ -260,11 +244,15 @@ MM2 Zubehör mit Adresse 3: Basis: 00 00 30 00 Plus Adresse: 00 00 30 03
         if(isEthernet){
             try {
                 ethernetInterface.writeCANPacket(canPacket, CS2_IP_ADDRESS, CS2_PORT);
-            } catch (IOException e) {
+            } catch (FrameworkException e) {
                 e.printStackTrace();
             }
         }else{
-            serialPortInterface.writeCANPacket(canPacket);
+            try {
+                serialPortInterface.writeCANPacket(canPacket);
+            } catch (FrameworkException e) {
+                e.printStackTrace();
+            }
         }
     }
 

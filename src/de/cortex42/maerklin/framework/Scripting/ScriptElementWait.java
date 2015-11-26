@@ -1,4 +1,6 @@
-package de.cortex42.maerklin.test;
+package de.cortex42.maerklin.framework.Scripting;
+
+import de.cortex42.maerklin.framework.FrameworkException;
 
 /**
  * Created by ivo on 13.11.15.
@@ -11,11 +13,11 @@ public class ScriptElementWait extends ScriptElement {
     }
 
     @Override
-    public void executeElement(ScriptContext scriptContext) {
+    public void executeElement(ScriptContext scriptContext) throws FrameworkException {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new FrameworkException(e);
         }
     }
 }

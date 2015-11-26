@@ -20,15 +20,16 @@ public class SerialPortInterface {
 
     private final CANPacketListener canPacketListener = new CANPacketListener();
 
-    private static SerialPortInterface instance = new SerialPortInterface();
-    public static SerialPortInterface getInstance() {
+    private final static SerialPortInterface instance = new SerialPortInterface();
+
+    synchronized public static SerialPortInterface getInstance() {
         return instance;
     }
 
     private SerialPortInterface(){
     }
 
-    public ArrayList<String> getAvailableSerialPorts(){
+    synchronized public ArrayList<String> getAvailableSerialPorts() {
         SerialPort[] serialPorts = SerialPort.getCommPorts();
         ArrayList<String> portNames = new ArrayList<>();
 
@@ -39,7 +40,7 @@ public class SerialPortInterface {
         return portNames;
     }
 
-    public boolean openPort(String systemPortName){
+    synchronized public boolean openPort(String systemPortName) {
         serialPort = SerialPort.getCommPort(systemPortName);
 
         serialPort.setComPortParameters(BAUD, DATA_BITS, STOP_BITS, PARITY_BIT);
@@ -48,32 +49,35 @@ public class SerialPortInterface {
         return serialPort.openPort();
     }
 
-    public boolean closePort() {
+    synchronized public boolean closePort() {
         return serialPort == null || serialPort.closePort();
     }
 
-    public void addPacketListener(PacketListener packetListener){
+    synchronized public void addPacketListener(PacketListener packetListener) {
         serialPort.addDataListener(canPacketListener); //happens only once
         canPacketListener.addPacketListener(packetListener);
     }
 
-    public void removePacketListener(PacketListener packetListener){
+    synchronized public void removePacketListener(PacketListener packetListener) {
         canPacketListener.removePacketListener(packetListener);
-        /*if(!canPacketListener.packetListenersAvailable()){
+
+        if (!canPacketListener.packetListenersAvailable()) {
             serialPort.removeDataListener();
-        }*/
+        }
     }
 
     /**
      * @param canPacket
      * @return false if not every byte was written
      */
-    public boolean writeCANPacket(CANPacket canPacket) {
+    synchronized public void writeCANPacket(CANPacket canPacket) throws FrameworkException {
         byte[] bytesToWrite = canPacket.getBytes();
 
         int bytesWritten = serialPort.writeBytes(bytesToWrite, bytesToWrite.length);
 
-        return bytesWritten == bytesToWrite.length;
+        if (bytesWritten != bytesToWrite.length) {
+            throw new FrameworkException("Not all bytes were written. Check serial port connection.");
+        }
     }
 
     private final class CANPacketListener implements SerialPortPacketListener{
@@ -115,6 +119,10 @@ public class SerialPortInterface {
 
         public void removePacketListener(PacketListener packetListener){
             packetListeners.remove(packetListener);
+        }
+
+        public boolean packetListenersAvailable() {
+            return !packetListeners.isEmpty();
         }
     }
 }

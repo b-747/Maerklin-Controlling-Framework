@@ -1,11 +1,8 @@
-package de.cortex42.maerklin.test;
+package de.cortex42.maerklin.framework.Scripting;
 
-import de.cortex42.maerklin.framework.CANPacket;
-import de.cortex42.maerklin.framework.EthernetInterface;
-import de.cortex42.maerklin.framework.PacketListener;
-import de.cortex42.maerklin.framework.SerialPortInterface;
+import de.cortex42.maerklin.framework.*;
 
-import java.io.IOException;
+//todo strategy pattern
 
 /**
  * Created by ivo on 18.11.15.
@@ -33,13 +30,9 @@ public class ScriptContext {
         this.useEthernetInterface = false;
     }
 
-    public void writeCANPacket(CANPacket canPacket) {
+    public void writeCANPacket(CANPacket canPacket) throws FrameworkException {
         if (useEthernetInterface) {
-            try {
-                ethernetInterface.writeCANPacket(canPacket, targetAddress, targetPort);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            ethernetInterface.writeCANPacket(canPacket, targetAddress, targetPort);
         } else {
             serialPortInterface.writeCANPacket(canPacket);
 
@@ -59,6 +52,18 @@ public class ScriptContext {
             ethernetInterface.removePacketListener(packetListener);
         } else {
             serialPortInterface.removePacketListener(packetListener);
+        }
+    }
+
+    public void addEthernetInterfacePacketListenerExceptionHandler(EthernetInterfacePacketListenerExceptionHandler ethernetInterfacePacketListenerExceptionHandler) {
+        if (useEthernetInterface) {
+            ethernetInterface.addEthernetInterfacePacketListenerExceptionHandler(ethernetInterfacePacketListenerExceptionHandler);
+        }
+    }
+
+    public void removeEthernetInterfacePacketListenerExceptionHandler(EthernetInterfacePacketListenerExceptionHandler ethernetInterfacePacketListenerExceptionHandler) {
+        if (useEthernetInterface) {
+            ethernetInterface.removeEthernetInterfacePacketListenerExceptionHandler(ethernetInterfacePacketListenerExceptionHandler);
         }
     }
 }

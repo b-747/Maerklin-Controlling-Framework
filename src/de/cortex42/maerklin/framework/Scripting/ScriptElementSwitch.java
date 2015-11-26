@@ -1,6 +1,7 @@
-package de.cortex42.maerklin.test;
+package de.cortex42.maerklin.framework.Scripting;
 
 import de.cortex42.maerklin.framework.CS2CANCommands;
+import de.cortex42.maerklin.framework.FrameworkException;
 
 /**
  * Created by ivo on 13.11.15.
@@ -22,7 +23,7 @@ public class ScriptElementSwitch extends ScriptElement {
     }
 
     @Override
-    public void executeElement(ScriptContext scriptContext) {
+    public void executeElement(ScriptContext scriptContext) throws FrameworkException {
         scriptContext.writeCANPacket(
                 CS2CANCommands.toggleEquipment(equipmentId, position, CS2CANCommands.EQUIPMENT_POWER_ON)
         );
@@ -30,7 +31,7 @@ public class ScriptElementSwitch extends ScriptElement {
         try {
             Thread.sleep(switchDelay);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new FrameworkException(e);
         }
 
         scriptContext.writeCANPacket(

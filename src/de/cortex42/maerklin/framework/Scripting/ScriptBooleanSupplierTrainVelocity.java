@@ -1,16 +1,11 @@
-package de.cortex42.maerklin.test;
+package de.cortex42.maerklin.framework.Scripting;
 
-import de.cortex42.maerklin.framework.CANPacket;
-import de.cortex42.maerklin.framework.CS2CANCommands;
-import de.cortex42.maerklin.framework.PacketEvent;
-import de.cortex42.maerklin.framework.PacketListener;
-
-import java.util.function.BooleanSupplier;
+import de.cortex42.maerklin.framework.*;
 
 /**
  * Created by ivo on 20.11.15.
  */
-public class ScriptBooleanSupplierTrainVelocity implements BooleanSupplier {
+public class ScriptBooleanSupplierTrainVelocity implements BooleanEvent {
     private final ScriptContext scriptContext;
     private final int locId;
     private final int velocity;
@@ -23,11 +18,11 @@ public class ScriptBooleanSupplierTrainVelocity implements BooleanSupplier {
     }
 
     @Override
-    public boolean getAsBoolean() {
+    public boolean getAsBoolean() throws FrameworkException {
         return check();
     }
 
-    private boolean check() {
+    private boolean check() throws FrameworkException {
         final WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
         scriptContext.addPacketListener(new PacketListener() {
@@ -54,7 +49,7 @@ public class ScriptBooleanSupplierTrainVelocity implements BooleanSupplier {
             try {
                 Thread.sleep(DELAY);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                throw new FrameworkException(e);
             }
         }
 

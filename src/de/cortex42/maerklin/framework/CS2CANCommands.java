@@ -9,7 +9,6 @@ public final class CS2CANCommands {
      * BIG ENDIAN
      */
 
-
     /*---PRIORITY---*/
     public static final byte PRIORITY = 0x00;
     /*---HASH---*/
@@ -24,7 +23,7 @@ public final class CS2CANCommands {
     public static final byte SYSTEM = 0x00;
     public static final byte VELOCITY = 0x08;
     public static final byte EQUIPMENT = 0x16;
-    public static final byte DISCOVERY = 0x02; //only master should send this! (if CS2 available, then read locs from .cs2 file)
+    public static final byte DISCOVERY = 0x02; //only master should send this!
     public static final byte MFX_BIND = 0x04; //only master should send this!
     public static final byte S88_EVENT = 0x22;
     public static final byte REQUEST_CONFIG_DATA = 0x40;
@@ -373,9 +372,6 @@ public final class CS2CANCommands {
                 }
         );
     }
-
-
-    //Schaltvorgang: Position angeben und Strom an, dann gleiche Position und Strom aus
 
     /**
      *

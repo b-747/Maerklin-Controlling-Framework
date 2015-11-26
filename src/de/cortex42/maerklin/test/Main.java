@@ -1,6 +1,8 @@
 package de.cortex42.maerklin.test;
 
 import de.cortex42.maerklin.framework.*;
+import de.cortex42.maerklin.framework.Scripting.Script;
+import de.cortex42.maerklin.framework.Scripting.ScriptContext;
 import de.cortex42.maerklin.testgui.DebugOutput;
 
 import java.util.zip.DataFormatException;
@@ -101,16 +103,16 @@ public class Main {
             }
         };*/
 
-/*
+
         EthernetInterface ethernetInterface = null;
 
         try {
             ethernetInterface = EthernetInterface.getInstance(PC_PORT);
-        } catch (SocketException e) {
+        } catch (FrameworkException e) {
             e.printStackTrace();
-        }*/
+        }
 
-        SerialPortInterface serialPortInterface = SerialPortInterface.getInstance();
+/*        SerialPortInterface serialPortInterface = SerialPortInterface.getInstance();
         serialPortInterface.openPort(serialPortInterface.getAvailableSerialPorts().get(0));
         serialPortInterface.addPacketListener(debugPacketListener);
 
@@ -122,10 +124,10 @@ public class Main {
         pause();
         serialPortInterface.writeCANPacket(CS2CANCommands.unlockRail());
         pause();
-        serialPortInterface.writeCANPacket(CS2CANCommands.go());
+        serialPortInterface.writeCANPacket(CS2CANCommands.go());*/
 
-        //Script script = TestScripts.getTestScript(new ScriptContext(ethernetInterface, CS2_IP_ADDRESS, CS2_PORT));
-        Script script = TestScripts.getLittleTestScript(new ScriptContext(serialPortInterface));
+        Script script = TestScripts.getTestScript(new ScriptContext(ethernetInterface, CS2_IP_ADDRESS, CS2_PORT));
+/*        Script script = TestScripts.getLittleTestScript(new ScriptContext(serialPortInterface));
         (new Thread(new Runnable() {
             @Override
             public void run() {
@@ -139,6 +141,7 @@ public class Main {
                 }
             }
         })).start();
+        */
 
         script.execute();
 

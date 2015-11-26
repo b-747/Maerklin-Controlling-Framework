@@ -1,10 +1,10 @@
 package de.cortex42.maerklin.test;
 
 import de.cortex42.maerklin.framework.CS2CANCommands;
-import de.cortex42.maerklin.testgui.DebugOutput;
+import de.cortex42.maerklin.framework.FrameworkException;
+import de.cortex42.maerklin.framework.Scripting.*;
 
 import java.util.ArrayList;
-import java.util.function.BooleanSupplier;
 
 /**
  * Created by ivo on 13.11.15.
@@ -53,40 +53,40 @@ public class TestScripts {
         last = last.next = new ScriptElementSetDirection(0x4005, CS2CANCommands.DIRECTION_BACKWARD); //Lok 5 rückwärts
         last = last.next = new ScriptElementSetVelocity(0x4005, LANGSAM); //Lok 5 fährt langsam los
         //----gleichzeitige Beobachtung
-        ArrayList<ScriptConditionChecker> scriptConditionCheckers = new ArrayList<>();
+        ArrayList<ScriptElementConditionChecker> scriptElementConditionCheckers = new ArrayList<>();
 
-        ScriptConditionChecker scriptConditionChecker1 = new ScriptConditionChecker(new ScriptCondition(new ScriptBooleanSupplierContactReached(scriptContext, 0x110008))); //Erreichen von Kontakt 8
-        scriptConditionChecker1.next = new ScriptElementSetVelocity(0x4007, LANGSAM); //Lok 7 wird langsam
+        ScriptElementConditionChecker scriptElementConditionChecker1 = new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanSupplierContactReached(scriptContext, 0x110008))); //Erreichen von Kontakt 8
+        scriptElementConditionChecker1.next = new ScriptElementSetVelocity(0x4007, LANGSAM); //Lok 7 wird langsam
 
-        ScriptConditionChecker scriptConditionChecker2 = new ScriptConditionChecker(new ScriptCondition(new ScriptBooleanSupplierContactReached(scriptContext, 0x110004))); //Erreichen von Kontakt 4
-        scriptConditionChecker2.next = new ScriptElementSetVelocity(0x4007, STOPP); //Lok 7 hält an
+        ScriptElementConditionChecker scriptElementConditionChecker2 = new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanSupplierContactReached(scriptContext, 0x110004))); //Erreichen von Kontakt 4
+        scriptElementConditionChecker2.next = new ScriptElementSetVelocity(0x4007, STOPP); //Lok 7 hält an
 
-        ScriptConditionChecker scriptConditionChecker3 = new ScriptConditionChecker(new ScriptCondition(new ScriptBooleanSupplierContactReached(scriptContext, 0x1103E9))); //Erreichen von Kontakt 1001
-        scriptConditionChecker3.next = new ScriptElementSetVelocity(0x4005, STOPP); //Lok 5 hält an
+        ScriptElementConditionChecker scriptElementConditionChecker3 = new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanSupplierContactReached(scriptContext, 0x1103E9))); //Erreichen von Kontakt 1001
+        scriptElementConditionChecker3.next = new ScriptElementSetVelocity(0x4005, STOPP); //Lok 5 hält an
 
-        scriptConditionCheckers.add(scriptConditionChecker1);
-        scriptConditionCheckers.add(scriptConditionChecker2);
-        scriptConditionCheckers.add(scriptConditionChecker3);
+        scriptElementConditionCheckers.add(scriptElementConditionChecker1);
+        scriptElementConditionCheckers.add(scriptElementConditionChecker2);
+        scriptElementConditionCheckers.add(scriptElementConditionChecker3);
 
-        last = last.next = new ScriptParallel(scriptConditionCheckers);
+        last = last.next = new ScriptElementParallel(scriptElementConditionCheckers);
         //----gleichzeitige Beobachtung
 
+        ScriptElementConditionChecker scriptElementConditionCheckerStop5And7 = new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanSupplierTrainVelocity(scriptContext, 0x4005, 0)));
+        try {
+            scriptElementConditionCheckerStop5And7.and(new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanSupplierTrainVelocity(scriptContext, 0x4007, 0))));
+        } catch (FrameworkException e) {
+            System.out.println(e.getMessage());
+        }
 
-       /* last = last.next = new ScriptElementWaitForContact(0x110008, CS2CANCommands.EQUIPMENT_POSITION_ON);
-        last = last.next = new ScriptElementSetVelocity(0x4007, LANGSAM);
-        last = last.next = new ScriptElementWaitForContact(0x110004, CS2CANCommands.EQUIPMENT_POSITION_ON);
-        last = last.next = new ScriptElementSetVelocity(0x4007, STOPP);
-        last = last.next = new ScriptElementWaitForContact(0x110005, CS2CANCommands.EQUIPMENT_POSITION_ON);
-        last = last.next = new ScriptElementWait(2000L);
-        last = last.next = new ScriptElementSetVelocity(0x4005, STOPP);
-        last = last.next = new ScriptElementSetDirection(0x4005, CS2CANCommands.DIRECTION_FORWARD);*/
-
+        last = last.next = scriptElementConditionCheckerStop5And7;
+        //if scriptElementConditionCheckerStop5And7 then
         last = last.next = new ScriptElementSetDirection(0x4005, CS2CANCommands.DIRECTION_FORWARD); //Lok 5 vorwärts (und bleibt stehen)
         last = last.next = new ScriptElementSwitch(0x3001, 0); //Weiche 2 rechts
         last = last.next = new ScriptElementSwitch(0x3004, 1); //Weiche 5 links
         last = last.next = new ScriptElementSwitch(0x3005, 0); //Weiche 6 links
+        last = last.next = new ScriptElementSetFunction(0x4006, 3, 1); //Funktion
         last = last.next = new ScriptElementSetVelocity(0x4006, MITTELSCHNELL); //Lok 6 wird mittelschnell
-        last = last.next = new ScriptElementWaitForContact(0x1100A0, CS2CANCommands.EQUIPMENT_POSITION_ON); //Erreichen von Kontakt 10
+        last = last.next = new ScriptElementWaitForContact(0x11000A, CS2CANCommands.EQUIPMENT_POSITION_ON); //Erreichen von Kontakt 10
         last = last.next = new ScriptElementSetVelocity(0x4006, SCHNELL); //Lok 6 wird schnell
         last = last.next = new ScriptElementWaitForContact(0x1103EB, CS2CANCommands.EQUIPMENT_POSITION_ON); //Erreichen von Kontakt 1003
         last = last.next = new ScriptElementSetVelocity(0x4006, MITTELSCHNELL); //Lok 6 wird mittelschnell
@@ -96,76 +96,5 @@ public class TestScripts {
         last.next = new ScriptElementSetVelocity(0x4006, STOPP); //Lok 6 hält an
 
         return s;
-    }
-
-    public static volatile long waitingTime1 = 0L;
-
-    public static Script getLittleTestScript(ScriptContext scriptContext) {
-        ScriptElement last;
-        Script script = new Script(scriptContext);
-
-        last = script.first = new ScriptElementGo();
-        last = last.next = new ScriptElementSetVelocity(78, LANGSAM);
-
-        ScriptConditionChecker scriptConditionChecker1 = new ScriptConditionChecker(new ScriptCondition(new BooleanSupplier() {
-            @Override
-            public boolean getAsBoolean() {
-
-                while (waitingTime1 < 5000L) ;
-                DebugOutput.write("ScriptConditionChecker1, waitingtime: " + waitingTime1);
-                return waitingTime1 >= 5000L;
-            }
-        }));
-        scriptConditionChecker1.next = new ScriptElementSetVelocity(78, MITTELSCHNELL);
-        scriptConditionChecker1.and(new ScriptConditionChecker(new ScriptCondition(new BooleanSupplier() { //scriptConditionChecker1 blocks until both area true
-            @Override
-            public boolean getAsBoolean() {
-
-                while (waitingTime1 < 10000L) ;
-                DebugOutput.write("ScriptConditionChecker2, waitingtime: " + waitingTime1);
-
-                return waitingTime1 >= 10000L;
-            }
-        })));
-
-       /* ScriptConditionChecker scriptConditionChecker2 = new ScriptConditionChecker(new ScriptCondition(new BooleanSupplier() {
-            @Override
-            public boolean getAsBoolean() {
-
-                while(waitingTime1< 10000L);
-                DebugOutput.write("ScriptConditionChecker2, waitingtime: "+waitingTime1);
-
-                return waitingTime1 >= 10000L;
-            }
-        }));
-        scriptConditionChecker2.next = new ScriptElementSetVelocity(78, SCHNELL);*/
-
-        ScriptConditionChecker scriptConditionChecker3 = new ScriptConditionChecker(new ScriptCondition(new BooleanSupplier() {
-            @Override
-            public boolean getAsBoolean() {
-
-                while (waitingTime1 < 15000L) ;
-                DebugOutput.write("ScriptConditionChecker3, waitingtime: " + waitingTime1);
-
-                return waitingTime1 >= 15000;
-            }
-        }));
-        scriptConditionChecker3.next = new ScriptElementSetVelocity(78, LANGSAM);
-
-        ArrayList<ScriptConditionChecker> scriptConditionCheckers = new ArrayList<>(3);
-        scriptConditionCheckers.add(scriptConditionChecker1);
-        //scriptConditionCheckers.add(scriptConditionChecker2);
-        scriptConditionCheckers.add(scriptConditionChecker3);
-
-        last = last.next = new ScriptParallel(scriptConditionCheckers);
-        last = last.next = new ScriptElementSetVelocity(78, STOPP);
-        last = last.next = new ScriptElementWait(250L);
-        last = last.next = new ScriptElementSetDirection(78, CS2CANCommands.DIRECTION_FORWARD);
-        last = last.next = new ScriptElementWait(250L);
-        last = last.next = new ScriptElementSetVelocity(78, LANGSAM);
-        last = last.next = new ScriptElementWait(5000L);
-        last.next = new ScriptElementStop();
-
-        return script;
     }
 }

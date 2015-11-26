@@ -1,9 +1,6 @@
-package de.cortex42.maerklin.test;
+package de.cortex42.maerklin.framework.Scripting;
 
-import de.cortex42.maerklin.framework.CANPacket;
-import de.cortex42.maerklin.framework.CS2CANCommands;
-import de.cortex42.maerklin.framework.PacketEvent;
-import de.cortex42.maerklin.framework.PacketListener;
+import de.cortex42.maerklin.framework.*;
 
 /**
  * Created by ivo on 18.11.15.
@@ -18,7 +15,7 @@ public class ScriptElementWaitForContact extends ScriptElement {
     }
 
     @Override
-    public void executeElement(ScriptContext scriptContext) {
+    public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
         final WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
         scriptContext.addPacketListener(
@@ -46,7 +43,7 @@ public class ScriptElementWaitForContact extends ScriptElement {
                 try {
                     waitingThreadExchangeObject.wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    throw new FrameworkException(e);
                 }
             }
         }

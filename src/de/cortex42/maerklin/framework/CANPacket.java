@@ -1,4 +1,5 @@
-package de.cortex42.maerklin.framework; /**
+package de.cortex42.maerklin.framework;
+/**
  * Created by ivo on 16.10.15.
  */
 
@@ -11,8 +12,8 @@ import javax.xml.bind.DatatypeConverter;
 public class CANPacket {
 
     public static final int CAN_PACKET_SIZE = 13;
-    private static final int HASH_SIZE = 2;
-    private static final int DATA_SIZE = 8;
+    public static final int HASH_SIZE = 2;
+    public static final int DATA_SIZE = 8;
 
     private final byte priority;
     private final byte command;
@@ -118,19 +119,11 @@ public class CANPacket {
 
     /**
      *
-     * @return the byte array as a string
-     */
-    public String getByteString(){
-        return DatatypeConverter.printHexBinary(getBytes());
-    }
-
-    /**
-     *
      * @return the byte array as a string, but with identifiers ("CMD: ... ")
      */
     public String getString(){
         return String.format(
                 "Priority %02X, Command %02X, Hash %s, DLC %02X, Data %s",
-                getPriority(), getCommand(), DatatypeConverter.printHexBinary(getHash()), getDlc(), DatatypeConverter.printHexBinary(getData()));
+                getPriority(), getCommand(), DatatypeConverter.printHexBinary(getHash()), getDlc(), DatatypeConverter.printHexBinary(getData()));//todo
     }
 }

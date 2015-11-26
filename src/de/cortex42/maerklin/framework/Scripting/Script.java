@@ -1,4 +1,4 @@
-package de.cortex42.maerklin.test;
+package de.cortex42.maerklin.framework.Scripting;
 
 /**
  * Created by ivo on 13.11.15.
