@@ -5,16 +5,23 @@ import de.cortex42.maerklin.framework.*;
 /**
  * Created by ivo on 20.11.15.
  */
-public class ScriptBooleanSupplierTrainVelocity implements BooleanEvent {
+public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
     private final ScriptContext scriptContext;
     private final int locId;
     private final int velocity;
+    private final long timeout;
     private final long DELAY = 250L;
+    private final static long DEFAULT_TIMEOUT = 60000L; //60s
 
-    public ScriptBooleanSupplierTrainVelocity(ScriptContext scriptContext, int locId, int velocity) {
+    public ScriptBooleanEventTrainVelocity(ScriptContext scriptContext, int locId, int velocity, long timeout) {
         this.scriptContext = scriptContext;
         this.locId = locId;
         this.velocity = velocity;
+        this.timeout = timeout;
+    }
+
+    public ScriptBooleanEventTrainVelocity(ScriptContext scriptContext, int locId, int velocity) {
+        this(scriptContext, locId, velocity, DEFAULT_TIMEOUT);
     }
 
     @Override
@@ -30,7 +37,7 @@ public class ScriptBooleanSupplierTrainVelocity implements BooleanEvent {
             public void packetEvent(PacketEvent packetEvent) {
                 CANPacket canPacket = packetEvent.getCANPacket();
 
-                if (canPacket.getCommand() == (CS2CANCommands.VELOCITY + 1)
+                if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.VELOCITY
                         && canPacket.getDlc() == CS2CANCommands.VELOCITY_SET_DLC) {
                     int velocityValue = (((canPacket.getData()[4] & 0xFF) << 8) | (canPacket.getData()[5] & 0xFF));
 
@@ -43,11 +50,17 @@ public class ScriptBooleanSupplierTrainVelocity implements BooleanEvent {
             }
         });
 
+        long counter = 0L;
         while (!waitingThreadExchangeObject.value) {
             scriptContext.writeCANPacket(CS2CANCommands.queryVelocity(locId));
 
             try {
                 Thread.sleep(DELAY);
+                counter += DELAY;
+
+                if (counter >= timeout) {
+                    throw new FrameworkException("Timeout");
+                }
             } catch (InterruptedException e) {
                 throw new FrameworkException(e);
             }

@@ -103,7 +103,7 @@ public class EthernetInterface {
                             FrameworkException frameworkException = new FrameworkException(e);
                             cleanUp(); //stop listening and close socket
 
-                            //inform packetlistener users about error
+                            //call exception handlers
                             for (int i = 0; i < ethernetInterfacePacketListenerExceptionHandlers.size(); i++) {
                                 ethernetInterfacePacketListenerExceptionHandlers.get(i).onPacketListenerException(frameworkException);
                             }

@@ -112,36 +112,13 @@ public class Main {
             e.printStackTrace();
         }
 
-/*        SerialPortInterface serialPortInterface = SerialPortInterface.getInstance();
-        serialPortInterface.openPort(serialPortInterface.getAvailableSerialPorts().get(0));
-        serialPortInterface.addPacketListener(debugPacketListener);
 
-        serialPortInterface.writeCANPacket(CS2CANCommands.bootloaderGo());
-        pause();
-        serialPortInterface.writeCANPacket(CS2CANCommands.setVelocity(78, 0));
-        pause();
-        serialPortInterface.writeCANPacket(CS2CANCommands.newRegistration());
-        pause();
-        serialPortInterface.writeCANPacket(CS2CANCommands.unlockRail());
-        pause();
-        serialPortInterface.writeCANPacket(CS2CANCommands.go());*/
-
-        Script script = TestScripts.getTestScript(new ScriptContext(ethernetInterface, CS2_IP_ADDRESS, CS2_PORT));
-/*        Script script = TestScripts.getLittleTestScript(new ScriptContext(serialPortInterface));
-        (new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (TestScripts.waitingTime1 <= 20000L) {
-                    try {
-                        Thread.sleep(1000L);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    TestScripts.waitingTime1 += 1000L;
-                }
-            }
-        })).start();
-        */
+        Script script = null;
+        try {
+            script = TestScripts.getTestScript(new ScriptContext(ethernetInterface, CS2_IP_ADDRESS, CS2_PORT));
+        } catch (FrameworkException e) {
+            e.printStackTrace();
+        }
 
         try {
             script.execute();

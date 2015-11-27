@@ -8,10 +8,17 @@ import de.cortex42.maerklin.framework.*;
 public class ScriptElementWaitForContact extends ScriptElement {
     private final int contactId;
     private final int switchOverTo;
+    private final long timeout;
+    private final static long DEFAULT_TIMEOUT = 60000L; //60s
 
     public ScriptElementWaitForContact(int contactId, int switchOverTo) {
+        this(contactId, switchOverTo, DEFAULT_TIMEOUT);
+    }
+
+    public ScriptElementWaitForContact(int contactId, int switchOverTo, long timeout) {
         this.contactId = contactId;
         this.switchOverTo = switchOverTo;
+        this.timeout = timeout;
     }
 
     @Override
@@ -41,7 +48,7 @@ public class ScriptElementWaitForContact extends ScriptElement {
         while (!waitingThreadExchangeObject.value) {
             synchronized (waitingThreadExchangeObject) {
                 try {
-                    waitingThreadExchangeObject.wait();
+                    waitingThreadExchangeObject.wait(timeout);
                 } catch (InterruptedException e) {
                     throw new FrameworkException(e);
                 }

@@ -5,13 +5,20 @@ import de.cortex42.maerklin.framework.*;
 /**
  * Created by ivo on 20.11.15.
  */
-public class ScriptBooleanSupplierContactReached implements BooleanEvent {
+public class ScriptBooleanEventContactReached implements BooleanEvent {
     private final ScriptContext scriptContext;
     private final int contactId;
+    private final long timeout;
+    private final static long DEFAULT_TIMEOUT = 60000; //60s
 
-    public ScriptBooleanSupplierContactReached(ScriptContext scriptContext, int contactId) {
+    public ScriptBooleanEventContactReached(ScriptContext scriptContext, int contactId, long timeout) {
         this.contactId = contactId;
         this.scriptContext = scriptContext;
+        this.timeout = timeout;
+    }
+
+    public ScriptBooleanEventContactReached(ScriptContext scriptContext, int contactId) {
+        this(scriptContext, contactId, DEFAULT_TIMEOUT);
     }
 
     @Override
@@ -44,7 +51,7 @@ public class ScriptBooleanSupplierContactReached implements BooleanEvent {
         while (!waitingThreadExchangeObject.value) {
             synchronized (waitingThreadExchangeObject) {
                 try {
-                    waitingThreadExchangeObject.wait();
+                    waitingThreadExchangeObject.wait(timeout);
                 } catch (InterruptedException e) {
                     throw new FrameworkException(e);
                 }
