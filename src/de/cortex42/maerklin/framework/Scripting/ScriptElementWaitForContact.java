@@ -2,6 +2,11 @@ package de.cortex42.maerklin.framework.Scripting;
 
 import de.cortex42.maerklin.framework.*;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Created by ivo on 18.11.15.
  */
@@ -10,6 +15,8 @@ public class ScriptElementWaitForContact extends ScriptElement {
     private final int switchOverTo;
     private final long timeout;
     private final static long DEFAULT_TIMEOUT = 60000L; //60s
+    private final Lock lock = new ReentrantLock();
+    private final Condition condition;
 
     public ScriptElementWaitForContact(int contactId, int switchOverTo) {
         this(contactId, switchOverTo, DEFAULT_TIMEOUT);
@@ -19,6 +26,7 @@ public class ScriptElementWaitForContact extends ScriptElement {
         this.contactId = contactId;
         this.switchOverTo = switchOverTo;
         this.timeout = timeout;
+        condition = lock.newCondition();
     }
 
     @Override
@@ -36,23 +44,27 @@ public class ScriptElementWaitForContact extends ScriptElement {
                                 && canPacket.getID() == contactId
                                 && ((canPacket.getData()[5] & 0xFF) == switchOverTo)) {
 
-                            synchronized (waitingThreadExchangeObject) {
-                                waitingThreadExchangeObject.value = true;
-                                waitingThreadExchangeObject.notify();
-                            }
+                            lock.lock();
+                            waitingThreadExchangeObject.value = true;
+                            condition.signal();
+                            lock.unlock();
+
                             scriptContext.removePacketListener(this);
                         }
                     }
                 });
 
-        while (!waitingThreadExchangeObject.value) {
-            synchronized (waitingThreadExchangeObject) {
-                try {
-                    waitingThreadExchangeObject.wait(timeout);
-                } catch (InterruptedException e) {
-                    throw new FrameworkException(e);
-                }
+        lock.lock();
+        try {
+            if (!condition.await(timeout, TimeUnit.MILLISECONDS)) {
+                //timeout
+                throw new FrameworkException("Timeout");
+                //todo set next to null?
             }
+        } catch (InterruptedException e) {
+            throw new FrameworkException(e);
+        } finally {
+            lock.unlock();
         }
     }
 }

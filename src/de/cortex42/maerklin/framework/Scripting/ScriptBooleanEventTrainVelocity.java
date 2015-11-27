@@ -32,7 +32,7 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
     private boolean check() throws FrameworkException {
         final WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
-        scriptContext.addPacketListener(new PacketListener() {
+        PacketListener packetListener = new PacketListener() {
             @Override
             public void packetEvent(PacketEvent packetEvent) {
                 CANPacket canPacket = packetEvent.getCANPacket();
@@ -43,12 +43,12 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
 
                     if (velocityValue == velocity) {
                         waitingThreadExchangeObject.value = true;
-
-                        scriptContext.removePacketListener(this);
                     }
                 }
             }
-        });
+        };
+
+        scriptContext.addPacketListener(packetListener);
 
         long counter = 0L;
         while (!waitingThreadExchangeObject.value) {
@@ -59,10 +59,13 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
                 counter += DELAY;
 
                 if (counter >= timeout) {
-                    throw new FrameworkException("Timeout");
+                    //timeout
+                    return false;
                 }
             } catch (InterruptedException e) {
                 throw new FrameworkException(e);
+            } finally {
+                scriptContext.removePacketListener(packetListener);
             }
         }
 

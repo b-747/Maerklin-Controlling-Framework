@@ -55,14 +55,16 @@ public class TestScripts {
         last = last.next = new ScriptElementSwitch(0x3003, 1); //Weiche 4 rechts
         last = last.next = new ScriptElementSwitch(0x3002, 0); //Weiche 3 rechts
         last = last.next = new ScriptElementSwitch(0x3001, 0); //Weiche 2 rechts
+
         //----gleichzeitige Beobachtung
         ArrayList<ScriptElementConditionChecker> scriptElementConditionCheckers = new ArrayList<>();
 
         ScriptElementConditionChecker scriptElementConditionChecker1 = new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, 0x110008))); //Erreichen von Kontakt 8
         scriptElementConditionChecker1.next = new ScriptElementSetVelocity(0x4007, LANGSAM); //Lok 7 wird langsam
 
-        ScriptElementConditionChecker scriptElementConditionChecker2 = new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, 0x110004))); //Erreichen von Kontakt 4
-        scriptElementConditionChecker2.next = new ScriptElementSetVelocity(0x4007, STOPP); //Lok 7 hält an
+        ScriptElementConditionChecker temp = new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, 0x110004))); //Erreichen von Kontakt 4
+        temp.next = new ScriptElementSetVelocity(0x4007, STOPP); //Lok 7 hält an
+        scriptElementConditionChecker1.next.next = temp;
 
         ScriptElementConditionChecker scriptElementConditionChecker3 = new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, 0x1103E9))); //Erreichen von Kontakt 1001
         ScriptElementConditionChecker scriptElementConditionChecker4 = new ScriptElementConditionChecker(
@@ -71,13 +73,12 @@ public class TestScripts {
         scriptElementConditionChecker4.and(
                 new ScriptElementConditionChecker(
                         new ScriptCondition(
-                                new ScriptBooleanEventContactFree(scriptContext, 0x110001, 200L)))); //Nach Erreichen von Kontakt 1 200ms Freigabe von Kontakt 1
+                                new ScriptBooleanEventContactFree(scriptContext, 0x110001, 200L)))); //Nach Erreichen von Kontakt 1 und 200ms Freigabe von Kontakt 1
 
         scriptElementConditionChecker3.or(scriptElementConditionChecker4);
         scriptElementConditionChecker3.next = new ScriptElementSetVelocity(0x4005, STOPP); //Lok 5 hält an
 
         scriptElementConditionCheckers.add(scriptElementConditionChecker1);
-        scriptElementConditionCheckers.add(scriptElementConditionChecker2);
         scriptElementConditionCheckers.add(scriptElementConditionChecker3);
 
         last = last.next = new ScriptElementParallel(scriptElementConditionCheckers);

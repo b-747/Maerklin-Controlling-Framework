@@ -112,7 +112,6 @@ public class Main {
             e.printStackTrace();
         }
 
-
         Script script = null;
         try {
             script = TestScripts.getTestScript(new ScriptContext(ethernetInterface, CS2_IP_ADDRESS, CS2_PORT));
@@ -126,7 +125,7 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
-        while (true) ;
+        ethernetInterface.cleanUp();
     }
 
     public static void uncompressTest(byte[] data, int expectedCRC) {

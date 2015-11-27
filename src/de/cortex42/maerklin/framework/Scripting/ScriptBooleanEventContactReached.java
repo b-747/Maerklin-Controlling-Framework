@@ -2,6 +2,11 @@ package de.cortex42.maerklin.framework.Scripting;
 
 import de.cortex42.maerklin.framework.*;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Created by ivo on 20.11.15.
  */
@@ -10,11 +15,14 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
     private final int contactId;
     private final long timeout;
     private final static long DEFAULT_TIMEOUT = 60000; //60s
+    private final Lock lock = new ReentrantLock();
+    private final Condition condition;
 
     public ScriptBooleanEventContactReached(ScriptContext scriptContext, int contactId, long timeout) {
         this.contactId = contactId;
         this.scriptContext = scriptContext;
         this.timeout = timeout;
+        condition = lock.newCondition();
     }
 
     public ScriptBooleanEventContactReached(ScriptContext scriptContext, int contactId) {
@@ -29,7 +37,7 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
     private boolean check() throws FrameworkException {
         final WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
-        scriptContext.addPacketListener(new PacketListener() {
+        PacketListener packetListener = new PacketListener() {
             @Override
             public void packetEvent(PacketEvent packetEvent) {
                 CANPacket canPacket = packetEvent.getCANPacket();
@@ -39,23 +47,27 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
                         && canPacket.getID() == contactId
                         && ((canPacket.getData()[5] & 0xFF) == CS2CANCommands.EQUIPMENT_POSITION_ON)) {
 
-                    synchronized (waitingThreadExchangeObject) {
-                        waitingThreadExchangeObject.value = true;
-                        waitingThreadExchangeObject.notify();
-                    }
-                    scriptContext.removePacketListener(this);
+                    lock.lock();
+                    waitingThreadExchangeObject.value = true;
+                    condition.signal();
+                    lock.unlock();
                 }
             }
-        });
+        };
 
-        while (!waitingThreadExchangeObject.value) {
-            synchronized (waitingThreadExchangeObject) {
-                try {
-                    waitingThreadExchangeObject.wait(timeout);
-                } catch (InterruptedException e) {
-                    throw new FrameworkException(e);
-                }
+        scriptContext.addPacketListener(packetListener);
+
+        lock.lock();
+        try {
+            if (!condition.await(timeout, TimeUnit.MILLISECONDS)) {
+                //timeout
+                return false;
             }
+        } catch (InterruptedException e) {
+            throw new FrameworkException(e);
+        } finally {
+            lock.unlock();
+            scriptContext.removePacketListener(packetListener);
         }
 
         return waitingThreadExchangeObject.value;
