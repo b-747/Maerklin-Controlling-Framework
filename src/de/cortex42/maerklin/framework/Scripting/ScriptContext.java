@@ -55,15 +55,15 @@ public class ScriptContext {
         }
     }
 
-    public void addEthernetInterfacePacketListenerExceptionHandler(EthernetInterfacePacketListenerExceptionHandler ethernetInterfacePacketListenerExceptionHandler) {
+    public void addEthernetInterfacePacketListenerExceptionHandler(PacketListenerExceptionHandler packetListenerExceptionHandler) {
         if (useEthernetInterface) {
-            ethernetInterface.addEthernetInterfacePacketListenerExceptionHandler(ethernetInterfacePacketListenerExceptionHandler);
+            ethernetInterface.addPacketListenerExceptionHandler(packetListenerExceptionHandler);
         }
     }
 
-    public void removeEthernetInterfacePacketListenerExceptionHandler(EthernetInterfacePacketListenerExceptionHandler ethernetInterfacePacketListenerExceptionHandler) {
+    public void removeEthernetInterfacePacketListenerExceptionHandler(PacketListenerExceptionHandler packetListenerExceptionHandler) {
         if (useEthernetInterface) {
-            ethernetInterface.removeEthernetInterfacePacketListenerExceptionHandler(ethernetInterfacePacketListenerExceptionHandler);
+            ethernetInterface.removePacketListenerExceptionHandler(packetListenerExceptionHandler);
         }
     }
 }

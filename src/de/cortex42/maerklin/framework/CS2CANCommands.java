@@ -58,7 +58,7 @@ public final class CS2CANCommands {
     public static final byte S88_EVENT_QUERY_DLC = 0x04;
     public static final byte S88_EVENT_RESPONSE_DLC = 0x08;
     public static final byte REQUEST_CONFIG_DATA_DLC = 0x08;
-    public static final byte GET_CONFIG_DATA_STREAM_FIRST_PACKET_REQUEST_RESPONSE_DLC = 0x06;
+    public static final byte GET_CONFIG_DATA_STREAM_REQUEST_RESPONSE_DLC = 0x06;
     public static final byte GET_CONFIG_DATA_STREAM_FIRST_PACKET_CONFIG_CHANGED_DLC = 0x07;
     public static final byte GET_CONFIG_DATA_STREAM_PACKET_DLC = 0x08;
     public static final byte READ_CONFIG_DLC = 0x07;
@@ -93,6 +93,7 @@ public final class CS2CANCommands {
         /* ... */
     }
 
+    //todo wait 400ms after sending bootloader go!
     public static CANPacket bootloaderGo(){
         return new CANPacket(
                 PRIORITY,
@@ -493,12 +494,17 @@ public final class CS2CANCommands {
             throw new IllegalArgumentException("max fileName length is 8. Length: "+fileName.length());
         }
 
+        byte[] fileNameBytes = fileName.getBytes();
+        byte[] dataBytes = new byte[8];
+
+        System.arraycopy(fileNameBytes, 0, dataBytes, 0, fileNameBytes.length); //copy fileNameBytes to dataBytes array
+
         return new CANPacket(
                 PRIORITY,
                 REQUEST_CONFIG_DATA,
                 HASH,
                 REQUEST_CONFIG_DATA_DLC,
-                fileName.getBytes()
+                dataBytes
         );
     }
 

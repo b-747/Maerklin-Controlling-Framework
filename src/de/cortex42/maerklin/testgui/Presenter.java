@@ -43,6 +43,19 @@ public class Presenter {
 
 
     //todo check hashes (S. 6)
+    /*
+    // -----------------------------------------------------------------------------
+// Calculation HASH:
+// 16Bit High UID XOR 16Bit LOW UID
+// 0x4347 XOR 0x5A6B = 0x192C
+// Initial Hash for command 0x1B will be 0x192c
+// For other commands swap HByte with LByte and add b110 at Bit 9,8,7
+//    0x2C |  0x19
+// 00101100|00011001
+// 00101111|00011001 = 0x2F19
+#define BRIDGE_HASH   0x2F19
+#define INIT_HASH      0x192C
+     */
 
     public Presenter(View view){
         this.view = view;

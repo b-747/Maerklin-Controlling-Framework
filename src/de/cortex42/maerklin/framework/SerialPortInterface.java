@@ -80,7 +80,7 @@ public class SerialPortInterface {
         }
     }
 
-    private final class CANPacketListener implements SerialPortPacketListener{
+    private final class CANPacketListener implements SerialPortPacketListener {
         private final ArrayList<PacketListener> packetListeners = new ArrayList<>();
 
         public CANPacketListener() {
