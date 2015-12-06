@@ -2,7 +2,7 @@ package de.cortex42.maerklin.test;
 
 import de.cortex42.maerklin.framework.CS2CANCommands;
 import de.cortex42.maerklin.framework.FrameworkException;
-import de.cortex42.maerklin.framework.Scripting.*;
+import de.cortex42.maerklin.framework.scripting.*;
 
 import java.util.ArrayList;
 

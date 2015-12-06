@@ -1,4 +1,4 @@
-package de.cortex42.maerklin.framework.Scripting;
+package de.cortex42.maerklin.framework.scripting;
 
 import de.cortex42.maerklin.framework.*;
 
@@ -55,15 +55,15 @@ public class ScriptContext {
         }
     }
 
-    public void addEthernetInterfacePacketListenerExceptionHandler(PacketListenerExceptionHandler packetListenerExceptionHandler) {
+    public void addEthernetInterfacePacketListenerExceptionHandler(ExceptionHandler exceptionHandler) {
         if (useEthernetInterface) {
-            ethernetInterface.addPacketListenerExceptionHandler(packetListenerExceptionHandler);
+            ethernetInterface.addExceptionHandler(exceptionHandler);
         }
     }
 
-    public void removeEthernetInterfacePacketListenerExceptionHandler(PacketListenerExceptionHandler packetListenerExceptionHandler) {
+    public void removeEthernetInterfacePacketListenerExceptionHandler(ExceptionHandler exceptionHandler) {
         if (useEthernetInterface) {
-            ethernetInterface.removePacketListenerExceptionHandler(packetListenerExceptionHandler);
+            ethernetInterface.removeExceptionHandler(exceptionHandler);
         }
     }
 }

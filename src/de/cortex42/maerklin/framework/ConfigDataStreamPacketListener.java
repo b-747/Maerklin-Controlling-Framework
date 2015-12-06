@@ -3,17 +3,45 @@ package de.cortex42.maerklin.framework;
 /**
  * Created by ivo on 04.12.15.
  */
-public class ConfigDataStreamPacketListener implements PacketListener {
+public abstract class ConfigDataStreamPacketListener implements PacketListener {
     private int compressedFileLength = -1;
     private int decompressedFileLength = -1;
     private int crc = -1;
     private boolean configDataRequestResponseReceived = false;
     private boolean firstDataPacketReceived = false;
-    private byte[] decompressedBytes;
+    private byte[] decompressedBytes = null;
+    private ExceptionHandler exceptionHandler = null;
 
     @Override
     public void packetEvent(final PacketEvent packetEvent) {
-        CANPacket canPacket = packetEvent.getCANPacket();
+        processConfigDataStreamPacket(packetEvent.getCANPacket());
+
+        if (decompressedBytes != null) {
+            compressedFileLength = decompressedFileLength = crc = -1;
+            configDataRequestResponseReceived = firstDataPacketReceived = false;
+
+            bytesDecompressed(decompressedBytes.clone());
+
+            decompressedBytes = null;
+        }
+    }
+
+    /**
+     * This method is called by the packetEvent method if the bytes were successfully decompressed.
+     *
+     * @param decompressedBytes
+     */
+    public abstract void bytesDecompressed(byte[] decompressedBytes);
+
+    public void addExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
+    }
+
+    public void removeExceptionHandler() {
+        this.exceptionHandler = null;
+    }
+
+    private void processConfigDataStreamPacket(CANPacket canPacket) {
         byte[] dataBytes = canPacket.getData();
 
         if (canPacket.getCommand() == CS2CANCommands.GET_CONFIG_DATA_STREAM) {
@@ -52,16 +80,21 @@ public class ConfigDataStreamPacketListener implements PacketListener {
                             byte[] tempBuffer = new byte[compressedFileLength];
                             System.arraycopy(buffer, 4, tempBuffer, 0, compressedFileLength); //Skip decompressed file length bytes
 
-                            int calculatedCRC = DecompressConfigData.calcCRC(tempBuffer);
+                            int calculatedCRC = ConfigDataHelper.calcCRC(tempBuffer);
 
                             if (calculatedCRC != crc) {
-                                throw new FrameworkException(String.format("Incorrect crc value %d but expected %d", calculatedCRC, crc));
+                                if (exceptionHandler != null) {
+                                    exceptionHandler.onException(new FrameworkException(String.format("Incorrect crc value %d but expected %d", calculatedCRC, crc)));
+                                }
+                                return;
                             }
 
-                            decompressedBytes = DecompressConfigData.decompressBytes(tempBuffer, decompressedFileLength);
+                            decompressedBytes = ConfigDataHelper.decompressBytes(tempBuffer, decompressedFileLength);
                         }
                     } else {
-                        throw new FrameworkException("Config data stream packet received without previous request response packet.");
+                        if (exceptionHandler != null) {
+                            exceptionHandler.onException(new FrameworkException("Config data stream packet received without previous request response packet."));
+                        }
                     }
                     break;
 

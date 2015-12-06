@@ -1,4 +1,4 @@
-package de.cortex42.maerklin.framework.Scripting;
+package de.cortex42.maerklin.framework.scripting;
 
 import de.cortex42.maerklin.framework.CS2CANCommands;
 import de.cortex42.maerklin.framework.FrameworkException;

@@ -1,9 +1,10 @@
 package de.cortex42.maerklin.test;
 
-import de.cortex42.maerklin.framework.*;
+import de.cortex42.maerklin.framework.CANPacket;
+import de.cortex42.maerklin.framework.CANPacketInterpreter;
+import de.cortex42.maerklin.framework.PacketEvent;
+import de.cortex42.maerklin.framework.PacketListener;
 import de.cortex42.maerklin.testgui.DebugOutput;
-
-import javax.xml.bind.DatatypeConverter;
 
 /**
  * Created by ivo on 13.11.15.
@@ -78,34 +79,6 @@ public class Main {
         }*/
         //while(true);
         //ethernetInterface.cleanUp();
-
-        uncompressTest(DatatypeConverter.parseHexBinary(configDataStreamCompressedAsString2), expectedCrc);
-    }
-
-    public static void uncompressTest(byte[] data, int expectedCRC) {
-        int calculatedCRC = DecompressConfigData.calcCRC(data);
-        //int expectedCRC = (((calcCRC[0] & 0xFF) << 8) | (calcCRC[1] & 0xFF));
-
-       /* int calculatedCRC = 0xFFFF;
-
-        for(int i = 0; i< data.length-1; i++){
-            calculatedCRC = DecompressConfigData.calcCRCByte(calculatedCRC, data[i]);
-        }*/
-
-        if (calculatedCRC == expectedCRC) {
-            DebugOutput.write(String.format("Correct crc %d", calculatedCRC));
-        } else {
-            DebugOutput.write(String.format("Expected crc %d, actual crc %d", expectedCRC, calculatedCRC));
-        }
-
-        //inflate data
-        //byte[] uncompressed = DecompressConfigData.decompressBytes(data);
-        byte[] uncompressed = DecompressConfigData.decompressBytes(data);
-
-
-        for (byte b : uncompressed) {
-                System.out.print((char) (b & 0xFF));
-            }
     }
 
     /*

@@ -12,7 +12,7 @@ public class EthernetInterface {
     private DatagramSocket datagramSocket = null;
 
     private final ArrayList<PacketListener> packetListeners = new ArrayList<>();
-    private final ArrayList<PacketListenerExceptionHandler> packetListenerExceptionHandlers = new ArrayList<>();
+    private final ArrayList<ExceptionHandler> exceptionHandlers = new ArrayList<>();
     private boolean isListening = false;
 
     private static EthernetInterface instance = null;
@@ -62,14 +62,14 @@ public class EthernetInterface {
         }
     }
 
-    synchronized public void addPacketListenerExceptionHandler(PacketListenerExceptionHandler packetListenerExceptionHandler) {
-        if (!packetListenerExceptionHandlers.contains(packetListenerExceptionHandler)) {
-            packetListenerExceptionHandlers.add(packetListenerExceptionHandler);
+    synchronized public void addExceptionHandler(ExceptionHandler exceptionHandler) {
+        if (!exceptionHandlers.contains(exceptionHandler)) {
+            exceptionHandlers.add(exceptionHandler);
         }
     }
 
-    synchronized public void removePacketListenerExceptionHandler(PacketListenerExceptionHandler packetListenerExceptionHandler) {
-        packetListenerExceptionHandlers.remove(packetListenerExceptionHandler);
+    synchronized public void removeExceptionHandler(ExceptionHandler exceptionHandler) {
+        exceptionHandlers.remove(exceptionHandler);
     }
 
     synchronized public void addPacketListener(PacketListener packetListener) {
@@ -104,8 +104,8 @@ public class EthernetInterface {
                             cleanUp(); //stop listening and close socket
 
                             //call exception handlers
-                            for (int i = 0; i < packetListenerExceptionHandlers.size(); i++) {
-                                packetListenerExceptionHandlers.get(i).onPacketListenerException(frameworkException);
+                            for (int i = 0; i < exceptionHandlers.size(); i++) {
+                                exceptionHandlers.get(i).onException(frameworkException);
                             }
 
                             break;

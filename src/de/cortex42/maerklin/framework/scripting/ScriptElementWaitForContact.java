@@ -1,4 +1,4 @@
-package de.cortex42.maerklin.framework.Scripting;
+package de.cortex42.maerklin.framework.scripting;
 
 import de.cortex42.maerklin.framework.*;
 
@@ -59,7 +59,6 @@ public class ScriptElementWaitForContact extends ScriptElement {
             if (!condition.await(timeout, TimeUnit.MILLISECONDS)) {
                 //timeout
                 throw new FrameworkException("Timeout");
-                //todo set next to null?
             }
         } catch (InterruptedException e) {
             throw new FrameworkException(e);

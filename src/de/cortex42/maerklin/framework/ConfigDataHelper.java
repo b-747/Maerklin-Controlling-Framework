@@ -7,8 +7,8 @@ import com.jcraft.jzlib.JZlib;
 /**
  * Created by ivo on 12.11.15.
  */
-public final class DecompressConfigData {
-    private DecompressConfigData() {
+public final class ConfigDataHelper {
+    private ConfigDataHelper() {
     }
 
     //zlib inflate
@@ -65,7 +65,7 @@ public final class DecompressConfigData {
     }
 
     //alternative
-    public static int crc_16_ccitt(byte[] data) {
+    /*public static int crc_16_ccitt(byte[] data) {
         int crc = 0xFFFF; // initial value
         int polynomial = 0x1021; // 0001 0000 0010 0001 (0, 5, 12)
 
@@ -82,5 +82,5 @@ public final class DecompressConfigData {
         crc &= 0xffff;
 
         return crc;
-    }
+    }*/
 }

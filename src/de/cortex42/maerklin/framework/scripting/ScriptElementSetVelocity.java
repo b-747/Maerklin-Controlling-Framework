@@ -1,4 +1,4 @@
-package de.cortex42.maerklin.framework.Scripting;
+package de.cortex42.maerklin.framework.scripting;
 
 import de.cortex42.maerklin.framework.CS2CANCommands;
 import de.cortex42.maerklin.framework.FrameworkException;
@@ -6,19 +6,19 @@ import de.cortex42.maerklin.framework.FrameworkException;
 /**
  * Created by ivo on 18.11.15.
  */
-public class ScriptElementSetDirection extends ScriptElement {
+public class ScriptElementSetVelocity extends ScriptElement {
     private final int locId;
-    private final int direction;
+    private final int velocity;
 
-    public ScriptElementSetDirection(int locId, int direction) {
+    public ScriptElementSetVelocity(int locId, int velocity) {
         this.locId = locId;
-        this.direction = direction;
+        this.velocity = velocity;
     }
 
     @Override
     public void executeElement(ScriptContext scriptContext) throws FrameworkException {
         scriptContext.writeCANPacket(
-                CS2CANCommands.setDirection(locId, direction)
+                CS2CANCommands.setVelocity(locId, velocity)
         );
     }
 }

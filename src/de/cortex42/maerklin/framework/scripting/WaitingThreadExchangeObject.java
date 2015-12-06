@@ -1,4 +1,4 @@
-package de.cortex42.maerklin.framework.Scripting;
+package de.cortex42.maerklin.framework.scripting;
 
 /**
  * Created by ivo on 20.11.15.
