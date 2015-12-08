@@ -8,16 +8,15 @@ import java.util.ArrayList;
  * Created by ivo on 20.11.15.
  */
 public class ScriptElementParallel extends ScriptElement {
-    private final ArrayList<ScriptElementConditionChecker> scriptElementConditionCheckers;
+    private final ArrayList<ScriptElement> scriptElements;
 
-    //todo use ScriptElements instead of ScriptElementConditionCheckers;
-    public ScriptElementParallel(ArrayList<ScriptElementConditionChecker> scriptElementConditionCheckers) {
-        this.scriptElementConditionCheckers = scriptElementConditionCheckers;
+    public ScriptElementParallel(ArrayList<ScriptElement> scriptElements) {
+        this.scriptElements = scriptElements;
     }
 
     @Override
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
-        final int scriptConditionCheckerCount = scriptElementConditionCheckers.size();
+        final int scriptConditionCheckerCount = scriptElements.size();
 
         final FrameworkException[] threadFrameworkExceptions = new FrameworkException[scriptConditionCheckerCount];
 
@@ -30,7 +29,7 @@ public class ScriptElementParallel extends ScriptElement {
                 @Override
                 public void run() {
                     try {
-                        scriptElementConditionCheckers.get(finalI).execute(scriptContext);
+                        scriptElements.get(finalI).execute(scriptContext);
                     } catch (FrameworkException e) {
                         threadFrameworkExceptions[finalI] = e;
                     }

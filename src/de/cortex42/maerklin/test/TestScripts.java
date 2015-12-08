@@ -57,7 +57,7 @@ public class TestScripts {
         last = last.next = new ScriptElementSwitch(0x3001, 0); //Weiche 2 rechts
 
         //----gleichzeitige Beobachtung
-        ArrayList<ScriptElementConditionChecker> scriptElementConditionCheckers = new ArrayList<>();
+        ArrayList<ScriptElement> scriptElementConditionCheckers = new ArrayList<>();
 
         ScriptElementConditionChecker scriptElementConditionChecker1 = new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, 0x110008))); //Erreichen von Kontakt 8
         scriptElementConditionChecker1.next = new ScriptElementSetVelocity(0x4007, LANGSAM); //Lok 7 wird langsam
