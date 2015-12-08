@@ -9,20 +9,21 @@ import java.util.ArrayList;
 /**
  * Created by ivo on 21.10.15.
  */
+//Konkrete Strategie
 //singleton
-public class SerialPortInterface {
+public class SerialPortConnection implements Connection {
 
     private SerialPort serialPort = null;
 
     private final CANPacketListener canPacketListener = new CANPacketListener();
 
-    private final static SerialPortInterface instance = new SerialPortInterface();
+    private final static SerialPortConnection instance = new SerialPortConnection();
 
-    synchronized public static SerialPortInterface getInstance() {
+    synchronized public static SerialPortConnection getInstance() {
         return instance;
     }
 
-    private SerialPortInterface(){
+    private SerialPortConnection() {
     }
 
     synchronized public ArrayList<String> getAvailableSerialPorts() {

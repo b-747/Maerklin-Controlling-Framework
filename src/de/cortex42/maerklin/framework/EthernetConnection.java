@@ -7,7 +7,8 @@ import java.util.ArrayList;
 /**
  * Created by ivo on 06.11.15.
  */
-public class EthernetInterface {
+//Konkrete Strategie
+public class EthernetConnection implements Connection {
     private final DatagramSocket datagramSocket;
     private final int targetPort;
     private final InetAddress targetAddress;
@@ -16,7 +17,7 @@ public class EthernetInterface {
     private final ArrayList<ExceptionHandler> exceptionHandlers = new ArrayList<>();
     private boolean isListening = false;
 
-    public EthernetInterface(int localPort, int targetPort, String targetAddress) throws FrameworkException {
+    public EthernetConnection(int localPort, int targetPort, String targetAddress) throws FrameworkException {
         this.targetPort = targetPort;
 
         try {

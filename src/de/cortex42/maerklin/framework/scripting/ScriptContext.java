@@ -1,57 +1,30 @@
 package de.cortex42.maerklin.framework.scripting;
 
-import de.cortex42.maerklin.framework.*;
-
-//todo strategy pattern
+import de.cortex42.maerklin.framework.CANPacket;
+import de.cortex42.maerklin.framework.Connection;
+import de.cortex42.maerklin.framework.FrameworkException;
+import de.cortex42.maerklin.framework.PacketListener;
 
 /**
  * Created by ivo on 18.11.15.
  */
+//Kontext
 public class ScriptContext {
-    private final EthernetInterface ethernetInterface;
-    private final SerialPortInterface serialPortInterface;
-    private final String targetAddress;
-    private final int targetPort;
-    private final boolean useEthernetInterface;
+    private final Connection connection;
 
-    public ScriptContext(EthernetInterface ethernetInterface, String targetAddress, int targetPort) {
-        this.ethernetInterface = ethernetInterface;
-        this.targetAddress = targetAddress;
-        this.targetPort = targetPort;
-        this.useEthernetInterface = true;
-        this.serialPortInterface = null;
-    }
-
-    public ScriptContext(SerialPortInterface serialPortInterface) {
-        this.serialPortInterface = serialPortInterface;
-        this.ethernetInterface = null;
-        this.targetAddress = null;
-        this.targetPort = -1;
-        this.useEthernetInterface = false;
+    public ScriptContext(Connection connection) {
+        this.connection = connection;
     }
 
     public void writeCANPacket(CANPacket canPacket) throws FrameworkException {
-        if (useEthernetInterface) {
-            ethernetInterface.writeCANPacket(canPacket);
-        } else {
-            serialPortInterface.writeCANPacket(canPacket);
-
-        }
+        connection.writeCANPacket(canPacket);
     }
 
     public void addPacketListener(PacketListener packetListener) {
-        if (useEthernetInterface) {
-            ethernetInterface.addPacketListener(packetListener);
-        } else {
-            serialPortInterface.addPacketListener(packetListener);
-        }
+        connection.addPacketListener(packetListener);
     }
 
     public void removePacketListener(PacketListener packetListener) {
-        if (useEthernetInterface) {
-            ethernetInterface.removePacketListener(packetListener);
-        } else {
-            serialPortInterface.removePacketListener(packetListener);
-        }
+        connection.removePacketListener(packetListener);
     }
 }

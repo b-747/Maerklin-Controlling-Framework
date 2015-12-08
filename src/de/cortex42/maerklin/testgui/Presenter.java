@@ -10,8 +10,8 @@ import java.util.Objects;
  */
 public class Presenter {
     private final View view;
-    private final SerialPortInterface serialPortInterface = SerialPortInterface.getInstance();
-    private EthernetInterface ethernetInterface;
+    private final SerialPortConnection serialPortConnection = SerialPortConnection.getInstance();
+    private EthernetConnection ethernetConnection;
     private boolean isEthernet;
     private int selectedLocId;
 
@@ -75,7 +75,7 @@ public class Presenter {
         //fill combobox with available interfaces
         view.addInterface("");
         view.addInterface(CS2_IP_ADDRESS);
-        for (String serialPortString : serialPortInterface.getAvailableSerialPorts()) {
+        for (String serialPortString : serialPortConnection.getAvailableSerialPorts()) {
             view.addInterface(serialPortString);
         }
     }
@@ -87,14 +87,14 @@ public class Presenter {
             isEthernet = true;
 
             try {
-                ethernetInterface = new EthernetInterface(PC_PORT, CS2_PORT, CS2_IP_ADDRESS);
+                ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, CS2_IP_ADDRESS);
             } catch (FrameworkException e) {
                 e.printStackTrace();
             }
         }else{
             isEthernet = false;
 
-            if (!serialPortInterface.openPort(selectedInterface, BAUD, DATA_BITS, STOP_BITS, PARITY_BIT)) {
+            if (!serialPortConnection.openPort(selectedInterface, BAUD, DATA_BITS, STOP_BITS, PARITY_BIT)) {
                 DebugOutput.write("Could not open the port.");
             }else{
                 DebugOutput.write("Port opened.");
@@ -220,11 +220,11 @@ public class Presenter {
 
     public void cleanUp(){
         if(isEthernet){
-            if(ethernetInterface != null) {
-                ethernetInterface.cleanUp();
+            if (ethernetConnection != null) {
+                ethernetConnection.cleanUp();
             }
         }else{
-            serialPortInterface.closePort();
+            serialPortConnection.closePort();
         }
 
         DebugOutput.write("Cleaned up.");
@@ -263,13 +263,13 @@ public class Presenter {
     private void sendPacket(CANPacket canPacket){
         if(isEthernet){
             try {
-                ethernetInterface.writeCANPacket(canPacket);
+                ethernetConnection.writeCANPacket(canPacket);
             } catch (FrameworkException e) {
                 e.printStackTrace();
             }
         }else{
             try {
-                serialPortInterface.writeCANPacket(canPacket);
+                serialPortConnection.writeCANPacket(canPacket);
             } catch (FrameworkException e) {
                 e.printStackTrace();
             }
@@ -278,17 +278,17 @@ public class Presenter {
 
     private void addPacketListener(PacketListener packetListener){
         if(isEthernet){
-            ethernetInterface.addPacketListener(packetListener);
+            ethernetConnection.addPacketListener(packetListener);
         }else{
-            serialPortInterface.addPacketListener(packetListener);
+            serialPortConnection.addPacketListener(packetListener);
         }
     }
 
     private void removePacketListener(PacketListener packetListener){
         if(isEthernet){
-            ethernetInterface.removePacketListener(packetListener);
+            ethernetConnection.removePacketListener(packetListener);
         }else{
-            serialPortInterface.removePacketListener(packetListener);
+            serialPortConnection.removePacketListener(packetListener);
         }
     }
 

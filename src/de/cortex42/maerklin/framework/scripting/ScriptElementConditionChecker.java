@@ -17,6 +17,7 @@ public class ScriptElementConditionChecker extends ScriptElement {
         this.scriptCondition = scriptCondition;
     }
 
+    //todo remove or, xor, and; add them to scriptcondition
     public void or(ScriptElementConditionChecker scriptElementConditionChecker) throws FrameworkException {
         if (!(isOr || isAnd || isXor)) {
             otherScriptElementConditionChecker = scriptElementConditionChecker;

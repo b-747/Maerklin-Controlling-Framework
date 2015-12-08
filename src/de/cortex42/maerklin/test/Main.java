@@ -40,16 +40,16 @@ public class Main {
             }
         };
 
-      /*  EthernetInterface ethernetInterface = null;
+      /*  EthernetConnection ethernetConnection = null;
 
 
         try {
-            ethernetInterface = EthernetInterface.getInstance(PC_PORT);
+            ethernetConnection = EthernetConnection.getInstance(PC_PORT);
         } catch (FrameworkException e) {
             e.printStackTrace();
         }
 
-        final EthernetInterface finalEthernetInterface = ethernetInterface;*/
+        final EthernetConnection finalEthernetInterface = ethernetInterface;*/
 
         // ethernetInterface.addPacketListener(debugPacketListener);
         //ethernetInterface.addPacketListener(configDataStreamFirstPacketListener);
