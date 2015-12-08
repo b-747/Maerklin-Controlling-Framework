@@ -119,7 +119,7 @@ public class CANPacket {
 
     /**
      *
-     * @return the byte array as a string, but with identifiers ("CMD: ... ")
+     * @return the byte array as a string, but with identifiers
      */
     public String getString(){
         return String.format(

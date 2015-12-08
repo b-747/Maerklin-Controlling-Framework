@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class ScriptElementParallel extends ScriptElement {
     private final ArrayList<ScriptElementConditionChecker> scriptElementConditionCheckers;
 
+    //todo use ScriptElements instead of ScriptElementConditionCheckers;
     public ScriptElementParallel(ArrayList<ScriptElementConditionChecker> scriptElementConditionCheckers) {
         this.scriptElementConditionCheckers = scriptElementConditionCheckers;
     }

@@ -66,16 +66,16 @@ public class TestScripts {
         temp.next = new ScriptElementSetVelocity(0x4007, STOPP); //Lok 7 hält an
         scriptElementConditionChecker1.next.next = temp;
 
-        ScriptElementConditionChecker scriptElementConditionChecker3 = new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, 0x1103E9))); //Erreichen von Kontakt 1001
-        ScriptElementConditionChecker scriptElementConditionChecker4 = new ScriptElementConditionChecker(
-                new ScriptCondition(
-                        new ScriptBooleanEventContactReached(scriptContext, 0x110001))); //Erreichen von Kontakt 1
-        scriptElementConditionChecker4.and(
-                new ScriptElementConditionChecker(
-                        new ScriptCondition(
-                                new ScriptBooleanEventContactFree(scriptContext, 0x110001, 200L)))); //Nach Erreichen von Kontakt 1 und 200ms Freigabe von Kontakt 1
 
-        scriptElementConditionChecker3.or(scriptElementConditionChecker4);
+        /* Bei ((Erreichen von Kontakt 1001) oder (Erreichen von Kontakt 1 und
+            danach mindestens 200ms Freigabe von Kontakt 1)) bleibt Lok 5 stehen.*/
+
+        ScriptElementConditionChecker scriptElementConditionChecker3 = new ScriptElementConditionChecker(
+                new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, 0x1103E9)) //Erreichen von Kontakt 1001
+                        .or((new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, 0x110001))) //oder ((Erreichen von Kontakt 1)
+                                .and(new ScriptCondition(new ScriptBooleanEventContactFree(scriptContext, 0x110001, 200L)))) //und 200ms Freigabe von Kontakt 1)
+        );
+
         scriptElementConditionChecker3.next = new ScriptElementSetVelocity(0x4005, STOPP); //Lok 5 hält an
 
         scriptElementConditionCheckers.add(scriptElementConditionChecker1);
@@ -84,8 +84,10 @@ public class TestScripts {
         last = last.next = new ScriptElementParallel(scriptElementConditionCheckers);
         //----gleichzeitige Beobachtung
 
-        ScriptElementConditionChecker scriptElementConditionCheckerStop5And7 = new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanEventTrainVelocity(scriptContext, 0x4005, 0)));
-        scriptElementConditionCheckerStop5And7.and(new ScriptElementConditionChecker(new ScriptCondition(new ScriptBooleanEventTrainVelocity(scriptContext, 0x4007, 0))));
+        ScriptElementConditionChecker scriptElementConditionCheckerStop5And7 = new ScriptElementConditionChecker(
+                new ScriptCondition(new ScriptBooleanEventTrainVelocity(scriptContext, 0x4005, 0))
+                        .and(new ScriptCondition(new ScriptBooleanEventTrainVelocity(scriptContext, 0x4007, 0)))
+        );
 
         last = last.next = scriptElementConditionCheckerStop5And7;
         //if scriptElementConditionCheckerStop5And7 then
