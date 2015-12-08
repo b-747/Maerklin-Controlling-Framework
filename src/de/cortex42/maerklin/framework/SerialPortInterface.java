@@ -11,10 +11,6 @@ import java.util.ArrayList;
  */
 //singleton
 public class SerialPortInterface {
-    private final static int BAUD = 500000;
-    private final static int DATA_BITS = 8;
-    private final static int STOP_BITS = 1;
-    private final static int PARITY_BIT = 0;
 
     private SerialPort serialPort = null;
 
@@ -40,10 +36,17 @@ public class SerialPortInterface {
         return portNames;
     }
 
-    synchronized public boolean openPort(String systemPortName) {
+    //Parameters for CC-Schnitte
+    /*
+        private final static int BAUD = 500000;
+        private final static int DATA_BITS = 8;
+        private final static int STOP_BITS = 1;
+        private final static int PARITY_BIT = 0;
+     */
+    synchronized public boolean openPort(String systemPortName, int baud, int dataBits, int stopBits, int parityBit) {
         serialPort = SerialPort.getCommPort(systemPortName);
 
-        serialPort.setComPortParameters(BAUD, DATA_BITS, STOP_BITS, PARITY_BIT);
+        serialPort.setComPortParameters(baud, dataBits, stopBits, parityBit);
         serialPort.setFlowControl(SerialPort.FLOW_CONTROL_CTS_ENABLED);
 
         return serialPort.openPort();

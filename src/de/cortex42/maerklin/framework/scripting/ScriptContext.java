@@ -32,7 +32,7 @@ public class ScriptContext {
 
     public void writeCANPacket(CANPacket canPacket) throws FrameworkException {
         if (useEthernetInterface) {
-            ethernetInterface.writeCANPacket(canPacket, targetAddress, targetPort);
+            ethernetInterface.writeCANPacket(canPacket);
         } else {
             serialPortInterface.writeCANPacket(canPacket);
 
@@ -52,18 +52,6 @@ public class ScriptContext {
             ethernetInterface.removePacketListener(packetListener);
         } else {
             serialPortInterface.removePacketListener(packetListener);
-        }
-    }
-
-    public void addEthernetInterfacePacketListenerExceptionHandler(ExceptionHandler exceptionHandler) {
-        if (useEthernetInterface) {
-            ethernetInterface.addExceptionHandler(exceptionHandler);
-        }
-    }
-
-    public void removeEthernetInterfacePacketListenerExceptionHandler(ExceptionHandler exceptionHandler) {
-        if (useEthernetInterface) {
-            ethernetInterface.removeExceptionHandler(exceptionHandler);
         }
     }
 }

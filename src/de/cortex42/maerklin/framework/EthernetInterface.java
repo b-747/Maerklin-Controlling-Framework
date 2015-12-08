@@ -7,28 +7,23 @@ import java.util.ArrayList;
 /**
  * Created by ivo on 06.11.15.
  */
-//singleton
 public class EthernetInterface {
-    private DatagramSocket datagramSocket = null;
+    private final DatagramSocket datagramSocket;
+    private final int targetPort;
+    private final InetAddress targetAddress;
 
     private final ArrayList<PacketListener> packetListeners = new ArrayList<>();
     private final ArrayList<ExceptionHandler> exceptionHandlers = new ArrayList<>();
     private boolean isListening = false;
 
-    private static EthernetInterface instance = null;
+    public EthernetInterface(int localPort, int targetPort, String targetAddress) throws FrameworkException {
+        this.targetPort = targetPort;
 
-    synchronized public static EthernetInterface getInstance(int port) throws FrameworkException {
-        if(instance == null){
-            instance = new EthernetInterface(port);
-        }
-
-        return instance;
-    }
-
-    private EthernetInterface(int port) throws FrameworkException {
         try {
-            datagramSocket = new DatagramSocket(port);
-        } catch (SocketException e) {
+            this.targetAddress = InetAddress.getByName(targetAddress);
+
+            datagramSocket = new DatagramSocket(localPort);
+        } catch (SocketException | UnknownHostException e) {
             throw new FrameworkException(e);
         }
     }
@@ -41,19 +36,12 @@ public class EthernetInterface {
     /**
      * Sends a CANPacket as UDP packet to the target.
      * @param canPacket
-     * @param targetAddress
-     * @param port
-     * @throws IOException, UnknownHostException, SocketException
+     * @throws
      */
-    synchronized public void writeCANPacket(CANPacket canPacket, String targetAddress, int port) throws FrameworkException {
+    synchronized public void writeCANPacket(CANPacket canPacket) throws FrameworkException {
         byte[] bytes = canPacket.getBytes();
 
-        DatagramPacket datagramPacket;
-        try {
-            datagramPacket = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(targetAddress), port);
-        } catch (UnknownHostException e) {
-            throw new FrameworkException(e);
-        }
+        DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, targetAddress, targetPort);
 
         try {
             datagramSocket.send(datagramPacket);

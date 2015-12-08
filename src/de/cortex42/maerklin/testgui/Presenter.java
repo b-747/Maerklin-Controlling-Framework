@@ -15,6 +15,13 @@ public class Presenter {
     private boolean isEthernet;
     private int selectedLocId;
 
+
+    private final static int BAUD = 500000;
+    private final static int DATA_BITS = 8;
+    private final static int STOP_BITS = 1;
+    private final static int PARITY_BIT = 0;
+
+
     private static final int MFX_RANGE = 16384; //new byte[]{0x00, 0x00, 0x40, 0x00};
     private static final int MM_RANGE = 0; //new byte[]{0x00, 0x00, 0x00, 0x00};
     private static final int MM2_EQUIPMENT_RANGE = 12288; //new byte[]{0x00, 0x00, 0x30, 0x00};
@@ -80,14 +87,14 @@ public class Presenter {
             isEthernet = true;
 
             try {
-                ethernetInterface = EthernetInterface.getInstance(CS2_PORT);
+                ethernetInterface = new EthernetInterface(PC_PORT, CS2_PORT, CS2_IP_ADDRESS);
             } catch (FrameworkException e) {
                 e.printStackTrace();
             }
         }else{
             isEthernet = false;
 
-            if(!serialPortInterface.openPort(selectedInterface)){
+            if (!serialPortInterface.openPort(selectedInterface, BAUD, DATA_BITS, STOP_BITS, PARITY_BIT)) {
                 DebugOutput.write("Could not open the port.");
             }else{
                 DebugOutput.write("Port opened.");
@@ -256,7 +263,7 @@ public class Presenter {
     private void sendPacket(CANPacket canPacket){
         if(isEthernet){
             try {
-                ethernetInterface.writeCANPacket(canPacket, CS2_IP_ADDRESS, CS2_PORT);
+                ethernetInterface.writeCANPacket(canPacket);
             } catch (FrameworkException e) {
                 e.printStackTrace();
             }

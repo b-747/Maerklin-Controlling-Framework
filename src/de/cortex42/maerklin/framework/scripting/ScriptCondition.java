@@ -12,6 +12,7 @@ public class ScriptCondition {
         this.booleanEvent = booleanEvent;
     }
 
+    //todo add and, or, xor
     public boolean check() throws FrameworkException {
         return booleanEvent.getAsBoolean();
     }
