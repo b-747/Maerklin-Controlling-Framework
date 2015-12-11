@@ -1,9 +1,6 @@
 package de.cortex42.maerklin.test;
 
-import de.cortex42.maerklin.framework.CANPacket;
-import de.cortex42.maerklin.framework.CANPacketInterpreter;
-import de.cortex42.maerklin.framework.PacketEvent;
-import de.cortex42.maerklin.framework.PacketListener;
+import de.cortex42.maerklin.framework.*;
 import de.cortex42.maerklin.testgui.DebugOutput;
 
 /**
@@ -40,45 +37,39 @@ public class Main {
             }
         };
 
-      /*  EthernetConnection ethernetConnection = null;
+        ConfigDataStreamPacketListener configDataStreamPacketListener = new ConfigDataStreamPacketListener() {
+            @Override
+            public void bytesDecompressed(final byte[] decompressedBytes) {
+                for (int i = 0; i < decompressedBytes.length; i++) {
+                    System.out.print((char) decompressedBytes[i]);
+                }
+            }
+        };
 
+        ExceptionHandler exceptionHandler = new ExceptionHandler() {
+            @Override
+            public void onException(final FrameworkException frameworkException) {
+                frameworkException.printStackTrace();
+            }
+        };
+
+        configDataStreamPacketListener.addExceptionHandler(exceptionHandler);
 
         try {
-            ethernetConnection = EthernetConnection.getInstance(PC_PORT);
+            EthernetConnection ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, CS2_IP_ADDRESS);
+            ethernetConnection.addExceptionHandler(exceptionHandler);
+            ethernetConnection.addPacketListener(configDataStreamPacketListener);
+            //ethernetConnection.addPacketListener(debugPacketListener);
+
+            ethernetConnection.writeCANPacket(CS2CANCommands.requestConfigData("loks"));
+
+            while (true) ;
         } catch (FrameworkException e) {
             e.printStackTrace();
         }
 
-        final EthernetConnection finalEthernetInterface = ethernetInterface;*/
+        //System.out.printf("Calculated %d, expected %d\n", ConfigDataHelper.calcCRC(DatatypeConverter.parseHexBinary(configDataStreamCompressedAsString)), expectedCrc);
 
-        // ethernetInterface.addPacketListener(debugPacketListener);
-        //ethernetInterface.addPacketListener(configDataStreamFirstPacketListener);
-       /* try {
-            ethernetInterface.writeCANPacket(CS2CANCommands.requestConfigData("loks"), CS2_IP_ADDRESS, CS2_PORT);
-        } catch (FrameworkException e) {
-            e.printStackTrace();
-        }*/
-
-        /*Script script = null;
-        try {
-            script = TestScripts.getTestScript(new ScriptContext(ethernetInterface, CS2_IP_ADDRESS, CS2_PORT));
-        } catch (FrameworkException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            script.execute();
-        } catch (FrameworkException e) {
-            System.out.println(e.getMessage());
-        }*/
-
-       /* try {
-            Thread.sleep(20000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-        //while(true);
-        //ethernetInterface.cleanUp();
     }
 
     /*

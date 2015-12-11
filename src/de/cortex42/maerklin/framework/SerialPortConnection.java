@@ -19,6 +19,7 @@ public class SerialPortConnection implements Connection {
 
     private final static SerialPortConnection instance = new SerialPortConnection();
 
+    //todo second getInstance() method with baud, data bits ... this one without parameters calls the other with default parameters
     synchronized public static SerialPortConnection getInstance() {
         return instance;
     }

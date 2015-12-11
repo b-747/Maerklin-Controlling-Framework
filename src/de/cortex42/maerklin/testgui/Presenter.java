@@ -10,17 +10,14 @@ import java.util.Objects;
  */
 public class Presenter {
     private final View view;
-    private final SerialPortConnection serialPortConnection = SerialPortConnection.getInstance();
-    private EthernetConnection ethernetConnection;
+    private Connection connection;
     private boolean isEthernet;
     private int selectedLocId;
-
 
     private final static int BAUD = 500000;
     private final static int DATA_BITS = 8;
     private final static int STOP_BITS = 1;
     private final static int PARITY_BIT = 0;
-
 
     private static final int MFX_RANGE = 16384; //new byte[]{0x00, 0x00, 0x40, 0x00};
     private static final int MM_RANGE = 0; //new byte[]{0x00, 0x00, 0x00, 0x00};
@@ -35,18 +32,7 @@ public class Presenter {
     private static final int PC_PORT = 15730;
     private static final int CS2_PORT = 15731;
     private static final String CS2_IP_ADDRESS = "192.168.16.2";
-    private static final long DELAY = 250L;
-
-    private final PacketListener debugPacketListener = new PacketListener() {
-        @Override
-        public void packetEvent(PacketEvent packetEvent) {
-            CANPacket canPacket = packetEvent.getCANPacket();
-
-            DebugOutput.write(String.format("----Received: %s\n\t%s",
-                    canPacket.getString(),
-                    CANPacketInterpreter.interpretCANPacket(canPacket)));
-        }
-    };
+    private static final long DEFAULT_DELAY = 250L;
 
 
     //todo check hashes (S. 6)
@@ -75,15 +61,15 @@ public class Presenter {
         //fill combobox with available interfaces
         view.addInterface("");
         view.addInterface(CS2_IP_ADDRESS);
-        for (String serialPortString : serialPortConnection.getAvailableSerialPorts()) {
+       /* for (String serialPortString : serialPortConnection.getAvailableSerialPorts()) {
             view.addInterface(serialPortString);
-        }
+        }*/
     }
 
     public void initialize(){
         String selectedInterface = view.getSelectedInterface();
 
-        if(Objects.equals(selectedInterface, CS2_IP_ADDRESS)){
+      /*  if(Objects.equals(selectedInterface, CS2_IP_ADDRESS)){
             isEthernet = true;
 
             try {
@@ -99,11 +85,9 @@ public class Presenter {
             }else{
                 DebugOutput.write("Port opened.");
             }
-        }
+        }*/
 
-        addPacketListener(debugPacketListener);
-
-        //ugly..
+        //todo ugly..
         String selectedLoc = view.getSelectedLoc();
         String mmLoc = Integer.toString(MM_LOC_ID);
         String mfxLoc1 = Integer.toString(MFX_LOC_ID);
@@ -119,9 +103,9 @@ public class Presenter {
 
     public void sendStart(){
         sendPacket(CS2CANCommands.newRegistration());
-        pause();
+        pause(DEFAULT_DELAY);
         sendPacket(CS2CANCommands.unlockRail());
-        pause();
+        pause(DEFAULT_DELAY);
 
         sendPacket(CS2CANCommands.go());
     }
@@ -132,6 +116,7 @@ public class Presenter {
 
     public void sendBootloaderGo(){
         sendPacket(CS2CANCommands.bootloaderGo());
+        pause(400L); //pause 400ms after sending bootloader go command
     }
 
     public void sendLight(boolean on){
@@ -170,11 +155,11 @@ public class Presenter {
         );
 
         sendPacket(CS2CANCommands.queryVelocity(selectedLocId));
-        pause();
+        pause(DEFAULT_DELAY);
 
 
         sendPacket(CS2CANCommands.setDirection(selectedLocId, CS2CANCommands.DIRECTION_TOGGLE)); //toggle direction
-        pause();
+        pause(DEFAULT_DELAY);
 
         addPacketListener(
                 new PacketListener() {
@@ -210,16 +195,16 @@ public class Presenter {
                 }
         );
         sendVelocity(velocity[0]);
-        pause();
+        pause(DEFAULT_DELAY);
 
         sendStart();
-        pause();
+        pause(DEFAULT_DELAY);
 
         sendPacket(CS2CANCommands.queryDirection(selectedLocId)); //query new direction
     }
 
     public void cleanUp(){
-        if(isEthernet){
+       /* if(isEthernet){
             if (ethernetConnection != null) {
                 ethernetConnection.cleanUp();
             }
@@ -227,7 +212,7 @@ public class Presenter {
             serialPortConnection.closePort();
         }
 
-        DebugOutput.write("Cleaned up.");
+        DebugOutput.write("Cleaned up.");*/
     }
 
     private void sendQueryVelocity(){
@@ -261,7 +246,7 @@ public class Presenter {
     }
 
     private void sendPacket(CANPacket canPacket){
-        if(isEthernet){
+       /* if(isEthernet){
             try {
                 ethernetConnection.writeCANPacket(canPacket);
             } catch (FrameworkException e) {
@@ -273,28 +258,28 @@ public class Presenter {
             } catch (FrameworkException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     private void addPacketListener(PacketListener packetListener){
-        if(isEthernet){
+     /*   if(isEthernet){
             ethernetConnection.addPacketListener(packetListener);
         }else{
             serialPortConnection.addPacketListener(packetListener);
-        }
+        }*/
     }
 
     private void removePacketListener(PacketListener packetListener){
-        if(isEthernet){
+     /*   if(isEthernet){
             ethernetConnection.removePacketListener(packetListener);
         }else{
             serialPortConnection.removePacketListener(packetListener);
-        }
+        }*/
     }
 
-    private void pause() {
+    private void pause(long ms) {
         try {
-            Thread.sleep(DELAY);
+            Thread.sleep(ms);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

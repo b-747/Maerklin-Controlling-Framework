@@ -10,6 +10,8 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
     private boolean configDataRequestResponseReceived = false;
     private boolean firstDataPacketReceived = false;
     private byte[] decompressedBytes = null;
+    private byte[] compressedBytes = null;
+    private int bytesReceived = 0;
     private ExceptionHandler exceptionHandler = null;
 
     @Override
@@ -19,6 +21,8 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
         if (decompressedBytes != null) {
             compressedFileLength = decompressedFileLength = crc = -1;
             configDataRequestResponseReceived = firstDataPacketReceived = false;
+            compressedBytes = null;
+            bytesReceived = 0;
 
             bytesDecompressed(decompressedBytes.clone());
 
@@ -54,6 +58,13 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
                     compressedFileLength = ((compressedFileLengthBytes[0] & 0xFF) << 24) | ((compressedFileLengthBytes[1] & 0xFF) << 16)
                             | ((compressedFileLengthBytes[2] & 0xFF) << 8) | ((compressedFileLengthBytes[3] & 0xFF) /*<<0*/);
 
+                    int remainder = compressedFileLength % 8;
+                    if (remainder > 0) {
+                        compressedFileLength += 8 - remainder; //fill up
+                    }
+
+                    compressedBytes = new byte[compressedFileLength];
+
                     byte[] crcBytes = new byte[]{dataBytes[4], dataBytes[5]};
                     crc = (((crcBytes[0] & 0xFF) << 8) | (crcBytes[1] & 0xFF));
 
@@ -61,26 +72,20 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
 
                 case CS2CANCommands.GET_CONFIG_DATA_STREAM_PACKET_DLC:
                     if (configDataRequestResponseReceived) {
-                        int bytesReceived = 0;
-                        byte[] buffer = new byte[compressedFileLength + 4]; //allocate 4 bytes more as they contain the decompressed file length
-
-                        for (int j = 0; bytesReceived < compressedFileLength + 4 && j < dataBytes.length; bytesReceived++, j++) {
-                            buffer[bytesReceived] = dataBytes[j];
+                        for (int j = 0; bytesReceived < compressedBytes.length && j < dataBytes.length; bytesReceived++, j++) {
+                            compressedBytes[bytesReceived] = dataBytes[j];
                         }
 
                         if (!firstDataPacketReceived) {
                             firstDataPacketReceived = true;
 
-                            byte[] decompressedFileLengthBytes = new byte[]{buffer[0], buffer[1], buffer[2], buffer[3]};
+                            byte[] decompressedFileLengthBytes = new byte[]{compressedBytes[0], compressedBytes[1], compressedBytes[2], compressedBytes[3]};
                             decompressedFileLength = ((decompressedFileLengthBytes[0] & 0xFF) << 24) | ((decompressedFileLengthBytes[1] & 0xFF) << 16)
                                     | ((decompressedFileLengthBytes[2] & 0xFF) << 8) | ((decompressedFileLengthBytes[3] & 0xFF) /*<<0*/);
                         }
 
-                        if (bytesReceived == compressedFileLength + 4) {
-                            byte[] tempBuffer = new byte[compressedFileLength];
-                            System.arraycopy(buffer, 4, tempBuffer, 0, compressedFileLength); //Skip decompressed file length bytes
-
-                            int calculatedCRC = ConfigDataHelper.calcCRC(tempBuffer);
+                        if (bytesReceived == compressedBytes.length) {
+                            int calculatedCRC = ConfigDataHelper.calcCRC(compressedBytes); //calculate crc over ALL bytes
 
                             if (calculatedCRC != crc) {
                                 if (exceptionHandler != null) {
@@ -88,6 +93,9 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
                                 }
                                 return;
                             }
+
+                            byte[] tempBuffer = new byte[compressedFileLength - 4];
+                            System.arraycopy(compressedBytes, 4, tempBuffer, 0, tempBuffer.length); //Skip decompressed file length bytes
 
                             decompressedBytes = ConfigDataHelper.decompressBytes(tempBuffer, decompressedFileLength);
                         }

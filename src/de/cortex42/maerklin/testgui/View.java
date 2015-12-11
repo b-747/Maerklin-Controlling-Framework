@@ -26,6 +26,11 @@ public class View {
     private JButton buttonToggleDirection;
     private JComboBox<String> comboBoxInterface;
     private JTextField directionTextField;
+    private JRadioButton radioButtonEthernet;
+    private JRadioButton radioButtonSerialPort;
+    private JTextField textFieldEthernet;
+    private JTextField textFieldSerialPort;
+    private JFormattedTextField formattedTextFieldLoc;
 
     private boolean userAction = true;
 
@@ -40,6 +45,30 @@ public class View {
     }
 
     public View() {
+
+        //formattedTextFieldLoc.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(Number)));
+
+        //only one radio button can be selected at a time in the group
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(radioButtonEthernet);
+        buttonGroup.add(radioButtonSerialPort);
+
+        radioButtonEthernet.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent actionEvent) {
+                textFieldEthernet.setEnabled(true);
+                textFieldSerialPort.setEnabled(false);
+            }
+        });
+
+        radioButtonSerialPort.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent actionEvent) {
+                textFieldSerialPort.setEnabled(true);
+                textFieldEthernet.setEnabled(false);
+            }
+        });
+
         buttonStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -184,7 +213,7 @@ public class View {
      */
     private void $$$setupUI$$$() {
         panel = new JPanel();
-        panel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(6, 7, new Insets(0, 0, 0, 0), -1, -1));
+        panel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(6, 8, new Insets(0, 0, 0, 0), -1, -1));
         buttonStart = new JButton();
         buttonStart.setEnabled(false);
         buttonStart.setText("Start");
@@ -194,7 +223,7 @@ public class View {
         buttonStop = new JButton();
         buttonStop.setEnabled(false);
         buttonStop.setText("Stop");
-        panel.add(buttonStop, new com.intellij.uiDesigner.core.GridConstraints(3, 2, 1, 5, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel.add(buttonStop, new com.intellij.uiDesigner.core.GridConstraints(3, 2, 1, 6, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         buttonBootloaderGo = new JButton();
         buttonBootloaderGo.setEnabled(false);
         buttonBootloaderGo.setText("Bootloader Go");
@@ -209,33 +238,47 @@ public class View {
         speedSlider.setOrientation(1);
         speedSlider.setPaintLabels(true);
         speedSlider.setValue(0);
-        panel.add(speedSlider, new com.intellij.uiDesigner.core.GridConstraints(0, 3, 1, 4, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel.add(speedSlider, new com.intellij.uiDesigner.core.GridConstraints(0, 3, 1, 5, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setText("Velocity:");
         panel.add(label1, new com.intellij.uiDesigner.core.GridConstraints(2, 3, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         velocityTextField = new JTextField();
         velocityTextField.setEditable(false);
-        panel.add(velocityTextField, new com.intellij.uiDesigner.core.GridConstraints(2, 4, 1, 3, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        comboBoxLoc = new JComboBox();
-        panel.add(comboBoxLoc, new com.intellij.uiDesigner.core.GridConstraints(4, 6, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label2 = new JLabel();
-        label2.setText("Loc:");
-        panel.add(label2, new com.intellij.uiDesigner.core.GridConstraints(4, 5, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel.add(velocityTextField, new com.intellij.uiDesigner.core.GridConstraints(2, 4, 1, 4, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         buttonToggleDirection = new JButton();
         buttonToggleDirection.setEnabled(false);
         buttonToggleDirection.setText("Toggle Direction");
         panel.add(buttonToggleDirection, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        comboBoxInterface = new JComboBox();
-        panel.add(comboBoxInterface, new com.intellij.uiDesigner.core.GridConstraints(5, 4, 1, 3, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label3 = new JLabel();
-        label3.setText("Direction");
-        panel.add(label3, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setText("Direction");
+        panel.add(label2, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         directionTextField = new JTextField();
         directionTextField.setEditable(false);
         panel.add(directionTextField, new com.intellij.uiDesigner.core.GridConstraints(1, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        radioButtonEthernet = new JRadioButton();
+        radioButtonEthernet.setEnabled(false);
+        radioButtonEthernet.setText("Ethernet");
+        panel.add(radioButtonEthernet, new com.intellij.uiDesigner.core.GridConstraints(5, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        radioButtonSerialPort = new JRadioButton();
+        radioButtonSerialPort.setEnabled(false);
+        radioButtonSerialPort.setText("SerialPort");
+        panel.add(radioButtonSerialPort, new com.intellij.uiDesigner.core.GridConstraints(5, 6, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label3 = new JLabel();
+        label3.setText("Loc:");
+        panel.add(label3, new com.intellij.uiDesigner.core.GridConstraints(4, 6, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        textFieldEthernet = new JTextField();
+        textFieldEthernet.setEditable(false);
+        textFieldEthernet.setEnabled(false);
+        panel.add(textFieldEthernet, new com.intellij.uiDesigner.core.GridConstraints(5, 3, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        textFieldSerialPort = new JTextField();
+        textFieldSerialPort.setEditable(false);
+        textFieldSerialPort.setEnabled(false);
+        panel.add(textFieldSerialPort, new com.intellij.uiDesigner.core.GridConstraints(5, 7, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        formattedTextFieldLoc = new JFormattedTextField();
+        formattedTextFieldLoc.setEnabled(false);
+        panel.add(formattedTextFieldLoc, new com.intellij.uiDesigner.core.GridConstraints(4, 7, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         label1.setLabelFor(velocityTextField);
-        label2.setLabelFor(comboBoxLoc);
-        label3.setLabelFor(directionTextField);
+        label2.setLabelFor(directionTextField);
     }
 
     /**
