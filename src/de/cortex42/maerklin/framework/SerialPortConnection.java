@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Created by ivo on 21.10.15.
  */
 //Konkrete Strategie
-//singleton
+//singleton //todo remove singleton
 public class SerialPortConnection implements Connection {
 
     private SerialPort serialPort = null;

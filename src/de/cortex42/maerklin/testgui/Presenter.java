@@ -12,7 +12,9 @@ public class Presenter {
     private EthernetConnection ethernetConnection;
     private SerialPortConnection serialPortConnection;
     private Connection connection;
-    private boolean useEthernet = false;
+    private int loc;
+    private String ipAddress;
+    private String serialPort;
 
     private final static int BAUD = 500000;
     private final static int DATA_BITS = 8;
@@ -44,7 +46,7 @@ public class Presenter {
     private static final int PC_PORT = 15730;
     private static final int CS2_PORT = 15731;
 
-    private static final long DEFAULT_DELAY = 250L; //todo check this delay!
+    private static final long DEFAULT_DELAY = 250L; //todo check this delay! (10ms should be enough)
 
     public Presenter(View view){
         this.view = view;
@@ -55,15 +57,27 @@ public class Presenter {
     public void useEthernetConnection(boolean use) {
         if (use) {
             try {
-                connection = ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, view.getIpAddress());
+                connection = ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, ipAddress);
             } catch (FrameworkException e) {
-                e.printStackTrace();
+                view.showException(e);
             }
         }else{
             serialPortConnection.closePort();
-            serialPortConnection.openPort(view.getSerialPort(), BAUD, DATA_BITS, STOP_BITS, PARITY_BIT);
+            serialPortConnection.openPort(serialPort, BAUD, DATA_BITS, STOP_BITS, PARITY_BIT);
             connection = serialPortConnection;
         }
+    }
+
+    public void setLoc(String loc) {
+        this.loc = Integer.getInteger(loc);
+    }
+
+    public void setSerialPort(String serialPort) {
+        this.serialPort = serialPort;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
     public void sendStart(){
@@ -85,16 +99,14 @@ public class Presenter {
     }
 
     public void sendLight(boolean on){
-        sendPacket(CS2CANCommands.toggleFunction(view.getLoc(), LIGHT_FUNCTION, on ? CS2CANCommands.FUNCTION_ON : CS2CANCommands.FUNCTION_OFF));
+        sendPacket(CS2CANCommands.toggleFunction(loc, LIGHT_FUNCTION, on ? CS2CANCommands.FUNCTION_ON : CS2CANCommands.FUNCTION_OFF));
     }
 
     public void sendVelocity(int velocity){
-        sendPacket(CS2CANCommands.setVelocity(view.getLoc(), velocity));
+        sendPacket(CS2CANCommands.setVelocity(loc, velocity));
     }
 
     public void sendToggleDirection(){
-        int locId = view.getLoc();
-
         final int[] velocity = new int[1];
 
         addPacketListener(
@@ -121,11 +133,11 @@ public class Presenter {
                 }
         );
 
-        sendPacket(CS2CANCommands.queryVelocity(locId));
+        sendPacket(CS2CANCommands.queryVelocity(loc));
         pause(DEFAULT_DELAY);
 
 
-        sendPacket(CS2CANCommands.setDirection(locId, CS2CANCommands.DIRECTION_TOGGLE)); //toggle direction
+        sendPacket(CS2CANCommands.setDirection(loc, CS2CANCommands.DIRECTION_TOGGLE));
         pause(DEFAULT_DELAY);
 
         addPacketListener(
@@ -136,7 +148,7 @@ public class Presenter {
 
                         if((command & CS2CANCommands.RESPONSE) == CS2CANCommands.RESPONSE){
                             //toggle reponse bit
-                            command = (byte)(command & ~CS2CANCommands.RESPONSE);
+                            command = (byte) (command & ~CS2CANCommands.RESPONSE); //todo
                         }
 
                         if(command != CS2CANCommands.DIRECTION){
@@ -167,7 +179,7 @@ public class Presenter {
         sendStart();
         pause(DEFAULT_DELAY);
 
-        sendPacket(CS2CANCommands.queryDirection(locId)); //query new direction
+        sendPacket(CS2CANCommands.queryDirection(loc)); //query new direction
     }
 
     public void cleanUp(){
@@ -205,7 +217,7 @@ public class Presenter {
                 }
         );
 
-        sendPacket(CS2CANCommands.queryVelocity(view.getLoc()));
+        sendPacket(CS2CANCommands.queryVelocity(loc));
     }
 
     public void sendGetLoks() {
@@ -232,7 +244,7 @@ public class Presenter {
         try {
             connection.writeCANPacket(canPacket);
         } catch (FrameworkException e) {
-            e.printStackTrace();
+            view.showException(e);
         }
     }
 

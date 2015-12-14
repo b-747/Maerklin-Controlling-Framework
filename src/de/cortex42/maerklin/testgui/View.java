@@ -1,14 +1,15 @@
 package de.cortex42.maerklin.testgui;
 
+import de.cortex42.maerklin.framework.FrameworkException;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by ivo on 10.10.15.
@@ -21,16 +22,13 @@ public class View {
     private JCheckBox lightCheckBox;
     private JPanel panel;
     private JSlider sliderVelocity;
-    private JTextField velocityTextField;
     private JButton buttonToggleDirection;
-    private JTextField directionTextField;
     private JRadioButton radioButtonEthernet;
     private JRadioButton radioButtonSerialPort;
     private JTextField textFieldEthernet;
     private JComboBox<String> comboBoxSerialPort;
     private JButton buttonConfigData;
-    private JComboBox comboBoxLoc;
-    private JTextField textFieldLoc;
+    private JComboBox<String> comboBoxLoc;
 
     public JPanel getPanel() {
         return panel;
@@ -69,7 +67,7 @@ public class View {
         comboBoxSerialPort.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
-
+                presenter.setSerialPort((String) comboBoxSerialPort.getSelectedItem());
             }
         });
 
@@ -94,10 +92,10 @@ public class View {
             }
         });
 
-        lightCheckBox.addItemListener(new ItemListener() {
+        lightCheckBox.addActionListener(new ActionListener() {
             @Override
-            public void itemStateChanged(ItemEvent itemEvent) {
-                if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+            public void actionPerformed(final ActionEvent actionEvent) {
+                if (lightCheckBox.isSelected()) {
                     presenter.sendLight(true);
                 } else {
                     presenter.sendLight(false);
@@ -111,10 +109,11 @@ public class View {
                 Object source = changeEvent.getSource();
 
                 if (source instanceof JSlider) {
-                    if (!sliderVelocity.getValueIsAdjusting()) {
-                        int velocity = sliderVelocity.getValue();
+                    int velocity = sliderVelocity.getValue();
+                    sliderVelocity.setToolTipText(Integer.toString(velocity));
+
+                    if (!sliderVelocity.getValueIsAdjusting()) { //todo try without this line
                         presenter.sendVelocity(velocity);
-                        velocityTextField.setText(Integer.toString(velocity));
                     }
                 }
             }
@@ -133,18 +132,20 @@ public class View {
                 presenter.sendGetLoks();
             }
         });
-    }
 
-    public int getLoc() {
-        return Integer.getInteger(textFieldLoc.getText());
-    }
+        comboBoxLoc.getEditor().addActionListener(new ActionListener() { //handle enter
+            @Override
+            public void actionPerformed(final ActionEvent actionEvent) {
+                comboBoxLoc.addItem((String) comboBoxLoc.getEditor().getItem());
+            }
+        });
 
-    public String getIpAddress() {
-        return textFieldEthernet.getText();
-    }
-
-    public String getSerialPort() {
-        return (String) comboBoxSerialPort.getSelectedItem();
+        comboBoxLoc.addActionListener(new ActionListener() { //handle selection
+            @Override
+            public void actionPerformed(final ActionEvent actionEvent) {
+                presenter.setLoc((String) comboBoxLoc.getSelectedItem());
+            }
+        });
     }
 
     public void addSerialPorts(ArrayList<String> serialPorts) {
@@ -156,15 +157,19 @@ public class View {
     }
 
     public void setVelocity(int velocity) {
-        velocityTextField.setText(Integer.toString(velocity));
+        sliderVelocity.setValue(velocity);
     }
 
     public void setDirection(String direction) {
-        directionTextField.setText(direction);
+        buttonToggleDirection.setText("Toggle Direction (Current: " + direction + ")");
     }
 
     public void showConfigData(final String s) {
         JOptionPane.showMessageDialog(null, s, "loks.cs2", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    public void showException(FrameworkException frameworkException) {
+        JOptionPane.showMessageDialog(null, Arrays.toString(frameworkException.getStackTrace()), "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     {
