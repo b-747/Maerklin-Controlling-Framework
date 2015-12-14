@@ -3,8 +3,6 @@ package de.cortex42.maerklin.framework;
  * Created by ivo on 16.10.15.
  */
 
-import javax.xml.bind.DatatypeConverter;
-
 /**
  * Describes a CAN message.
  * @see http://medienpdb.maerklin.de/digital22008/files/cs2CAN-Protokoll-2_0.pdf (chapter 1.1)
@@ -115,15 +113,5 @@ public class CANPacket {
         System.arraycopy(data, 0, bytes, 5, data.length); //bytes[5 - 12]
 
         return bytes;
-    }
-
-    /**
-     *
-     * @return the byte array as a string, but with identifiers
-     */
-    public String getString(){
-        return String.format(
-                "Priority %02X, Command %02X, Hash %s, DLC %02X, Data %s",
-                getPriority(), getCommand(), DatatypeConverter.printHexBinary(getHash()), getDlc(), DatatypeConverter.printHexBinary(getData()));//todo
     }
 }
