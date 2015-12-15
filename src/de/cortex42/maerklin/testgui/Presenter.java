@@ -2,8 +2,6 @@ package de.cortex42.maerklin.testgui;
 
 import de.cortex42.maerklin.framework.*;
 
-import java.math.BigInteger;
-
 /**
  * Created by ivo on 21.10.15.
  */
@@ -15,6 +13,7 @@ public class Presenter {
     private int loc;
     private String ipAddress;
     private String serialPort;
+    private final static String DEFAULT_IP_ADDRESS = "192.168.016.002";
 
     private final static int BAUD = 500000;
     private final static int DATA_BITS = 8;
@@ -50,8 +49,13 @@ public class Presenter {
 
     public Presenter(View view){
         this.view = view;
+
         serialPortConnection = SerialPortConnection.getInstance();
         this.view.addSerialPorts(serialPortConnection.getAvailableSerialPorts());
+
+        ipAddress = DEFAULT_IP_ADDRESS;
+        this.view.setDefaultIpAddress(ipAddress);
+        useEthernetConnection(true);
     }
 
     public void useEthernetConnection(boolean use) {
@@ -69,7 +73,7 @@ public class Presenter {
     }
 
     public void setLoc(String loc) {
-        this.loc = Integer.getInteger(loc);
+        this.loc = Integer.parseInt(loc);
     }
 
     public void setSerialPort(String serialPort) {
@@ -146,17 +150,12 @@ public class Presenter {
                     public void packetEvent(PacketEvent packetEvent) {
                         byte command = packetEvent.getCANPacket().getCommand();
 
-                        if((command & CS2CANCommands.RESPONSE) == CS2CANCommands.RESPONSE){
-                            //toggle reponse bit
-                            command = (byte) (command & ~CS2CANCommands.RESPONSE); //todo
-                        }
-
-                        if(command != CS2CANCommands.DIRECTION){
+                        if ((command & 0xFE) != CS2CANCommands.DIRECTION) {
                             return;
                         }
 
                         byte[] data = packetEvent.getCANPacket().getData();
-                        byte direction= data[4];
+                        byte direction = data[4];
 
                         switch (direction) {
                             case CS2CANCommands.DIRECTION_FORWARD:
@@ -197,19 +196,14 @@ public class Presenter {
                     public void packetEvent(PacketEvent packetEvent) {
                         byte command = packetEvent.getCANPacket().getCommand();
 
-                        if((command & CS2CANCommands.RESPONSE) == CS2CANCommands.RESPONSE){
-                            //toggle reponse bit
-                            command = (byte)(command & ~CS2CANCommands.RESPONSE);
-                        }
-
-                        if (command != CS2CANCommands.VELOCITY
+                        if ((command & 0xFE) != CS2CANCommands.VELOCITY
                                 && packetEvent.getCANPacket().getDlc() != CS2CANCommands.VELOCITY_SET_DLC) {
                             return;
                         }
 
                         byte[] data = packetEvent.getCANPacket().getData();
                         byte[] velocityBytes = new byte[]{data[4], data[5]};
-                        int velocity = new BigInteger(velocityBytes).intValue();
+                        int velocity = (((velocityBytes[0] & 0xFF) << 8) | (velocityBytes[1] & 0xFF));
                         view.setVelocity(velocity);
 
                         removePacketListener(this);
