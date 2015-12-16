@@ -1,7 +1,5 @@
 package de.cortex42.maerklin.testgui;
 
-import de.cortex42.maerklin.framework.FrameworkException;
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -104,7 +102,7 @@ public class View {
             }
         });
 
-        sliderVelocity.addChangeListener(new ChangeListener() { //todo update slider when presenter gets velocity packet
+        sliderVelocity.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent changeEvent) {
                 Object source = changeEvent.getSource();
@@ -159,10 +157,12 @@ public class View {
     }
 
     public void addSerialPorts(ArrayList<String> serialPorts) {
-        comboBoxSerialPort.removeAllItems();
-
         for (int i = 0; i < serialPorts.size(); i++) {
             comboBoxSerialPort.addItem(serialPorts.get(i));
+        }
+
+        if (comboBoxSerialPort.getItemCount() == 0) {
+            radioButtonSerialPort.setEnabled(false);
         }
     }
 
@@ -182,12 +182,11 @@ public class View {
         JOptionPane.showMessageDialog(null, s, "loks.cs2", JOptionPane.PLAIN_MESSAGE);
     }
 
-    public void showException(FrameworkException frameworkException) {
-        JOptionPane.showMessageDialog(null, Arrays.toString(frameworkException.getStackTrace()), "Error", JOptionPane.ERROR_MESSAGE);
+    public void showException(Exception exception) {
+        JOptionPane.showMessageDialog(null, Arrays.toString(exception.getStackTrace()), "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         try {
             formattedTextFieldIpAddress = new JFormattedTextField(new MaskFormatter("###.###.###.###"));
         } catch (ParseException e) {
@@ -209,22 +208,10 @@ public class View {
         buttonToggleDirection = new JButton();
         buttonToggleDirection.setEnabled(true);
         buttonToggleDirection.setText("Toggle Direction");
-        panel.add(buttonToggleDirection, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel.add(buttonToggleDirection, new com.intellij.uiDesigner.core.GridConstraints(6, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         buttonConfigData = new JButton();
         buttonConfigData.setText("Show loks.cs2");
         panel.add(buttonConfigData, new com.intellij.uiDesigner.core.GridConstraints(7, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        buttonStart = new JButton();
-        buttonStart.setEnabled(true);
-        buttonStart.setText("Start");
-        panel.add(buttonStart, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        buttonStop = new JButton();
-        buttonStop.setEnabled(true);
-        buttonStop.setText("Stop");
-        panel.add(buttonStop, new com.intellij.uiDesigner.core.GridConstraints(5, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        buttonBootloaderGo = new JButton();
-        buttonBootloaderGo.setEnabled(true);
-        buttonBootloaderGo.setText("Bootloader Go");
-        panel.add(buttonBootloaderGo, new com.intellij.uiDesigner.core.GridConstraints(6, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lightCheckBox = new JCheckBox();
         lightCheckBox.setEnabled(true);
         lightCheckBox.setText("Light");
@@ -270,6 +257,18 @@ public class View {
         sliderVelocity.setSnapToTicks(false);
         sliderVelocity.setValue(0);
         panel.add(sliderVelocity, new com.intellij.uiDesigner.core.GridConstraints(1, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonBootloaderGo = new JButton();
+        buttonBootloaderGo.setEnabled(true);
+        buttonBootloaderGo.setText("Bootloader Go");
+        panel.add(buttonBootloaderGo, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonStart = new JButton();
+        buttonStart.setEnabled(true);
+        buttonStart.setText("Start");
+        panel.add(buttonStart, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonStop = new JButton();
+        buttonStop.setEnabled(true);
+        buttonStop.setText("Stop");
+        panel.add(buttonStop, new com.intellij.uiDesigner.core.GridConstraints(5, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         label2.setLabelFor(comboBoxLoc);
     }
 

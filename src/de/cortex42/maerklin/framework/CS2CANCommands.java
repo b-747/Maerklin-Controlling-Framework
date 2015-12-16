@@ -4,11 +4,11 @@ package de.cortex42.maerklin.framework;
  * Created by ivo on 19.10.15.
  */
 public final class CS2CANCommands {
-
+    //todo factory?
     /**
      * BIG ENDIAN
      */
-
+//todo remove unneeded commands
     /*---PRIORITY---*/
     public static final byte PRIORITY = 0x00;
     /*---HASH---*/

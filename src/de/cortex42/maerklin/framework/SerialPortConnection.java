@@ -10,51 +10,39 @@ import java.util.ArrayList;
  * Created by ivo on 21.10.15.
  */
 //Konkrete Strategie
-//singleton //todo remove singleton
 public class SerialPortConnection implements Connection {
 
-    private SerialPort serialPort = null;
+    private final SerialPort serialPort;
 
     private final CANPacketListener canPacketListener = new CANPacketListener();
 
-    private final static SerialPortConnection instance = new SerialPortConnection();
+    public SerialPortConnection(String systemPortName, int baud, int dataBits, int stopBits, int parityBit) throws FrameworkException {
+        serialPort = SerialPort.getCommPort(systemPortName);
 
-    synchronized public static SerialPortConnection getInstance() {
-        return instance;
+        serialPort.setComPortParameters(baud, dataBits, stopBits, parityBit);
+        serialPort.setFlowControl(SerialPort.FLOW_CONTROL_CTS_ENABLED);
+
+        if (!serialPort.openPort()) {
+            throw new FrameworkException("Could not open the serial port."); //todo create sub exceptions
+        }
     }
 
-    private SerialPortConnection() {
-    }
-
-    synchronized public ArrayList<String> getAvailableSerialPorts() {
+    public static ArrayList<String> getAvailableSerialPorts() {
         SerialPort[] serialPorts = SerialPort.getCommPorts();
         ArrayList<String> portNames = new ArrayList<>();
 
-        for (SerialPort serialPort: serialPorts) {
+        for (SerialPort serialPort : serialPorts) {
             portNames.add(serialPort.getSystemPortName());
         }
 
         return portNames;
     }
 
-    //Parameters for CC-Schnitte
-    /*
-        private final static int BAUD = 500000;
-        private final static int DATA_BITS = 8;
-        private final static int STOP_BITS = 1;
-        private final static int PARITY_BIT = 0;
-     */
-    synchronized public boolean openPort(String systemPortName, int baud, int dataBits, int stopBits, int parityBit) {
-        serialPort = SerialPort.getCommPort(systemPortName);
-
-        serialPort.setComPortParameters(baud, dataBits, stopBits, parityBit);
-        serialPort.setFlowControl(SerialPort.FLOW_CONTROL_CTS_ENABLED);
-
-        return serialPort.openPort();
-    }
-
-    synchronized public boolean closePort() {
-        return serialPort == null || serialPort.closePort();
+    @Override
+    synchronized public void close() {
+        if (serialPort != null) {
+            serialPort.closePort();
+        }
     }
 
     synchronized public void addPacketListener(PacketListener packetListener) {
@@ -70,10 +58,6 @@ public class SerialPortConnection implements Connection {
         }
     }
 
-    /**
-     * @param canPacket
-     * @return false if not every byte was written
-     */
     synchronized public void writeCANPacket(CANPacket canPacket) throws FrameworkException {
         byte[] bytesToWrite = canPacket.getBytes();
 

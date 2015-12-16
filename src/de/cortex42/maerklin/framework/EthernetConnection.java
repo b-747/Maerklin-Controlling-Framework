@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 
+//todo add documentation
+
 /**
  * Created by ivo on 06.11.15.
  */
@@ -29,16 +31,12 @@ public class EthernetConnection implements Connection {
         }
     }
 
-    synchronized public void cleanUp() {
+    @Override
+    synchronized public void close() {
         stopListening();
         datagramSocket.close();
     }
 
-    /**
-     * Sends a CANPacket as UDP packet to the target.
-     * @param canPacket
-     * @throws
-     */
     synchronized public void writeCANPacket(CANPacket canPacket) throws FrameworkException {
         byte[] bytes = canPacket.getBytes();
 
@@ -90,7 +88,6 @@ public class EthernetConnection implements Connection {
                             datagramSocket.receive(datagramPacket);
                         } catch (IOException e) {
                             FrameworkException frameworkException = new FrameworkException(e);
-                            cleanUp(); //stop listening and close socket
 
                             //call exception handlers
                             for (int i = 0; i < exceptionHandlers.size(); i++) {
@@ -116,4 +113,6 @@ public class EthernetConnection implements Connection {
     private void stopListening(){
         isListening=false;
     }
+
+
 }

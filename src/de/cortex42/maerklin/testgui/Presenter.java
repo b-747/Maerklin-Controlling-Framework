@@ -7,8 +7,6 @@ import de.cortex42.maerklin.framework.*;
  */
 public class Presenter {
     private final View view;
-    private EthernetConnection ethernetConnection;
-    private SerialPortConnection serialPortConnection;
     private Connection connection;
     private int loc;
     private String ipAddress;
@@ -50,8 +48,7 @@ public class Presenter {
     public Presenter(View view){
         this.view = view;
 
-        serialPortConnection = SerialPortConnection.getInstance();
-        this.view.addSerialPorts(serialPortConnection.getAvailableSerialPorts());
+        this.view.addSerialPorts(SerialPortConnection.getAvailableSerialPorts());
 
         ipAddress = DEFAULT_IP_ADDRESS;
         this.view.setDefaultIpAddress(ipAddress);
@@ -59,16 +56,18 @@ public class Presenter {
     }
 
     public void useEthernetConnection(boolean use) {
-        if (use) {
-            try {
-                connection = ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, ipAddress);
-            } catch (FrameworkException e) {
-                view.showException(e);
+        if (connection != null) {
+            connection.close();
+        }
+
+        try {
+            if (use) {
+                connection = new EthernetConnection(PC_PORT, CS2_PORT, ipAddress);
+            } else {
+                connection = new SerialPortConnection(serialPort, BAUD, DATA_BITS, STOP_BITS, PARITY_BIT);
             }
-        }else{
-            serialPortConnection.closePort();
-            serialPortConnection.openPort(serialPort, BAUD, DATA_BITS, STOP_BITS, PARITY_BIT);
-            connection = serialPortConnection;
+        } catch (FrameworkException e) {
+            view.showException(e);
         }
     }
 
@@ -182,11 +181,7 @@ public class Presenter {
     }
 
     public void cleanUp(){
-        if (ethernetConnection != null) {
-            ethernetConnection.cleanUp();
-        }
-
-        serialPortConnection.closePort();
+        connection.close();
     }
 
     private void sendQueryVelocity(){
@@ -215,7 +210,7 @@ public class Presenter {
     }
 
     public void sendGetLoks() {
-        addPacketListener(new ConfigDataStreamPacketListener() {
+        ConfigDataStreamPacketListener configDataStreamPacketListener = new ConfigDataStreamPacketListener() {
             @Override
             public void bytesDecompressed(final byte[] decompressedBytes) {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -225,11 +220,18 @@ public class Presenter {
 
                 view.showConfigData(stringBuilder.toString());
 
-                //todo add errorhandler
-
                 removePacketListener(this);
             }
+        };
+
+        configDataStreamPacketListener.addExceptionHandler(new ExceptionHandler() {
+            @Override
+            public void onException(final FrameworkException frameworkException) {
+                view.showException(frameworkException);
+            }
         });
+
+        addPacketListener(configDataStreamPacketListener);
 
         sendPacket(CS2CANCommands.requestConfigData("loks"));
     }
@@ -254,7 +256,7 @@ public class Presenter {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            view.showException(e);
         }
     }
 }
