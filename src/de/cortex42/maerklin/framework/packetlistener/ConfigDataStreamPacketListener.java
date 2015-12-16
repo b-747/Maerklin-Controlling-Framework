@@ -1,8 +1,13 @@
-package de.cortex42.maerklin.framework;
+package de.cortex42.maerklin.framework.packetlistener;
+
+import de.cortex42.maerklin.framework.CANPacket;
+import de.cortex42.maerklin.framework.CS2CANCommands;
+import de.cortex42.maerklin.framework.ExceptionHandler;
 
 /**
  * Created by ivo on 04.12.15.
  */
+//todo create abstract parent class? (for other abstract listeners)
 public abstract class ConfigDataStreamPacketListener implements PacketListener {
     private int compressedFileLength = -1;
     private int decompressedFileLength = -1;
@@ -35,7 +40,7 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
      *
      * @param decompressedBytes
      */
-    public abstract void bytesDecompressed(byte[] decompressedBytes);
+    public abstract void bytesDecompressed(byte[] decompressedBytes); //todo rename to callback(); don't pass in the bytes, let the user fetch them
 
     public void addExceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
@@ -89,7 +94,7 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
 
                             if (calculatedCRC != crc) {
                                 if (exceptionHandler != null) {
-                                    exceptionHandler.onException(new FrameworkException(String.format("Incorrect crc value %d but expected %d", calculatedCRC, crc)));
+                                    exceptionHandler.onException(new ConfigDataCrcException(String.format("Incorrect crc value %d but expected %d", calculatedCRC, crc)));
                                 }
                                 return;
                             }
@@ -101,7 +106,7 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
                         }
                     } else {
                         if (exceptionHandler != null) {
-                            exceptionHandler.onException(new FrameworkException("Config data stream packet received without previous request response packet."));
+                            exceptionHandler.onException(new ConfigDataMissingRequestResponseException("Config data stream packet received without previous request response packet."));
                         }
                     }
                     break;

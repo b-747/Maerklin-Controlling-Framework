@@ -1,6 +1,9 @@
 package de.cortex42.maerklin.testgui;
 
 import de.cortex42.maerklin.framework.*;
+import de.cortex42.maerklin.framework.packetlistener.ConfigDataStreamPacketListener;
+import de.cortex42.maerklin.framework.packetlistener.PacketEvent;
+import de.cortex42.maerklin.framework.packetlistener.PacketListener;
 
 /**
  * Created by ivo on 21.10.15.
@@ -110,7 +113,7 @@ public class Presenter {
     }
 
     public void sendToggleDirection(){
-        final int[] velocity = new int[1];
+        int[] velocity = new int[1];
 
         addPacketListener(
                 new PacketListener() {
@@ -228,6 +231,7 @@ public class Presenter {
             @Override
             public void onException(final FrameworkException frameworkException) {
                 view.showException(frameworkException);
+                //frameworkException.getCause() //todo gets inner exception
             }
         });
 

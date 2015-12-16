@@ -1,5 +1,7 @@
 package de.cortex42.maerklin.framework;
 
+import de.cortex42.maerklin.framework.packetlistener.PacketListener;
+
 /**
  * Created by ivo on 08.12.15.
  */

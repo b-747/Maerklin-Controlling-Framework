@@ -1,5 +1,8 @@
 package de.cortex42.maerklin.framework;
 
+import de.cortex42.maerklin.framework.packetlistener.PacketEvent;
+import de.cortex42.maerklin.framework.packetlistener.PacketListener;
+
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -32,7 +35,7 @@ public class EthernetConnection implements Connection {
     }
 
     @Override
-    synchronized public void close() {
+    synchronized public void close() { //todo https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
         stopListening();
         datagramSocket.close();
     }

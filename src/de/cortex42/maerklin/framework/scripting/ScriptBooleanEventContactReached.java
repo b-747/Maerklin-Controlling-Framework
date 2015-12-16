@@ -1,6 +1,10 @@
 package de.cortex42.maerklin.framework.scripting;
 
-import de.cortex42.maerklin.framework.*;
+import de.cortex42.maerklin.framework.CANPacket;
+import de.cortex42.maerklin.framework.CS2CANCommands;
+import de.cortex42.maerklin.framework.FrameworkException;
+import de.cortex42.maerklin.framework.packetlistener.PacketEvent;
+import de.cortex42.maerklin.framework.packetlistener.PacketListener;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;

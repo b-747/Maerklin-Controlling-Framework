@@ -1,4 +1,4 @@
-package de.cortex42.maerklin.framework;
+package de.cortex42.maerklin.framework.packetlistener;
 
 import java.util.EventListener;
 
@@ -8,3 +8,5 @@ import java.util.EventListener;
 public interface PacketListener extends EventListener {
     void packetEvent(PacketEvent packetEvent);
 }
+
+//todo add packetlisteners for velocity, direction, function

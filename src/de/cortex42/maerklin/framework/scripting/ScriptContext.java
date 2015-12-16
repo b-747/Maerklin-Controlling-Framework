@@ -3,7 +3,7 @@ package de.cortex42.maerklin.framework.scripting;
 import de.cortex42.maerklin.framework.CANPacket;
 import de.cortex42.maerklin.framework.Connection;
 import de.cortex42.maerklin.framework.FrameworkException;
-import de.cortex42.maerklin.framework.PacketListener;
+import de.cortex42.maerklin.framework.packetlistener.PacketListener;
 
 /**
  * Created by ivo on 18.11.15.

@@ -4,7 +4,7 @@ package de.cortex42.maerklin.framework;
  * Created by ivo on 19.10.15.
  */
 public final class CS2CANCommands {
-    //todo factory?
+    //todo ist eine konkrete Fabrik (=Factory) (Patterns kompakt, S.28)
     /**
      * BIG ENDIAN
      */

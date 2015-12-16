@@ -1,4 +1,4 @@
-package de.cortex42.maerklin.framework;
+package de.cortex42.maerklin.framework.packetlistener;
 
 import com.jcraft.jzlib.Inflater;
 import com.jcraft.jzlib.JZlib;
@@ -42,8 +42,8 @@ public final class ConfigDataHelper {
      * @return
      */
     public static int calcCRC(byte[] data) {
-        final int POLY = 0x1021;
-        final int START_VALUE = 0xFFFF;
+        int POLY = 0x1021;
+        int START_VALUE = 0xFFFF;
 
         int crc = START_VALUE;
 

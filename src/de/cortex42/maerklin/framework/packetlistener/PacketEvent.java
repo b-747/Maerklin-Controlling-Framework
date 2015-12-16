@@ -1,4 +1,6 @@
-package de.cortex42.maerklin.framework;
+package de.cortex42.maerklin.framework.packetlistener;
+
+import de.cortex42.maerklin.framework.CANPacket;
 
 import java.util.EventObject;
 

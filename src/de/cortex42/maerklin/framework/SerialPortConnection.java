@@ -3,6 +3,8 @@ package de.cortex42.maerklin.framework;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortPacketListener;
+import de.cortex42.maerklin.framework.packetlistener.PacketEvent;
+import de.cortex42.maerklin.framework.packetlistener.PacketListener;
 
 import java.util.ArrayList;
 
@@ -16,14 +18,14 @@ public class SerialPortConnection implements Connection {
 
     private final CANPacketListener canPacketListener = new CANPacketListener();
 
-    public SerialPortConnection(String systemPortName, int baud, int dataBits, int stopBits, int parityBit) throws FrameworkException {
+    public SerialPortConnection(String systemPortName, int baud, int dataBits, int stopBits, int parityBit) throws SerialPortException {
         serialPort = SerialPort.getCommPort(systemPortName);
 
         serialPort.setComPortParameters(baud, dataBits, stopBits, parityBit);
         serialPort.setFlowControl(SerialPort.FLOW_CONTROL_CTS_ENABLED);
 
         if (!serialPort.openPort()) {
-            throw new FrameworkException("Could not open the serial port."); //todo create sub exceptions
+            throw new SerialPortException("Could not open the serial port.");
         }
     }
 
@@ -58,13 +60,13 @@ public class SerialPortConnection implements Connection {
         }
     }
 
-    synchronized public void writeCANPacket(CANPacket canPacket) throws FrameworkException {
+    synchronized public void writeCANPacket(CANPacket canPacket) throws SerialPortException {
         byte[] bytesToWrite = canPacket.getBytes();
 
         int bytesWritten = serialPort.writeBytes(bytesToWrite, bytesToWrite.length);
 
         if (bytesWritten != bytesToWrite.length) {
-            throw new FrameworkException("Not all bytes were written. Check serial port connection.");
+            throw new SerialPortException("Not all bytes were written. Check serial port connection.");
         }
     }
 

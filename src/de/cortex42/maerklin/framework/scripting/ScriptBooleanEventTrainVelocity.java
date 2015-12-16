@@ -1,6 +1,10 @@
 package de.cortex42.maerklin.framework.scripting;
 
-import de.cortex42.maerklin.framework.*;
+import de.cortex42.maerklin.framework.CANPacket;
+import de.cortex42.maerklin.framework.CS2CANCommands;
+import de.cortex42.maerklin.framework.FrameworkException;
+import de.cortex42.maerklin.framework.packetlistener.PacketEvent;
+import de.cortex42.maerklin.framework.packetlistener.PacketListener;
 
 /**
  * Created by ivo on 20.11.15.
@@ -30,7 +34,7 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
     }
 
     private boolean check() throws FrameworkException {
-        final WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
+        WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
         PacketListener packetListener = new PacketListener() {
             @Override

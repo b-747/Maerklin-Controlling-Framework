@@ -25,43 +25,43 @@ public class ScriptCondition {
             } else if (isXor) {
                 return booleanEvent.getAsBoolean() ^ otherScriptCondition.check();
             } else {
-                throw new FrameworkException("No operation was set.");
+                throw new ScriptConditionBooleanOperatorException("No operation was set.");
             }
         }
 
         return booleanEvent.getAsBoolean();
     }
 
-    public ScriptCondition or(ScriptCondition scriptCondition) throws FrameworkException {
+    public ScriptCondition or(ScriptCondition scriptCondition) throws ScriptConditionBooleanOperatorException {
         if (!(isOr || isAnd || isXor)) {
             otherScriptCondition = scriptCondition;
             isOr = true;
 
             return this;
         } else {
-            throw new FrameworkException("Operation was already set.");
+            throw new ScriptConditionBooleanOperatorException("Operator was already set.");
         }
     }
 
-    public ScriptCondition and(ScriptCondition scriptCondition) throws FrameworkException {
+    public ScriptCondition and(ScriptCondition scriptCondition) throws ScriptConditionBooleanOperatorException {
         if (!(isOr || isAnd || isXor)) {
             otherScriptCondition = scriptCondition;
             isAnd = true;
 
             return this;
         } else {
-            throw new FrameworkException("Operation was already set.");
+            throw new ScriptConditionBooleanOperatorException("Operator was already set.");
         }
     }
 
-    public ScriptCondition xor(ScriptCondition scriptCondition) throws FrameworkException {
+    public ScriptCondition xor(ScriptCondition scriptCondition) throws ScriptConditionBooleanOperatorException {
         if (!(isOr || isAnd || isXor)) {
             otherScriptCondition = scriptCondition;
             isXor = true;
 
             return this;
         } else {
-            throw new FrameworkException("Operation was already set.");
+            throw new ScriptConditionBooleanOperatorException("Operator was already set.");
         }
     }
 }
