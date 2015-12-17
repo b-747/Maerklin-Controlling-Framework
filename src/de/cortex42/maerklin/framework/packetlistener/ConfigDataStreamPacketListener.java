@@ -31,7 +31,7 @@ public abstract class ConfigDataStreamPacketListener extends PacketListener {
         }
     }
 
-    public byte[] getDecompressedBytes(){
+    public byte[] getDecompressedBytes() {
         return decompressedBytes;
     }
 
