@@ -1,10 +1,7 @@
 package de.cortex42.maerklin.framework.scripting;
 
-import de.cortex42.maerklin.framework.CANPacket;
-import de.cortex42.maerklin.framework.CS2CANCommands;
 import de.cortex42.maerklin.framework.FrameworkException;
-import de.cortex42.maerklin.framework.packetlistener.PacketEvent;
-import de.cortex42.maerklin.framework.packetlistener.PacketListener;
+import de.cortex42.maerklin.framework.packetlistener.S88EventPacketListener;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -16,19 +13,19 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ScriptElementWaitForContact extends ScriptElement {
     private final int contactId;
-    private final int switchOverTo;
+    private final boolean positionOn;
     private final long timeout;
     private final static long DEFAULT_TIMEOUT = 60000L; //60s
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
-    public ScriptElementWaitForContact(int contactId, int switchOverTo) {
-        this(contactId, switchOverTo, DEFAULT_TIMEOUT);
+    public ScriptElementWaitForContact(final int contactId, final boolean positionOn) {
+        this(contactId, positionOn, DEFAULT_TIMEOUT);
     }
 
-    public ScriptElementWaitForContact(int contactId, int switchOverTo, long timeout) {
+    public ScriptElementWaitForContact(final int contactId, final boolean positionOn, final long timeout) {
         this.contactId = contactId;
-        this.switchOverTo = switchOverTo;
+        this.positionOn = positionOn;
         this.timeout = timeout;
         condition = lock.newCondition();
     }
@@ -37,37 +34,29 @@ public class ScriptElementWaitForContact extends ScriptElement {
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
         WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
-        scriptContext.addPacketListener(
-                new PacketListener() {
-                    @Override
-                    public void onPacketEvent(PacketEvent packetEvent) {
-                        CANPacket canPacket = packetEvent.getCANPacket();
+        S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, positionOn) {
+            @Override
+            public void onSuccess() {
+                lock.lock();
+                waitingThreadExchangeObject.value = true;
+                condition.signal();
+                lock.unlock();
+            }
+        };
 
-                        if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT //for response bit
-                                && canPacket.getDlc() == CS2CANCommands.S88_EVENT_RESPONSE_DLC
-                                && canPacket.getID() == contactId
-                                && ((canPacket.getData()[5] & 0xFF) == switchOverTo)) {
-
-                            lock.lock();
-                            waitingThreadExchangeObject.value = true;
-                            condition.signal();
-                            lock.unlock();
-
-                            scriptContext.removePacketListener(this);
-                        }
-                    }
-                });
+        scriptContext.addPacketListener(s88EventPacketListener);
 
         lock.lock();
         try {
             if (!condition.await(timeout, TimeUnit.MILLISECONDS)) {
                 //timeout
-                throw new FrameworkException("Timeout");
+                throw new ScriptElementWaitTimeoutException();
             }
         } catch (InterruptedException e) {
             throw new FrameworkException(e);
         } finally {
             lock.unlock();
+            scriptContext.removePacketListener(s88EventPacketListener);
         }
     }
 }

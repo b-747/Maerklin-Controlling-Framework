@@ -12,7 +12,7 @@ public final class ConfigDataHelper {
     }
 
     //zlib inflate
-    public static byte[] decompressBytes(byte[] compressedBytes, int decompressedBytesLength) {
+    public static byte[] decompressBytes(final byte[] compressedBytes, final int decompressedBytesLength) {
         byte[] decompressedBytes = new byte[decompressedBytesLength];
 
         Inflater inflater = new Inflater();
@@ -41,7 +41,7 @@ public final class ConfigDataHelper {
      * @param data
      * @return
      */
-    public static int calcCRC(byte[] data) {
+    public static int calcCRC(final byte[] data) {
         int POLY = 0x1021;
         int START_VALUE = 0xFFFF;
 

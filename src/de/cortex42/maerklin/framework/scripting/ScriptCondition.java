@@ -12,7 +12,7 @@ public class ScriptCondition {
     private boolean isAnd = false;
     private boolean isXor = false;
 
-    public ScriptCondition(BooleanEvent booleanEvent) {
+    public ScriptCondition(final BooleanEvent booleanEvent) {
         this.booleanEvent = booleanEvent;
     }
 
@@ -32,7 +32,7 @@ public class ScriptCondition {
         return booleanEvent.getAsBoolean();
     }
 
-    public ScriptCondition or(ScriptCondition scriptCondition) throws ScriptConditionBooleanOperatorException {
+    public ScriptCondition or(final ScriptCondition scriptCondition) throws ScriptConditionBooleanOperatorException {
         if (!(isOr || isAnd || isXor)) {
             otherScriptCondition = scriptCondition;
             isOr = true;
@@ -43,7 +43,7 @@ public class ScriptCondition {
         }
     }
 
-    public ScriptCondition and(ScriptCondition scriptCondition) throws ScriptConditionBooleanOperatorException {
+    public ScriptCondition and(final ScriptCondition scriptCondition) throws ScriptConditionBooleanOperatorException {
         if (!(isOr || isAnd || isXor)) {
             otherScriptCondition = scriptCondition;
             isAnd = true;
@@ -54,7 +54,7 @@ public class ScriptCondition {
         }
     }
 
-    public ScriptCondition xor(ScriptCondition scriptCondition) throws ScriptConditionBooleanOperatorException {
+    public ScriptCondition xor(final ScriptCondition scriptCondition) throws ScriptConditionBooleanOperatorException {
         if (!(isOr || isAnd || isXor)) {
             otherScriptCondition = scriptCondition;
             isXor = true;

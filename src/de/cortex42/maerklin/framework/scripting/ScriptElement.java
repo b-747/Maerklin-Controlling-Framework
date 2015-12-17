@@ -8,7 +8,7 @@ import de.cortex42.maerklin.framework.FrameworkException;
 public abstract class ScriptElement {
     public ScriptElement next;
 
-    public void execute(ScriptContext scriptContext) throws FrameworkException {
+    public void execute(final ScriptContext scriptContext) throws FrameworkException {
         executeElement(scriptContext); //implemented by subclass
 
         if (next != null) {

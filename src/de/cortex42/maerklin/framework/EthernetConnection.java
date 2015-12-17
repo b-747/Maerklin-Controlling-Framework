@@ -22,7 +22,7 @@ public class EthernetConnection implements Connection {
     private final ArrayList<ExceptionListener> exceptionListeners = new ArrayList<>();
     private boolean isListening = false;
 
-    public EthernetConnection(int localPort, int targetPort, String targetAddress) throws FrameworkException {
+    public EthernetConnection(final int localPort, final int targetPort, final String targetAddress) throws FrameworkException {
         this.targetPort = targetPort;
 
         try {
@@ -40,7 +40,7 @@ public class EthernetConnection implements Connection {
         datagramSocket.close();
     }
 
-    synchronized public void writeCANPacket(CANPacket canPacket) throws FrameworkException {
+    synchronized public void writeCANPacket(final CANPacket canPacket) throws FrameworkException {
         byte[] bytes = canPacket.getBytes();
 
         DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, targetAddress, targetPort);
@@ -52,25 +52,25 @@ public class EthernetConnection implements Connection {
         }
     }
 
-    synchronized public void addExceptionHandler(ExceptionListener exceptionListener) {
+    synchronized public void addExceptionHandler(final ExceptionListener exceptionListener) {
         if (!exceptionListeners.contains(exceptionListener)) {
             exceptionListeners.add(exceptionListener);
         }
     }
 
-    synchronized public void removeExceptionHandler(ExceptionListener exceptionListener) {
+    synchronized public void removeExceptionHandler(final ExceptionListener exceptionListener) {
         exceptionListeners.remove(exceptionListener);
     }
 
-    synchronized public void addPacketListener(PacketListener packetListener) {
-        if(!packetListeners.contains(packetListener)) {
+    synchronized public void addPacketListener(final PacketListener packetListener) {
+        if (!packetListeners.contains(packetListener)) {
             packetListeners.add(packetListener);
         }
 
         startListening();
     }
 
-    synchronized public void removePacketListener(PacketListener packetListener) {
+    synchronized public void removePacketListener(final PacketListener packetListener) {
         packetListeners.remove(packetListener);
 
         if (packetListeners.isEmpty()) {
@@ -78,8 +78,8 @@ public class EthernetConnection implements Connection {
         }
     }
 
-    private void startListening(){
-        if(!isListening) {
+    private void startListening() {
+        if (!isListening) {
             isListening = true;
 
             Thread thread = new Thread(new Runnable() {
@@ -113,8 +113,8 @@ public class EthernetConnection implements Connection {
         }
     }
 
-    private void stopListening(){
-        isListening=false;
+    private void stopListening() {
+        isListening = false;
     }
 
 

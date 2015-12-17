@@ -10,13 +10,13 @@ public class ScriptElementSetDirection extends ScriptElement {
     private final int locId;
     private final int direction;
 
-    public ScriptElementSetDirection(int locId, int direction) {
+    public ScriptElementSetDirection(final int locId, final int direction) {
         this.locId = locId;
         this.direction = direction;
     }
 
     @Override
-    public void executeElement(ScriptContext scriptContext) throws FrameworkException {
+    public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
         scriptContext.writeCANPacket(
                 CS2CANCommands.setDirection(locId, direction)
         );

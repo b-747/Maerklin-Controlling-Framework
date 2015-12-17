@@ -10,27 +10,27 @@ public class FrameworkException extends Exception {
         innerFrameworkExceptions = null;
     }
 
-    public FrameworkException(String message) {
+    public FrameworkException(final String message) {
         super(message);
         innerFrameworkExceptions = null;
     }
 
-    public FrameworkException(Throwable cause) {
+    public FrameworkException(final Throwable cause) {
         super(cause);
         innerFrameworkExceptions = null;
     }
 
-    public FrameworkException(String message, Throwable cause) {
+    public FrameworkException(final String message, final Throwable cause) {
         super(message, cause);
         innerFrameworkExceptions = null;
     }
 
-    public FrameworkException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public FrameworkException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
         innerFrameworkExceptions = null;
     }
 
-    public FrameworkException(FrameworkException[] innerFrameworkExceptions) {
+    public FrameworkException(final FrameworkException[] innerFrameworkExceptions) {
         this.innerFrameworkExceptions = innerFrameworkExceptions;
     }
 

@@ -10,20 +10,20 @@ import java.util.ArrayList;
 public class ScriptElementParallel extends ScriptElement {
     private final ArrayList<ScriptElement> scriptElements;
 
-    public ScriptElementParallel(ArrayList<ScriptElement> scriptElements) {
+    public ScriptElementParallel(final ArrayList<ScriptElement> scriptElements) {
         this.scriptElements = scriptElements;
     }
 
     @Override
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
-        final int scriptConditionCheckerCount = scriptElements.size();
+        int scriptConditionCheckerCount = scriptElements.size();
 
-        final FrameworkException[] threadFrameworkExceptions = new FrameworkException[scriptConditionCheckerCount];
+        FrameworkException[] threadFrameworkExceptions = new FrameworkException[scriptConditionCheckerCount];
 
-        final Thread[] threads = new Thread[scriptConditionCheckerCount];
+        Thread[] threads = new Thread[scriptConditionCheckerCount];
 
         for (int i = 0; i < threads.length; i++) {
-            final int finalI = i;
+            int finalI = i;
 
             threads[i] = new Thread(new Runnable() {
                 @Override

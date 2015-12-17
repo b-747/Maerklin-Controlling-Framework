@@ -10,7 +10,7 @@ import java.util.EventListener;
 public abstract class PacketListener implements EventListener {
     protected ExceptionListener exceptionListener = null;
 
-    public void setExceptionListener(ExceptionListener exceptionListener) {
+    public void setExceptionListener(final ExceptionListener exceptionListener) {
         this.exceptionListener = exceptionListener;
     }
 
@@ -18,5 +18,3 @@ public abstract class PacketListener implements EventListener {
 
     public abstract void onSuccess();
 }
-
-//todo create listeners for booleanevents

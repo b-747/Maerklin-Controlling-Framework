@@ -49,7 +49,7 @@ public class Presenter {
 
     private static final long DEFAULT_DELAY = 250L; //todo check this delay! (10ms should be enough)
 
-    public Presenter(View view){
+    public Presenter(final View view) {
         this.view = view;
 
         this.view.addSerialPorts(SerialPortConnection.getAvailableSerialPorts());
@@ -59,7 +59,7 @@ public class Presenter {
         useEthernetConnection(true);
     }
 
-    public void useEthernetConnection(boolean use) {
+    public void useEthernetConnection(final boolean use) {
         if (connection != null) {
             connection.close();
         }
@@ -75,19 +75,19 @@ public class Presenter {
         }
     }
 
-    public void setLoc(String loc) {
+    public void setLoc(final String loc) {
         this.loc = Integer.parseInt(loc);
     }
 
-    public void setSerialPort(String serialPort) {
+    public void setSerialPort(final String serialPort) {
         this.serialPort = serialPort;
     }
 
-    public void setIpAddress(String ipAddress) {
+    public void setIpAddress(final String ipAddress) {
         this.ipAddress = ipAddress;
     }
 
-    public void sendStart(){
+    public void sendStart() {
         sendPacket(CS2CANCommands.newRegistration());
         pause(DEFAULT_DELAY);
         sendPacket(CS2CANCommands.unlockRail());
@@ -96,24 +96,24 @@ public class Presenter {
         sendPacket(CS2CANCommands.go());
     }
 
-    public void sendStop(){
+    public void sendStop() {
         sendPacket(CS2CANCommands.stop());
     }
 
-    public void sendBootloaderGo(){
+    public void sendBootloaderGo() {
         sendPacket(CS2CANCommands.bootloaderGo());
         pause(400L); //pause 400ms after sending bootloader go command
     }
 
-    public void sendLight(boolean on){
+    public void sendLight(final boolean on) {
         sendPacket(CS2CANCommands.toggleFunction(loc, LIGHT_FUNCTION, on ? CS2CANCommands.FUNCTION_ON : CS2CANCommands.FUNCTION_OFF));
     }
 
-    public void sendVelocity(int velocity){
+    public void sendVelocity(final int velocity) {
         sendPacket(CS2CANCommands.setVelocity(loc, velocity));
     }
 
-    public void sendToggleDirection(){
+    public void sendToggleDirection() {
         int[] velocity = new int[1];
 
         addPacketListener(
@@ -137,7 +137,7 @@ public class Presenter {
                     private byte direction;
 
                     @Override
-                    public void onPacketEvent(PacketEvent packetEvent) {
+                    public void onPacketEvent(final PacketEvent packetEvent) {
                         CANPacket canPacket = packetEvent.getCANPacket();
 
                         if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.DIRECTION
@@ -173,11 +173,11 @@ public class Presenter {
         sendPacket(CS2CANCommands.queryDirection(loc)); //query new direction
     }
 
-    public void cleanUp(){
+    public void cleanUp() {
         connection.close();
     }
 
-    public void sendGetLoks() {
+    public void sendGetLocos() {
         ConfigDataStreamPacketListener configDataStreamPacketListener = new ConfigDataStreamPacketListener() {
             @Override
             public void onSuccess() {
@@ -207,7 +207,7 @@ public class Presenter {
         sendPacket(CS2CANCommands.requestConfigData("loks"));
     }
 
-    private void sendPacket(CANPacket canPacket) {
+    private void sendPacket(final CANPacket canPacket) {
         try {
             connection.writeCANPacket(canPacket);
         } catch (FrameworkException e) {
@@ -215,15 +215,15 @@ public class Presenter {
         }
     }
 
-    private void addPacketListener(PacketListener packetListener){
+    private void addPacketListener(final PacketListener packetListener) {
         connection.addPacketListener(packetListener);
     }
 
-    private void removePacketListener(PacketListener packetListener){
+    private void removePacketListener(final PacketListener packetListener) {
         connection.removePacketListener(packetListener);
     }
 
-    private void pause(long ms) {
+    private void pause(final long ms) {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {

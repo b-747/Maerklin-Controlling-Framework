@@ -35,7 +35,7 @@ public abstract class ConfigDataStreamPacketListener extends PacketListener {
         return decompressedBytes;
     }
 
-    private void processConfigDataStreamPacket(CANPacket canPacket) {
+    private void processConfigDataStreamPacket(final CANPacket canPacket) {
         byte[] dataBytes = canPacket.getData();
 
         if (canPacket.getCommand() == CS2CANCommands.GET_CONFIG_DATA_STREAM) {

@@ -9,19 +9,19 @@ public class ScriptConditionBooleanOperatorException extends FrameworkException 
     public ScriptConditionBooleanOperatorException() {
     }
 
-    public ScriptConditionBooleanOperatorException(String message) {
+    public ScriptConditionBooleanOperatorException(final String message) {
         super(message);
     }
 
-    public ScriptConditionBooleanOperatorException(Throwable cause) {
+    public ScriptConditionBooleanOperatorException(final Throwable cause) {
         super(cause);
     }
 
-    public ScriptConditionBooleanOperatorException(String message, Throwable cause) {
+    public ScriptConditionBooleanOperatorException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public ScriptConditionBooleanOperatorException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public ScriptConditionBooleanOperatorException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

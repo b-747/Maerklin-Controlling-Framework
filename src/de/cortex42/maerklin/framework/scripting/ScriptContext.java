@@ -12,19 +12,19 @@ import de.cortex42.maerklin.framework.packetlistener.PacketListener;
 public class ScriptContext {
     private final Connection connection;
 
-    public ScriptContext(Connection connection) {
+    public ScriptContext(final Connection connection) {
         this.connection = connection;
     }
 
-    public void writeCANPacket(CANPacket canPacket) throws FrameworkException {
+    public void writeCANPacket(final CANPacket canPacket) throws FrameworkException {
         connection.writeCANPacket(canPacket);
     }
 
-    public void addPacketListener(PacketListener packetListener) {
+    public void addPacketListener(final PacketListener packetListener) {
         connection.addPacketListener(packetListener);
     }
 
-    public void removePacketListener(PacketListener packetListener) {
+    public void removePacketListener(final PacketListener packetListener) {
         connection.removePacketListener(packetListener);
     }
 }

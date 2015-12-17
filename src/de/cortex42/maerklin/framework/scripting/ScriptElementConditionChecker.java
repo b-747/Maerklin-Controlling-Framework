@@ -7,9 +7,8 @@ import de.cortex42.maerklin.framework.FrameworkException;
  */
 public class ScriptElementConditionChecker extends ScriptElement {
     private final ScriptCondition scriptCondition;
-    private boolean conditionMet = false;
 
-    public ScriptElementConditionChecker(ScriptCondition scriptCondition) {
+    public ScriptElementConditionChecker(final ScriptCondition scriptCondition) {
         this.scriptCondition = scriptCondition;
     }
 
@@ -19,7 +18,7 @@ public class ScriptElementConditionChecker extends ScriptElement {
 
     @Override
     public void executeElement(ScriptContext scriptContext) throws FrameworkException {
-        conditionMet = check();
+        boolean conditionMet = check();
 
         if (!conditionMet) {
             next = null; //condition not met -> do not execute the next element

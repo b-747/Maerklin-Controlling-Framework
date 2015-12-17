@@ -15,7 +15,7 @@ public class Main {
         String CS2_IP_ADDRESS = "192.168.16.2";
 
         try (EthernetConnection ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, CS2_IP_ADDRESS)) {
-            Script script = TestScripts.getTestScript(new ScriptContext(ethernetConnection));
+            Script script = TestScript.getTestScript(new ScriptContext(ethernetConnection));
             script.execute();
 
         } catch (FrameworkException e) {

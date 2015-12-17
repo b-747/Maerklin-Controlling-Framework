@@ -18,7 +18,7 @@ public class SerialPortConnection implements Connection {
 
     private final CANPacketListener canPacketListener = new CANPacketListener();
 
-    public SerialPortConnection(String systemPortName, int baud, int dataBits, int stopBits, int parityBit) throws SerialPortException {
+    public SerialPortConnection(final String systemPortName, final int baud, final int dataBits, final int stopBits, final int parityBit) throws SerialPortException {
         serialPort = SerialPort.getCommPort(systemPortName);
 
         serialPort.setComPortParameters(baud, dataBits, stopBits, parityBit);
@@ -47,12 +47,12 @@ public class SerialPortConnection implements Connection {
         }
     }
 
-    synchronized public void addPacketListener(PacketListener packetListener) {
+    synchronized public void addPacketListener(final PacketListener packetListener) {
         serialPort.addDataListener(canPacketListener); //happens only once
         canPacketListener.addPacketListener(packetListener);
     }
 
-    synchronized public void removePacketListener(PacketListener packetListener) {
+    synchronized public void removePacketListener(final PacketListener packetListener) {
         canPacketListener.removePacketListener(packetListener);
 
         if (!canPacketListener.packetListenersAvailable()) {
@@ -60,7 +60,7 @@ public class SerialPortConnection implements Connection {
         }
     }
 
-    synchronized public void writeCANPacket(CANPacket canPacket) throws SerialPortException {
+    synchronized public void writeCANPacket(final CANPacket canPacket) throws SerialPortException {
         byte[] bytesToWrite = canPacket.getBytes();
 
         int bytesWritten = serialPort.writeBytes(bytesToWrite, bytesToWrite.length);
@@ -87,7 +87,7 @@ public class SerialPortConnection implements Connection {
         }
 
         @Override
-        public void serialEvent(SerialPortEvent serialPortEvent) {
+        public void serialEvent(final SerialPortEvent serialPortEvent) {
             if (serialPortEvent.getEventType() != SerialPort.LISTENING_EVENT_DATA_RECEIVED) {
                 return;
             }
@@ -101,13 +101,13 @@ public class SerialPortConnection implements Connection {
 
         }
 
-        public void addPacketListener(PacketListener packetListener){
-            if(!packetListeners.contains(packetListener)) {
+        public void addPacketListener(final PacketListener packetListener) {
+            if (!packetListeners.contains(packetListener)) {
                 packetListeners.add(packetListener);
             }
         }
 
-        public void removePacketListener(PacketListener packetListener){
+        public void removePacketListener(final PacketListener packetListener) {
             packetListeners.remove(packetListener);
         }
 

@@ -7,19 +7,19 @@ public class ConfigDataCrcException extends ConfigDataException {
     public ConfigDataCrcException() {
     }
 
-    public ConfigDataCrcException(String message) {
+    public ConfigDataCrcException(final String message) {
         super(message);
     }
 
-    public ConfigDataCrcException(Throwable cause) {
+    public ConfigDataCrcException(final Throwable cause) {
         super(cause);
     }
 
-    public ConfigDataCrcException(String message, Throwable cause) {
+    public ConfigDataCrcException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public ConfigDataCrcException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public ConfigDataCrcException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

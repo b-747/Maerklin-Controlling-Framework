@@ -7,19 +7,19 @@ public class ConfigDataMissingRequestResponseException extends ConfigDataExcepti
     public ConfigDataMissingRequestResponseException() {
     }
 
-    public ConfigDataMissingRequestResponseException(String message) {
+    public ConfigDataMissingRequestResponseException(final String message) {
         super(message);
     }
 
-    public ConfigDataMissingRequestResponseException(Throwable cause) {
+    public ConfigDataMissingRequestResponseException(final Throwable cause) {
         super(cause);
     }
 
-    public ConfigDataMissingRequestResponseException(String message, Throwable cause) {
+    public ConfigDataMissingRequestResponseException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public ConfigDataMissingRequestResponseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public ConfigDataMissingRequestResponseException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

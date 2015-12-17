@@ -7,19 +7,19 @@ public class SerialPortException extends FrameworkException {
     public SerialPortException() {
     }
 
-    public SerialPortException(String message) {
+    public SerialPortException(final String message) {
         super(message);
     }
 
-    public SerialPortException(Throwable cause) {
+    public SerialPortException(final Throwable cause) {
         super(cause);
     }
 
-    public SerialPortException(String message, Throwable cause) {
+    public SerialPortException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public SerialPortException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public SerialPortException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

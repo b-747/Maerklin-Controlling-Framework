@@ -5,6 +5,7 @@ package de.cortex42.maerklin.framework;
 
 /**
  * Describes a CAN message.
+ *
  * @see http://medienpdb.maerklin.de/digital22008/files/cs2CAN-Protokoll-2_0.pdf (chapter 1.1)
  */
 public class CANPacket {
@@ -20,20 +21,19 @@ public class CANPacket {
     private final byte[] data;
 
     /**
-     *
      * @param priority
      * @param command
-     * @param hash 2 bytes
+     * @param hash     2 bytes
      * @param dlc
-     * @param data 8 bytes
+     * @param data     8 bytes
      */
-    public CANPacket(byte priority, byte command, byte[] hash, byte dlc, byte[] data) {
+    public CANPacket(final byte priority, final byte command, final byte[] hash, final byte dlc, final byte[] data) {
         this.priority = priority;
 
         this.command = command;
 
         if (hash.length != HASH_SIZE) {
-            throw new IllegalArgumentException("hash.length != 2: "+hash.length);
+            throw new IllegalArgumentException("hash.length != 2: " + hash.length);
         }
         this.hash = hash;
 
@@ -41,22 +41,22 @@ public class CANPacket {
         this.dlc = dlc;
 
         if (data.length != DATA_SIZE) {
-            throw new IllegalArgumentException("data.length != 8: "+data.length);
+            throw new IllegalArgumentException("data.length != 8: " + data.length);
         }
         this.data = data;
 
     }
 
-    public CANPacket(byte[] bytes){
-        if(bytes.length != CAN_PACKET_SIZE){
-            throw new IllegalArgumentException("bytes.length != 13: "+bytes.length);
+    public CANPacket(final byte[] bytes) {
+        if (bytes.length != CAN_PACKET_SIZE) {
+            throw new IllegalArgumentException("bytes.length != 13: " + bytes.length);
         }
 
         this.priority = bytes[0];
 
         this.command = bytes[1];
 
-        this.hash = new byte[] {bytes[2], bytes[3]};
+        this.hash = new byte[]{bytes[2], bytes[3]};
 
         this.dlc = bytes[4];
 
@@ -72,27 +72,27 @@ public class CANPacket {
         };
     }
 
-    public byte getPriority(){
+    public byte getPriority() {
         return priority;
     }
 
-    public byte getCommand(){
+    public byte getCommand() {
         return command;
     }
 
-    public byte[] getHash(){
+    public byte[] getHash() {
         return hash;
     }
 
-    public byte getDlc(){
+    public byte getDlc() {
         return dlc;
     }
 
-    public byte[] getData(){
+    public byte[] getData() {
         return data;
     }
 
-    public int getID(){
+    public int getID() {
         return ((data[0] & 0xFF) << 24)
                 | ((data[1] & 0xFF) << 16)
                 | ((data[2] & 0xFF) << 8)
@@ -100,10 +100,9 @@ public class CANPacket {
     }
 
     /**
-     *
      * @return all bytes together (13 bytes)
      */
-    public byte[] getBytes(){
+    public byte[] getBytes() {
         byte[] bytes = new byte[13];
 
         bytes[0] = priority;

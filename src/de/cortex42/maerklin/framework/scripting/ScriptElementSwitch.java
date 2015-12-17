@@ -8,22 +8,22 @@ import de.cortex42.maerklin.framework.FrameworkException;
  */
 public class ScriptElementSwitch extends ScriptElement {
     private final static long DELAY = 200L;
-    private int equipmentId;
-    private int position;
-    private long switchDelay;
+    private final int equipmentId;
+    private final int position;
+    private final long switchDelay;
 
-    public ScriptElementSwitch(int equipmentId, int position) {
+    public ScriptElementSwitch(final int equipmentId, final int position) {
         this(equipmentId, position, DELAY);
     }
 
-    public ScriptElementSwitch(int equipmentId, int position, long switchDelay) {
+    public ScriptElementSwitch(final int equipmentId, final int position, final long switchDelay) {
         this.equipmentId = equipmentId;
         this.position = position;
         this.switchDelay = switchDelay;
     }
 
     @Override
-    public void executeElement(ScriptContext scriptContext) throws FrameworkException {
+    public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
         scriptContext.writeCANPacket(
                 CS2CANCommands.toggleEquipment(equipmentId, position, CS2CANCommands.EQUIPMENT_POWER_ON)
         );

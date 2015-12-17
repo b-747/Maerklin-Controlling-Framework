@@ -11,14 +11,14 @@ public class ScriptElementSetFunction extends ScriptElement {
     private final int function;
     private final int toggle;
 
-    public ScriptElementSetFunction(int locId, int function, int toggle) {
+    public ScriptElementSetFunction(final int locId, final int function, final int toggle) {
         this.locId = locId;
         this.function = function;
         this.toggle = toggle;
     }
 
     @Override
-    public void executeElement(ScriptContext scriptContext) throws FrameworkException {
+    public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
         scriptContext.writeCANPacket(
                 CS2CANCommands.toggleFunction(locId, function, toggle));
     }

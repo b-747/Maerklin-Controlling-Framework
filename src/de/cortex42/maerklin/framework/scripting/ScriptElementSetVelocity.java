@@ -10,13 +10,13 @@ public class ScriptElementSetVelocity extends ScriptElement {
     private final int locId;
     private final int velocity;
 
-    public ScriptElementSetVelocity(int locId, int velocity) {
+    public ScriptElementSetVelocity(final int locId, final int velocity) {
         this.locId = locId;
         this.velocity = velocity;
     }
 
     @Override
-    public void executeElement(ScriptContext scriptContext) throws FrameworkException {
+    public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
         scriptContext.writeCANPacket(
                 CS2CANCommands.setVelocity(locId, velocity)
         );

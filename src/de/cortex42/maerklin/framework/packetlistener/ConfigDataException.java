@@ -9,19 +9,19 @@ public class ConfigDataException extends FrameworkException {
     public ConfigDataException() {
     }
 
-    public ConfigDataException(String message) {
+    public ConfigDataException(final String message) {
         super(message);
     }
 
-    public ConfigDataException(Throwable cause) {
+    public ConfigDataException(final Throwable cause) {
         super(cause);
     }
 
-    public ConfigDataException(String message, Throwable cause) {
+    public ConfigDataException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public ConfigDataException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public ConfigDataException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

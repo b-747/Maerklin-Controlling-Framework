@@ -1,10 +1,7 @@
 package de.cortex42.maerklin.framework.scripting;
 
-import de.cortex42.maerklin.framework.CANPacket;
-import de.cortex42.maerklin.framework.CS2CANCommands;
 import de.cortex42.maerklin.framework.FrameworkException;
-import de.cortex42.maerklin.framework.packetlistener.PacketEvent;
-import de.cortex42.maerklin.framework.packetlistener.PacketListener;
+import de.cortex42.maerklin.framework.packetlistener.S88EventPacketListener;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -22,14 +19,14 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
-    public ScriptBooleanEventContactReached(ScriptContext scriptContext, int contactId, long timeout) {
+    public ScriptBooleanEventContactReached(final ScriptContext scriptContext, final int contactId, final long timeout) {
         this.contactId = contactId;
         this.scriptContext = scriptContext;
         this.timeout = timeout;
         condition = lock.newCondition();
     }
 
-    public ScriptBooleanEventContactReached(ScriptContext scriptContext, int contactId) {
+    public ScriptBooleanEventContactReached(final ScriptContext scriptContext, final int contactId) {
         this(scriptContext, contactId, DEFAULT_TIMEOUT);
     }
 
@@ -41,25 +38,17 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
     private boolean check() throws FrameworkException {
         WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
-        PacketListener packetListener = new PacketListener() {
+        S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, true) {
             @Override
-            public void onPacketEvent(PacketEvent packetEvent) {
-                CANPacket canPacket = packetEvent.getCANPacket();
-
-                if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT
-                        && canPacket.getDlc() == CS2CANCommands.S88_EVENT_RESPONSE_DLC
-                        && canPacket.getID() == contactId
-                        && ((canPacket.getData()[5] & 0xFF) == CS2CANCommands.EQUIPMENT_POSITION_ON)) {
-
-                    lock.lock();
-                    waitingThreadExchangeObject.value = true;
-                    condition.signal();
-                    lock.unlock();
-                }
+            public void onSuccess() {
+                lock.lock();
+                waitingThreadExchangeObject.value = true;
+                condition.signal();
+                lock.unlock();
             }
         };
 
-        scriptContext.addPacketListener(packetListener);
+        scriptContext.addPacketListener(s88EventPacketListener);
 
         lock.lock();
         try {
@@ -71,7 +60,7 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
             throw new FrameworkException(e);
         } finally {
             lock.unlock();
-            scriptContext.removePacketListener(packetListener);
+            scriptContext.removePacketListener(s88EventPacketListener);
         }
 
         return waitingThreadExchangeObject.value;

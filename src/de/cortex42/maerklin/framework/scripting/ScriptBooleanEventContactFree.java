@@ -1,10 +1,7 @@
 package de.cortex42.maerklin.framework.scripting;
 
-import de.cortex42.maerklin.framework.CANPacket;
-import de.cortex42.maerklin.framework.CS2CANCommands;
 import de.cortex42.maerklin.framework.FrameworkException;
-import de.cortex42.maerklin.framework.packetlistener.PacketEvent;
-import de.cortex42.maerklin.framework.packetlistener.PacketListener;
+import de.cortex42.maerklin.framework.packetlistener.S88EventPacketListener;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -43,62 +40,49 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
     private boolean check() throws FrameworkException {
         WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
-        PacketListener packetListener = new PacketListener() {
+        S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, false) {
             @Override
-            public void onPacketEvent(PacketEvent packetEvent) {
-                CANPacket canPacket = packetEvent.getCANPacket();
-
-                if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT
-                        && canPacket.getDlc() == CS2CANCommands.S88_EVENT_RESPONSE_DLC
-                        && canPacket.getID() == contactId
-                        && (canPacket.getData()[5] & 0xFF) == CS2CANCommands.EQUIPMENT_POSITION_OFF) {
-
-                    lock.lock();
-                    waitingThreadExchangeObject.value = true;
-                    condition.signal();
-                    lock.unlock();
-                }
+            public void onSuccess() {
+                lock.lock();
+                waitingThreadExchangeObject.value = true;
+                condition.signal();
+                lock.unlock();
             }
         };
 
-        scriptContext.addPacketListener(packetListener);
+        scriptContext.addPacketListener(s88EventPacketListener);
 
         //wait until contact is free
         lock.lock();
-        try{
-            if(!condition.await(timeout, TimeUnit.MILLISECONDS)){
+        try {
+            if (!condition.await(timeout, TimeUnit.MILLISECONDS)) {
                 //timeout
                 return false;
             }
-        }catch(InterruptedException e){
+        } catch (InterruptedException e) {
             throw new FrameworkException(e);
-        }finally {
+        } finally {
             lock.unlock();
-            scriptContext.removePacketListener(packetListener);
+            scriptContext.removePacketListener(s88EventPacketListener);
         }
 
         waitingThreadExchangeObject.value = false; //reset and add another listener
 
-        packetListener = new PacketListener() {
+        s88EventPacketListener = new S88EventPacketListener(contactId) { //here the position does not matter, so use the second constructor
             @Override
-            public void onPacketEvent(PacketEvent packetEvent) {
-                CANPacket canPacket = packetEvent.getCANPacket();
-
-                if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT
-                        && canPacket.getDlc() == CS2CANCommands.S88_EVENT_RESPONSE_DLC
-                        && canPacket.getID() == contactId) {
-                    waitingThreadExchangeObject.value = true;
-                }
+            public void onSuccess() {
+                waitingThreadExchangeObject.value = true;
             }
         };
-        scriptContext.addPacketListener(packetListener);
+
+        scriptContext.addPacketListener(s88EventPacketListener);
 
         try {
             Thread.sleep(freeTime); //now wait
         } catch (InterruptedException e) {
             throw new FrameworkException(e);
-        }finally {
-            scriptContext.removePacketListener(packetListener);
+        } finally {
+            scriptContext.removePacketListener(s88EventPacketListener);
         }
 
         //if no S88 event occured until now (value is false), then the contact remained free

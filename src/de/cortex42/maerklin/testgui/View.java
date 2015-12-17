@@ -36,7 +36,7 @@ public class View {
 
     private Presenter presenter;
 
-    public void setPresenter(Presenter presenter) {
+    public void setPresenter(final Presenter presenter) {
         this.presenter = presenter;
     }
 
@@ -76,21 +76,21 @@ public class View {
 
         buttonStart.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void actionPerformed(final ActionEvent actionEvent) {
                 presenter.sendStart();
             }
         });
 
         buttonBootloaderGo.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void actionPerformed(final ActionEvent actionEvent) {
                 presenter.sendBootloaderGo();
             }
         });
 
         buttonStop.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void actionPerformed(final ActionEvent actionEvent) {
                 presenter.sendStop();
             }
         });
@@ -104,7 +104,7 @@ public class View {
 
         sliderVelocity.addChangeListener(new ChangeListener() {
             @Override
-            public void stateChanged(ChangeEvent changeEvent) {
+            public void stateChanged(final ChangeEvent changeEvent) {
                 Object source = changeEvent.getSource();
 
                 if (source instanceof JSlider) {
@@ -120,7 +120,7 @@ public class View {
 
         buttonToggleDirection.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void actionPerformed(final ActionEvent actionEvent) {
                 presenter.sendToggleDirection();
             }
         });
@@ -128,7 +128,7 @@ public class View {
         buttonConfigData.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
-                presenter.sendGetLoks();
+                presenter.sendGetLocos();
             }
         });
 
@@ -156,7 +156,7 @@ public class View {
         });
     }
 
-    public void addSerialPorts(ArrayList<String> serialPorts) {
+    public void addSerialPorts(final ArrayList<String> serialPorts) {
         for (int i = 0; i < serialPorts.size(); i++) {
             comboBoxSerialPort.addItem(serialPorts.get(i));
         }
@@ -166,15 +166,15 @@ public class View {
         }
     }
 
-    public void setVelocity(int velocity) {
+    public void setVelocity(final int velocity) {
         sliderVelocity.setValue(velocity);
     }
 
-    public void setDirection(String direction) {
+    public void setDirection(final String direction) {
         buttonToggleDirection.setText("Toggle Direction (Current: " + direction + ")");
     }
 
-    public void setDefaultIpAddress(String ipAddress) {
+    public void setDefaultIpAddress(final String ipAddress) {
         formattedTextFieldIpAddress.setValue(ipAddress);
     }
 
@@ -182,7 +182,7 @@ public class View {
         JOptionPane.showMessageDialog(null, s, "loks.cs2", JOptionPane.PLAIN_MESSAGE);
     }
 
-    public void showException(Exception exception) {
+    public void showException(final Exception exception) {
         JOptionPane.showMessageDialog(null, Arrays.toString(exception.getStackTrace()), "Error", JOptionPane.ERROR_MESSAGE);
     }
 
