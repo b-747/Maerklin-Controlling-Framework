@@ -23,7 +23,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
-    public ScriptBooleanEventContactFree(ScriptContext scriptContext, int contactId, long freeTime, long timeout) {
+    public ScriptBooleanEventContactFree(final ScriptContext scriptContext, final int contactId, final long freeTime, final long timeout) {
         this.scriptContext = scriptContext;
         this.contactId = contactId;
         this.freeTime = freeTime;
@@ -31,7 +31,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
         condition = lock.newCondition();
     }
 
-    public ScriptBooleanEventContactFree(ScriptContext scriptContext, int contactId, long freeTime) {
+    public ScriptBooleanEventContactFree(final ScriptContext scriptContext, final int contactId, final long freeTime) {
         this(scriptContext, contactId, freeTime, DEFAULT_TIMEOUT);
     }
 
@@ -45,7 +45,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
 
         PacketListener packetListener = new PacketListener() {
             @Override
-            public void packetEvent(PacketEvent packetEvent) {
+            public void onPacketEvent(PacketEvent packetEvent) {
                 CANPacket canPacket = packetEvent.getCANPacket();
 
                 if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT
@@ -81,7 +81,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
 
         packetListener = new PacketListener() {
             @Override
-            public void packetEvent(PacketEvent packetEvent) {
+            public void onPacketEvent(PacketEvent packetEvent) {
                 CANPacket canPacket = packetEvent.getCANPacket();
 
                 if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT

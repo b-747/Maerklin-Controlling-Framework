@@ -2,13 +2,11 @@ package de.cortex42.maerklin.framework.packetlistener;
 
 import de.cortex42.maerklin.framework.CANPacket;
 import de.cortex42.maerklin.framework.CS2CANCommands;
-import de.cortex42.maerklin.framework.ExceptionHandler;
 
 /**
  * Created by ivo on 04.12.15.
  */
-//todo create abstract parent class? (for other abstract listeners)
-public abstract class ConfigDataStreamPacketListener implements PacketListener {
+public abstract class ConfigDataStreamPacketListener extends PacketListener {
     private int compressedFileLength = -1;
     private int decompressedFileLength = -1;
     private int crc = -1;
@@ -17,10 +15,9 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
     private byte[] decompressedBytes = null;
     private byte[] compressedBytes = null;
     private int bytesReceived = 0;
-    private ExceptionHandler exceptionHandler = null;
 
     @Override
-    public void packetEvent(final PacketEvent packetEvent) {
+    public void onPacketEvent(final PacketEvent packetEvent) {
         processConfigDataStreamPacket(packetEvent.getCANPacket());
 
         if (decompressedBytes != null) {
@@ -28,26 +25,14 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
             configDataRequestResponseReceived = firstDataPacketReceived = false;
             compressedBytes = null;
             bytesReceived = 0;
-
-            bytesDecompressed(decompressedBytes.clone());
+            onSuccess();
 
             decompressedBytes = null;
         }
     }
 
-    /**
-     * This method is called by the packetEvent method if the bytes were successfully decompressed.
-     *
-     * @param decompressedBytes
-     */
-    public abstract void bytesDecompressed(byte[] decompressedBytes); //todo rename to callback(); don't pass in the bytes, let the user fetch them
-
-    public void addExceptionHandler(ExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
-    }
-
-    public void removeExceptionHandler() {
-        this.exceptionHandler = null;
+    public byte[] getDecompressedBytes(){
+        return decompressedBytes;
     }
 
     private void processConfigDataStreamPacket(CANPacket canPacket) {
@@ -93,8 +78,8 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
                             int calculatedCRC = ConfigDataHelper.calcCRC(compressedBytes); //calculate crc over ALL bytes
 
                             if (calculatedCRC != crc) {
-                                if (exceptionHandler != null) {
-                                    exceptionHandler.onException(new ConfigDataCrcException(String.format("Incorrect crc value %d but expected %d", calculatedCRC, crc)));
+                                if (exceptionListener != null) {
+                                    exceptionListener.onException(new ConfigDataCrcException(String.format("Incorrect crc value %d but expected %d", calculatedCRC, crc)));
                                 }
                                 return;
                             }
@@ -105,8 +90,8 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
                             decompressedBytes = ConfigDataHelper.decompressBytes(tempBuffer, decompressedFileLength);
                         }
                     } else {
-                        if (exceptionHandler != null) {
-                            exceptionHandler.onException(new ConfigDataMissingRequestResponseException("Config data stream packet received without previous request response packet."));
+                        if (exceptionListener != null) {
+                            exceptionListener.onException(new ConfigDataMissingRequestResponseException("Config data stream packet received without previous request response packet."));
                         }
                     }
                     break;

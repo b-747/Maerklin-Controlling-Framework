@@ -12,6 +12,15 @@ public final class CS2CANCommands {
     /*---PRIORITY---*/
     public static final byte PRIORITY = 0x00;
     /*---HASH---*/
+    /* //todo
+    *
+    * Hash 0x0300: wird gebildet aus UID 0x00000000 oder 0xFFFFFFFF (sollte also mit real existierender Hardware nicht kollidieren)
+    *
+    public static int calcHash(int uid) {
+        return (((uid >> 16) ^ (uid & 0xFFFF)) & 0xFF7F) | 0x0300;
+       (upper 16 bits XOR lower 16 bits) AND Bit7=0 OR Bit8/9=1
+    }
+    */
     public static final byte[] HASH = new byte[]{0x03, 0x00};
     /*---RESPONSE---*/
     public static final byte RESPONSE = 0x01;
@@ -200,7 +209,7 @@ public final class CS2CANCommands {
         }
 
         if(toggle > 1 || toggle < 0){
-            throw new IllegalArgumentException("toggle is either 0 or 1. (Error: "+toggle+").");
+            throw new IllegalArgumentException("toggle must be either 0 or 1. (Error: " + toggle + ").");
         }
 
         return new CANPacket(
@@ -355,6 +364,10 @@ public final class CS2CANCommands {
     }
 
     public static CANPacket setVelocity(int locId, int velocity){
+        if (velocity < 0 || velocity > 1023) {
+            throw new IllegalArgumentException("velocity must be between 0 and 1023. (Error: " + velocity + ").");
+        }
+
         return new CANPacket(
                 PRIORITY,
                 VELOCITY,

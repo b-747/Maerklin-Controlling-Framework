@@ -96,7 +96,7 @@ public class SerialPortConnection implements Connection {
             CANPacket canPacket = new CANPacket(data);
 
             for (int i = 0; i < packetListeners.size(); i++) {
-                packetListeners.get(i).packetEvent(new PacketEvent(canPacket));
+                packetListeners.get(i).onPacketEvent(new PacketEvent(canPacket));
             }
 
         }

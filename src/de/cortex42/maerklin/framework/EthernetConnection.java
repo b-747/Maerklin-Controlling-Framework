@@ -19,7 +19,7 @@ public class EthernetConnection implements Connection {
     private final InetAddress targetAddress;
 
     private final ArrayList<PacketListener> packetListeners = new ArrayList<>();
-    private final ArrayList<ExceptionHandler> exceptionHandlers = new ArrayList<>();
+    private final ArrayList<ExceptionListener> exceptionListeners = new ArrayList<>();
     private boolean isListening = false;
 
     public EthernetConnection(int localPort, int targetPort, String targetAddress) throws FrameworkException {
@@ -52,14 +52,14 @@ public class EthernetConnection implements Connection {
         }
     }
 
-    synchronized public void addExceptionHandler(ExceptionHandler exceptionHandler) {
-        if (!exceptionHandlers.contains(exceptionHandler)) {
-            exceptionHandlers.add(exceptionHandler);
+    synchronized public void addExceptionHandler(ExceptionListener exceptionListener) {
+        if (!exceptionListeners.contains(exceptionListener)) {
+            exceptionListeners.add(exceptionListener);
         }
     }
 
-    synchronized public void removeExceptionHandler(ExceptionHandler exceptionHandler) {
-        exceptionHandlers.remove(exceptionHandler);
+    synchronized public void removeExceptionHandler(ExceptionListener exceptionListener) {
+        exceptionListeners.remove(exceptionListener);
     }
 
     synchronized public void addPacketListener(PacketListener packetListener) {
@@ -93,8 +93,8 @@ public class EthernetConnection implements Connection {
                             FrameworkException frameworkException = new FrameworkException(e);
 
                             //call exception handlers
-                            for (int i = 0; i < exceptionHandlers.size(); i++) {
-                                exceptionHandlers.get(i).onException(frameworkException);
+                            for (int i = 0; i < exceptionListeners.size(); i++) {
+                                exceptionListeners.get(i).onException(frameworkException);
                             }
 
                             break;
@@ -103,7 +103,7 @@ public class EthernetConnection implements Connection {
                         CANPacket canPacket = new CANPacket(datagramPacket.getData());
 
                         for (int i = 0; i < packetListeners.size(); i++) {
-                            packetListeners.get(i).packetEvent(new PacketEvent(canPacket));
+                            packetListeners.get(i).onPacketEvent(new PacketEvent(canPacket));
                         }
                     }
                 }

@@ -1,10 +1,8 @@
 package de.cortex42.maerklin.framework.scripting;
 
-import de.cortex42.maerklin.framework.CANPacket;
 import de.cortex42.maerklin.framework.CS2CANCommands;
 import de.cortex42.maerklin.framework.FrameworkException;
-import de.cortex42.maerklin.framework.packetlistener.PacketEvent;
-import de.cortex42.maerklin.framework.packetlistener.PacketListener;
+import de.cortex42.maerklin.framework.packetlistener.VelocityPacketListener;
 
 /**
  * Created by ivo on 20.11.15.
@@ -17,14 +15,14 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
     private final long DELAY = 250L;
     private final static long DEFAULT_TIMEOUT = 60000L; //60s
 
-    public ScriptBooleanEventTrainVelocity(ScriptContext scriptContext, int locId, int velocity, long timeout) {
+    public ScriptBooleanEventTrainVelocity(final ScriptContext scriptContext, final int locId, final int velocity, final long timeout) {
         this.scriptContext = scriptContext;
         this.locId = locId;
         this.velocity = velocity;
         this.timeout = timeout;
     }
 
-    public ScriptBooleanEventTrainVelocity(ScriptContext scriptContext, int locId, int velocity) {
+    public ScriptBooleanEventTrainVelocity(final ScriptContext scriptContext, final int locId, final int velocity) {
         this(scriptContext, locId, velocity, DEFAULT_TIMEOUT);
     }
 
@@ -36,23 +34,16 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
     private boolean check() throws FrameworkException {
         WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
-        PacketListener packetListener = new PacketListener() {
+        VelocityPacketListener velocityPacketListener = new VelocityPacketListener() {
             @Override
-            public void packetEvent(PacketEvent packetEvent) {
-                CANPacket canPacket = packetEvent.getCANPacket();
-
-                if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.VELOCITY
-                        && canPacket.getDlc() == CS2CANCommands.VELOCITY_SET_DLC) {
-                    int velocityValue = (((canPacket.getData()[4] & 0xFF) << 8) | (canPacket.getData()[5] & 0xFF));
-
-                    if (velocityValue == velocity) {
-                        waitingThreadExchangeObject.value = true;
-                    }
+            public void onSuccess() {
+                if (getVelocity() == velocity) {
+                    waitingThreadExchangeObject.value = true;
                 }
             }
         };
 
-        scriptContext.addPacketListener(packetListener);
+        scriptContext.addPacketListener(velocityPacketListener);
 
         long counter = 0L;
         while (!waitingThreadExchangeObject.value) {
@@ -69,7 +60,7 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
             } catch (InterruptedException e) {
                 throw new FrameworkException(e);
             } finally {
-                scriptContext.removePacketListener(packetListener);
+                scriptContext.removePacketListener(velocityPacketListener);
             }
         }
 

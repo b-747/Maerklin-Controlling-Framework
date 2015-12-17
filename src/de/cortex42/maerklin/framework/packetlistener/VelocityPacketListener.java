@@ -6,19 +6,24 @@ import de.cortex42.maerklin.framework.CS2CANCommands;
 /**
  * Created by ivo on 16.12.15.
  */
-public abstract class VelocityPacketListener implements PacketListener {
+public abstract class VelocityPacketListener extends PacketListener {
+    private int velocity;
+
     @Override
-    public void packetEvent(final PacketEvent packetEvent) {
+    public void onPacketEvent(final PacketEvent packetEvent) {
         CANPacket canPacket = packetEvent.getCANPacket();
 
-        if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.VELOCITY) {
+        if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.VELOCITY
+                && (canPacket.getDlc() == CS2CANCommands.VELOCITY_SET_DLC)) {
             byte[] data = canPacket.getData();
 
-            int velocity = ((data[4] & 0xFF) << 8 | (data[5] & 0xFF));
+            velocity = ((data[4] & 0xFF) << 8 | (data[5] & 0xFF));
 
-
+            onSuccess();
         }
     }
 
-    public abstract void callback();
+    public int getVelocity() {
+        return velocity;
+    }
 }

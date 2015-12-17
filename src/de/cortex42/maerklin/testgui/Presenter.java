@@ -4,6 +4,7 @@ import de.cortex42.maerklin.framework.*;
 import de.cortex42.maerklin.framework.packetlistener.ConfigDataStreamPacketListener;
 import de.cortex42.maerklin.framework.packetlistener.PacketEvent;
 import de.cortex42.maerklin.framework.packetlistener.PacketListener;
+import de.cortex42.maerklin.framework.packetlistener.VelocityPacketListener;
 
 /**
  * Created by ivo on 21.10.15.
@@ -21,7 +22,7 @@ public class Presenter {
     private final static int STOP_BITS = 1;
     private final static int PARITY_BIT = 0;
 
-/*
+/* //todo
     private static final int MFX_RANGE = 16384; //new byte[]{0x00, 0x00, 0x40, 0x00};
     private static final int MM_RANGE = 0; //new byte[]{0x00, 0x00, 0x00, 0x00};
     private static final int MM2_EQUIPMENT_RANGE = 12288; //new byte[]{0x00, 0x00, 0x30, 0x00};
@@ -116,24 +117,10 @@ public class Presenter {
         int[] velocity = new int[1];
 
         addPacketListener(
-                new PacketListener() {
+                new VelocityPacketListener() {
                     @Override
-                    public void packetEvent(PacketEvent packetEvent) {
-                        byte command = packetEvent.getCANPacket().getCommand();
-
-                        if((command & CS2CANCommands.RESPONSE) == CS2CANCommands.RESPONSE){
-                            //toggle reponse bit
-                            command = (byte)(command & ~CS2CANCommands.RESPONSE);
-                        }
-
-                        if (command != CS2CANCommands.VELOCITY) {
-                            return;
-                        }
-
-                        byte[] data = packetEvent.getCANPacket().getData();
-                        byte[] velocityBytes = new byte[]{data[4], data[5]};
-                        velocity[0] = ((velocityBytes[0] & 0xFF) << 8 | (velocityBytes[1] & 0xFF));
-
+                    public void onSuccess() {
+                        velocity[0] = getVelocity();
                         removePacketListener(this);
                     }
                 }
@@ -142,23 +129,26 @@ public class Presenter {
         sendPacket(CS2CANCommands.queryVelocity(loc));
         pause(DEFAULT_DELAY);
 
-
         sendPacket(CS2CANCommands.setDirection(loc, CS2CANCommands.DIRECTION_TOGGLE));
         pause(DEFAULT_DELAY);
 
         addPacketListener(
                 new PacketListener() {
+                    private byte direction;
+
                     @Override
-                    public void packetEvent(PacketEvent packetEvent) {
-                        byte command = packetEvent.getCANPacket().getCommand();
+                    public void onPacketEvent(PacketEvent packetEvent) {
+                        CANPacket canPacket = packetEvent.getCANPacket();
 
-                        if ((command & 0xFE) != CS2CANCommands.DIRECTION) {
-                            return;
+                        if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.DIRECTION
+                                && (canPacket.getDlc() == CS2CANCommands.DIRECTION_SET_DLC)) {
+
+                            direction = canPacket.getData()[4];
                         }
+                    }
 
-                        byte[] data = packetEvent.getCANPacket().getData();
-                        byte direction = data[4];
-
+                    @Override
+                    public void onSuccess() {
                         switch (direction) {
                             case CS2CANCommands.DIRECTION_FORWARD:
                                 view.setDirection("FORWARD");
@@ -170,10 +160,10 @@ public class Presenter {
                         }
 
                         removePacketListener(this);
-
                     }
                 }
         );
+
         sendVelocity(velocity[0]);
         pause(DEFAULT_DELAY);
 
@@ -187,35 +177,12 @@ public class Presenter {
         connection.close();
     }
 
-    private void sendQueryVelocity(){
-        addPacketListener(
-                new PacketListener() {
-                    @Override
-                    public void packetEvent(PacketEvent packetEvent) {
-                        byte command = packetEvent.getCANPacket().getCommand();
-
-                        if ((command & 0xFE) != CS2CANCommands.VELOCITY
-                                && packetEvent.getCANPacket().getDlc() != CS2CANCommands.VELOCITY_SET_DLC) {
-                            return;
-                        }
-
-                        byte[] data = packetEvent.getCANPacket().getData();
-                        byte[] velocityBytes = new byte[]{data[4], data[5]};
-                        int velocity = (((velocityBytes[0] & 0xFF) << 8) | (velocityBytes[1] & 0xFF));
-                        view.setVelocity(velocity);
-
-                        removePacketListener(this);
-                    }
-                }
-        );
-
-        sendPacket(CS2CANCommands.queryVelocity(loc));
-    }
-
     public void sendGetLoks() {
         ConfigDataStreamPacketListener configDataStreamPacketListener = new ConfigDataStreamPacketListener() {
             @Override
-            public void bytesDecompressed(final byte[] decompressedBytes) {
+            public void onSuccess() {
+                byte[] decompressedBytes = getDecompressedBytes();
+
                 StringBuilder stringBuilder = new StringBuilder();
                 for (int i = 0; i < decompressedBytes.length; i++) {
                     stringBuilder.append((char) decompressedBytes[i]);
@@ -227,7 +194,7 @@ public class Presenter {
             }
         };
 
-        configDataStreamPacketListener.addExceptionHandler(new ExceptionHandler() {
+        configDataStreamPacketListener.setExceptionListener(new ExceptionListener() {
             @Override
             public void onException(final FrameworkException frameworkException) {
                 view.showException(frameworkException);

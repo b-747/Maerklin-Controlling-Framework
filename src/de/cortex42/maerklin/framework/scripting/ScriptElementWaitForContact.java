@@ -40,7 +40,7 @@ public class ScriptElementWaitForContact extends ScriptElement {
         scriptContext.addPacketListener(
                 new PacketListener() {
                     @Override
-                    public void packetEvent(PacketEvent packetEvent) {
+                    public void onPacketEvent(PacketEvent packetEvent) {
                         CANPacket canPacket = packetEvent.getCANPacket();
 
                         if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT //for response bit
