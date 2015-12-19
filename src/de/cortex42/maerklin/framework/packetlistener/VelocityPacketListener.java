@@ -2,6 +2,7 @@ package de.cortex42.maerklin.framework.packetlistener;
 
 import de.cortex42.maerklin.framework.CANPacket;
 import de.cortex42.maerklin.framework.CS2CANCommands;
+import de.cortex42.maerklin.framework.FrameworkException;
 
 /**
  * Created by ivo on 16.12.15.
@@ -21,6 +22,11 @@ public abstract class VelocityPacketListener extends PacketListener {
 
             onSuccess();
         }
+    }
+
+    @Override
+    public void onException(final FrameworkException frameworkException) {
+        //never happens
     }
 
     public int getVelocity() {

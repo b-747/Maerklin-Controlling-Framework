@@ -102,7 +102,7 @@ public final class TestScript {
         ScriptElementConditionChecker scriptElementConditionChecker = new ScriptElementConditionChecker(
                 new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, CONTACT_1001)) //when reaching contact 1001
                         .or((new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, CONTACT_1))) //or ((reaching contact 1)
-                                .and(new ScriptCondition(new ScriptBooleanEventContactFree(scriptContext, CONTACT_1, 200L)))) //and contact 1 remains free for 200ms)
+                                .and(new ScriptCondition(new ScriptBooleanEventContactFree(scriptContext, CONTACT_1, 200L)))) //and contact 1 remains free for 200ms) //todo vertauschen und testen
         );
         scriptElementConditionChecker.next = new ScriptElementSetVelocity(LOCO_5, STOP); //then stop loco 5
 

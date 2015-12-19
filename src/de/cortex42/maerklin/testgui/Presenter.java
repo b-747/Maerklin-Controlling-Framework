@@ -2,7 +2,7 @@ package de.cortex42.maerklin.testgui;
 
 import de.cortex42.maerklin.framework.*;
 import de.cortex42.maerklin.framework.packetlistener.ConfigDataStreamPacketListener;
-import de.cortex42.maerklin.framework.packetlistener.PacketEvent;
+import de.cortex42.maerklin.framework.packetlistener.DirectionPacketListener;
 import de.cortex42.maerklin.framework.packetlistener.PacketListener;
 import de.cortex42.maerklin.framework.packetlistener.VelocityPacketListener;
 
@@ -133,32 +133,10 @@ public class Presenter {
         pause(DEFAULT_DELAY);
 
         addPacketListener(
-                new PacketListener() {
-                    private byte direction;
-
-                    @Override
-                    public void onPacketEvent(final PacketEvent packetEvent) {
-                        CANPacket canPacket = packetEvent.getCANPacket();
-
-                        if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.DIRECTION
-                                && (canPacket.getDlc() == CS2CANCommands.DIRECTION_SET_DLC)) {
-
-                            direction = canPacket.getData()[4];
-                        }
-                    }
-
+                new DirectionPacketListener() {
                     @Override
                     public void onSuccess() {
-                        switch (direction) {
-                            case CS2CANCommands.DIRECTION_FORWARD:
-                                view.setDirection("FORWARD");
-                                break;
-
-                            case CS2CANCommands.DIRECTION_BACKWARD:
-                                view.setDirection("BACKWARD");
-                                break;
-                        }
-
+                        view.setDirection(getDirection().name());
                         removePacketListener(this);
                     }
                 }
@@ -178,7 +156,7 @@ public class Presenter {
     }
 
     public void sendGetLocos() {
-        ConfigDataStreamPacketListener configDataStreamPacketListener = new ConfigDataStreamPacketListener() {
+        addPacketListener(new ConfigDataStreamPacketListener() {
             @Override
             public void onSuccess() {
                 byte[] decompressedBytes = getDecompressedBytes();
@@ -192,17 +170,13 @@ public class Presenter {
 
                 removePacketListener(this);
             }
-        };
 
-        configDataStreamPacketListener.setExceptionListener(new ExceptionListener() {
             @Override
             public void onException(final FrameworkException frameworkException) {
                 view.showException(frameworkException);
                 //frameworkException.getCause() //todo gets inner exception
             }
         });
-
-        addPacketListener(configDataStreamPacketListener);
 
         sendPacket(CS2CANCommands.requestConfigData("loks"));
     }

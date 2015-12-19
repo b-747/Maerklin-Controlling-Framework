@@ -16,7 +16,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
     private final int contactId;
     private final long freeTime;
     private final long timeout;
-    private final static long DEFAULT_TIMEOUT = 60000; //60s
+    private final static long DEFAULT_TIMEOUT = 60000L; //60s
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
@@ -42,7 +42,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
 
         S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, false) {
             @Override
-            public void onSuccess() {
+            public void onSuccess() { //contact free
                 lock.lock();
                 waitingThreadExchangeObject.value = true;
                 condition.signal();

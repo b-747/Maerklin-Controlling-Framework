@@ -78,9 +78,7 @@ public abstract class ConfigDataStreamPacketListener extends PacketListener {
                             int calculatedCRC = ConfigDataHelper.calcCRC(compressedBytes); //calculate crc over ALL bytes
 
                             if (calculatedCRC != crc) {
-                                if (exceptionListener != null) {
-                                    exceptionListener.onException(new ConfigDataCrcException(String.format("Incorrect crc value %d but expected %d", calculatedCRC, crc)));
-                                }
+                                onException(new ConfigDataCrcException(String.format("Incorrect crc value %d but expected %d", calculatedCRC, crc)));
                                 return;
                             }
 
@@ -90,9 +88,7 @@ public abstract class ConfigDataStreamPacketListener extends PacketListener {
                             decompressedBytes = ConfigDataHelper.decompressBytes(tempBuffer, decompressedFileLength);
                         }
                     } else {
-                        if (exceptionListener != null) {
-                            exceptionListener.onException(new ConfigDataMissingRequestResponseException("Config data stream packet received without previous request response packet."));
-                        }
+                        onException(new ConfigDataMissingRequestResponseException("Config data stream packet received without previous request response packet."));
                     }
                     break;
 

@@ -2,6 +2,7 @@ package de.cortex42.maerklin.framework.packetlistener;
 
 import de.cortex42.maerklin.framework.CANPacket;
 import de.cortex42.maerklin.framework.CS2CANCommands;
+import de.cortex42.maerklin.framework.FrameworkException;
 
 /**
  * Created by ivo on 17.12.15.
@@ -33,5 +34,10 @@ public abstract class S88EventPacketListener extends PacketListener {
                 && (positionDoesNotMatter || (canPacket.getData()[5] == (positionOn ? CS2CANCommands.EQUIPMENT_POSITION_ON : CS2CANCommands.EQUIPMENT_POSITION_OFF)))) {
             onSuccess();
         }
+    }
+
+    @Override
+    public void onException(final FrameworkException frameworkException){
+        //never happens
     }
 }

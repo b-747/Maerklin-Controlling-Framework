@@ -15,7 +15,7 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
     private final ScriptContext scriptContext;
     private final int contactId;
     private final long timeout;
-    private final static long DEFAULT_TIMEOUT = 60000; //60s
+    private final static long DEFAULT_TIMEOUT = 60000L; //60s
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
