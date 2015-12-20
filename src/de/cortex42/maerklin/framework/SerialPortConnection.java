@@ -22,7 +22,7 @@ public class SerialPortConnection implements Connection {
         serialPort = SerialPort.getCommPort(systemPortName);
 
         serialPort.setComPortParameters(baud, dataBits, stopBits, parityBit);
-        serialPort.setFlowControl(SerialPort.FLOW_CONTROL_CTS_ENABLED);
+        serialPort.setFlowControl(SerialPort.FLOW_CONTROL_CTS_ENABLED); //todo
 
         if (!serialPort.openPort()) {
             throw new SerialPortException("Could not open the serial port.");
