@@ -14,7 +14,7 @@ public final class CS2CANCommands {
     /* //todo
     *
     * Hash 0x0300: wird gebildet aus UID 0x00000000 oder 0xFFFFFFFF (sollte also mit real existierender Hardware nicht kollidieren)
-    *
+    *                               Geräte-UID 0x00000000 ist die Broadcastadresse, 0xFFFFFFFF ist ungültig und steht für eine nicht initialisierte UID des Endgerätes.
     public static int calcHash(int uid) {
         return (((uid >> 16) ^ (uid & 0xFFFF)) & 0xFF7F) | 0x0300;
        (upper 16 bits XOR lower 16 bits) AND Bit7=0 OR Bit8/9=1

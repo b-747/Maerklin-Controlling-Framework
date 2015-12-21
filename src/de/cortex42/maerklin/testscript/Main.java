@@ -14,10 +14,9 @@ public class Main {
         int CS2_PORT = 15731;
         String CS2_IP_ADDRESS = "192.168.16.2";
 
-        try (EthernetConnection ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, CS2_IP_ADDRESS)) {
+        try (EthernetConnection ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, CS2_IP_ADDRESS)) { //todo mit gleisbox testen
             Script script = TestScript.getTestScript(new ScriptContext(ethernetConnection));
             script.execute();
-
         } catch (FrameworkException e) {
             e.printStackTrace();
         }

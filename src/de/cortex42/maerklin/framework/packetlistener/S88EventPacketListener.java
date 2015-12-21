@@ -37,7 +37,7 @@ public abstract class S88EventPacketListener extends PacketListener {
     }
 
     @Override
-    public void onException(final FrameworkException frameworkException){
+    public void onException(final FrameworkException frameworkException) {
         //never happens
     }
 }
