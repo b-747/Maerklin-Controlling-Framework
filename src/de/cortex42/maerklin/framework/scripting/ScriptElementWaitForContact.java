@@ -32,15 +32,16 @@ public class ScriptElementWaitForContact extends ScriptElement {
 
     @Override
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
-        WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
 
-        S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, positionOn) {
+        final S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, positionOn) {
             @Override
             public void onSuccess() {
                 lock.lock();
-                waitingThreadExchangeObject.value = true;
-                condition.signal();
-                lock.unlock();
+                try {
+                    condition.signal();
+                } finally {
+                    lock.unlock();
+                }
             }
         };
 
@@ -52,7 +53,7 @@ public class ScriptElementWaitForContact extends ScriptElement {
                 //timeout
                 throw new ScriptElementWaitTimeoutException();
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new FrameworkException(e);
         } finally {
             lock.unlock();

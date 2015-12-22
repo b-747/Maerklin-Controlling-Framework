@@ -20,13 +20,11 @@ public abstract class DirectionPacketListener extends PacketListener {
 
     @Override
     public void onPacketEvent(final PacketEvent packetEvent) {
-        CANPacket canPacket = packetEvent.getCANPacket();
+        final CANPacket canPacket = packetEvent.getCANPacket();
 
         if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.DIRECTION
                 && (canPacket.getDlc() == CS2CANCommands.DIRECTION_SET_DLC)) {
-            byte[] data = canPacket.getData();
-
-            byte directionByte = canPacket.getData()[4];
+            final byte directionByte = canPacket.getData()[4];
 
             switch (directionByte) {
                 case CS2CANCommands.DIRECTION_MAINTAIN:

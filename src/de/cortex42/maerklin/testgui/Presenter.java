@@ -70,7 +70,7 @@ public class Presenter {
             } else {
                 connection = new SerialPortConnection(serialPort, BAUD, DATA_BITS, STOP_BITS, PARITY_BIT);
             }
-        } catch (FrameworkException e) {
+        } catch (final FrameworkException e) {
             view.showException(e);
         }
     }
@@ -114,7 +114,7 @@ public class Presenter {
     }
 
     public void sendToggleDirection() {
-        int[] velocity = new int[1];
+        final int[] velocity = new int[1];
 
         addPacketListener(
                 new VelocityPacketListener() {
@@ -159,9 +159,9 @@ public class Presenter {
         addPacketListener(new ConfigDataStreamPacketListener() {
             @Override
             public void onSuccess() {
-                byte[] decompressedBytes = getDecompressedBytes();
+                final byte[] decompressedBytes = getDecompressedBytes();
 
-                StringBuilder stringBuilder = new StringBuilder();
+                final StringBuilder stringBuilder = new StringBuilder();
                 for (int i = 0; i < decompressedBytes.length; i++) {
                     stringBuilder.append((char) decompressedBytes[i]);
                 }
@@ -184,7 +184,7 @@ public class Presenter {
     private void sendPacket(final CANPacket canPacket) {
         try {
             connection.writeCANPacket(canPacket);
-        } catch (FrameworkException e) {
+        } catch (final FrameworkException e) {
             view.showException(e);
         }
     }
@@ -200,7 +200,7 @@ public class Presenter {
     private void pause(final long ms) {
         try {
             Thread.sleep(ms);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             view.showException(e);
         }
     }

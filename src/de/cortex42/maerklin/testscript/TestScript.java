@@ -44,7 +44,7 @@ public final class TestScript {
 
     public static Script getTestScript(final ScriptContext scriptContext) throws FrameworkException {
         ScriptElement last;
-        Script s = new Script(scriptContext);
+        final Script s = new Script(scriptContext);
 
         last = s.first = new ScriptElementSwitch(RAILWAY_SWITCH_1, 1); //railway switch 1 right
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_2, 0); //railway switch 2 right
@@ -86,12 +86,12 @@ public final class TestScript {
 
         //-------------------------------parallel-------------------------------
 
-        ScriptElementConditionChecker scriptElementConditionCheckerReach8 = new ScriptElementConditionChecker(
+        final ScriptElementConditionChecker scriptElementConditionCheckerReach8 = new ScriptElementConditionChecker(
                 new ScriptCondition(
                         new ScriptBooleanEventContactReached(scriptContext, CONTACT_8))); //reach contact 8
         scriptElementConditionCheckerReach8.next = new ScriptElementSetVelocity(LOCO_7, SLOW); //loco 7 slow
 
-        ScriptElementConditionChecker scriptElementConditionCheckerReach4 = new ScriptElementConditionChecker(
+        final ScriptElementConditionChecker scriptElementConditionCheckerReach4 = new ScriptElementConditionChecker(
                 new ScriptCondition(
                         new ScriptBooleanEventContactReached(scriptContext, CONTACT_4))); //reach contact 4
         scriptElementConditionCheckerReach4.next = new ScriptElementSetVelocity(LOCO_7, STOP); //loco 7 stop
@@ -99,7 +99,7 @@ public final class TestScript {
         scriptElementConditionCheckerReach8.next.next = scriptElementConditionCheckerReach4;
 
 
-        ScriptElementConditionChecker scriptElementConditionChecker = new ScriptElementConditionChecker(
+        final ScriptElementConditionChecker scriptElementConditionChecker = new ScriptElementConditionChecker(
                 new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, CONTACT_1001)) //when reaching contact 1001
                         .or((new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, CONTACT_1))) //or ((reaching contact 1)
                                 .and(new ScriptCondition(new ScriptBooleanEventContactFree(scriptContext, CONTACT_1, 200L)))) //and contact 1 remains free for 200ms) //todo vertauschen und testen
@@ -107,7 +107,7 @@ public final class TestScript {
         scriptElementConditionChecker.next = new ScriptElementSetVelocity(LOCO_5, STOP); //then stop loco 5
 
 
-        ArrayList<ScriptElement> scriptElementConditionCheckers = new ArrayList<>();
+        final ArrayList<ScriptElement> scriptElementConditionCheckers = new ArrayList<>();
         scriptElementConditionCheckers.add(scriptElementConditionCheckerReach8);
         scriptElementConditionCheckers.add(scriptElementConditionChecker);
 
@@ -115,7 +115,7 @@ public final class TestScript {
         //-------------------------------parallel-------------------------------
 
 
-        ScriptElementConditionChecker scriptElementConditionChecker5And7Stopped = new ScriptElementConditionChecker(
+        final ScriptElementConditionChecker scriptElementConditionChecker5And7Stopped = new ScriptElementConditionChecker(
                 new ScriptCondition(new ScriptBooleanEventTrainVelocity(scriptContext, LOCO_5, 0)) //loco 5 stopped
                         .and(new ScriptCondition(new ScriptBooleanEventTrainVelocity(scriptContext, LOCO_7, 0))) //loco 7 stopped
         );

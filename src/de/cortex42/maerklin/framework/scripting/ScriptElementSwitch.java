@@ -30,7 +30,7 @@ public class ScriptElementSwitch extends ScriptElement {
 
         try {
             Thread.sleep(switchDelay);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new FrameworkException(e);
         }
 

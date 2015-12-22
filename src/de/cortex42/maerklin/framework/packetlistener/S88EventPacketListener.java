@@ -26,7 +26,7 @@ public abstract class S88EventPacketListener extends PacketListener {
 
     @Override
     public void onPacketEvent(final PacketEvent packetEvent) {
-        CANPacket canPacket = packetEvent.getCANPacket();
+        final CANPacket canPacket = packetEvent.getCANPacket();
 
         if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT
                 && canPacket.getDlc() == CS2CANCommands.S88_EVENT_RESPONSE_DLC

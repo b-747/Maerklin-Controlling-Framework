@@ -16,7 +16,7 @@ public class ScriptElementWait extends ScriptElement {
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
         try {
             Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new FrameworkException(e);
         }
     }

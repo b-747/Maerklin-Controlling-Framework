@@ -36,15 +36,18 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
     }
 
     private boolean check() throws FrameworkException {
-        WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
+        final ThreadExchangeObject threadExchangeObject = new ThreadExchangeObject();
 
-        S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, true) {
+        final S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, true) {
             @Override
             public void onSuccess() {
                 lock.lock();
-                waitingThreadExchangeObject.value = true;
-                condition.signal();
-                lock.unlock();
+                try {
+                    threadExchangeObject.value = true;
+                    condition.signal();
+                } finally {
+                    lock.unlock();
+                }
             }
         };
 
@@ -56,13 +59,13 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
                 //timeout
                 return false;
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new FrameworkException(e);
         } finally {
             lock.unlock();
             scriptContext.removePacketListener(s88EventPacketListener);
         }
 
-        return waitingThreadExchangeObject.value;
+        return threadExchangeObject.value;
     }
 }

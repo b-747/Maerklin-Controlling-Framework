@@ -103,7 +103,7 @@ public class CANPacket {
      * @return all bytes together (13 bytes)
      */
     public byte[] getBytes() {
-        byte[] bytes = new byte[13];
+        final byte[] bytes = new byte[13];
 
         bytes[0] = priority;
         bytes[1] = command;

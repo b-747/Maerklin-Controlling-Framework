@@ -36,7 +36,7 @@ public abstract class ConfigDataStreamPacketListener extends PacketListener {
     }
 
     private void processConfigDataStreamPacket(final CANPacket canPacket) {
-        byte[] dataBytes = canPacket.getData();
+        final byte[] dataBytes = canPacket.getData();
 
         if (canPacket.getCommand() == CS2CANCommands.GET_CONFIG_DATA_STREAM) {
             switch (canPacket.getDlc()) {
@@ -44,11 +44,11 @@ public abstract class ConfigDataStreamPacketListener extends PacketListener {
                 case CS2CANCommands.GET_CONFIG_DATA_STREAM_REQUEST_RESPONSE_DLC:
                     configDataRequestResponseReceived = true;
 
-                    byte[] compressedFileLengthBytes = new byte[]{dataBytes[0], dataBytes[1], dataBytes[2], dataBytes[3]};
+                    final byte[] compressedFileLengthBytes = new byte[]{dataBytes[0], dataBytes[1], dataBytes[2], dataBytes[3]};
                     compressedFileLength = ((compressedFileLengthBytes[0] & 0xFF) << 24) | ((compressedFileLengthBytes[1] & 0xFF) << 16)
                             | ((compressedFileLengthBytes[2] & 0xFF) << 8) | ((compressedFileLengthBytes[3] & 0xFF) /*<<0*/);
 
-                    int remainder = compressedFileLength % 8;
+                    final int remainder = compressedFileLength % 8;
                     if (remainder > 0) {
                         compressedFileLength += 8 - remainder; //fill up
                     }
@@ -69,20 +69,20 @@ public abstract class ConfigDataStreamPacketListener extends PacketListener {
                         if (!firstDataPacketReceived) {
                             firstDataPacketReceived = true;
 
-                            byte[] decompressedFileLengthBytes = new byte[]{compressedBytes[0], compressedBytes[1], compressedBytes[2], compressedBytes[3]};
+                            final byte[] decompressedFileLengthBytes = new byte[]{compressedBytes[0], compressedBytes[1], compressedBytes[2], compressedBytes[3]};
                             decompressedFileLength = ((decompressedFileLengthBytes[0] & 0xFF) << 24) | ((decompressedFileLengthBytes[1] & 0xFF) << 16)
                                     | ((decompressedFileLengthBytes[2] & 0xFF) << 8) | ((decompressedFileLengthBytes[3] & 0xFF) /*<<0*/);
                         }
 
                         if (bytesReceived == compressedBytes.length) {
-                            int calculatedCRC = ConfigDataHelper.calcCRC(compressedBytes); //calculate crc over ALL bytes
+                            final int calculatedCRC = ConfigDataHelper.calcCRC(compressedBytes); //calculate crc over ALL bytes
 
                             if (calculatedCRC != crc) {
                                 onException(new ConfigDataCrcException(String.format("Incorrect crc value %d but expected %d", calculatedCRC, crc)));
                                 return;
                             }
 
-                            byte[] tempBuffer = new byte[compressedFileLength - 4];
+                            final byte[] tempBuffer = new byte[compressedFileLength - 4];
                             System.arraycopy(compressedBytes, 4, tempBuffer, 0, tempBuffer.length); //Skip decompressed file length bytes
 
                             decompressedBytes = ConfigDataHelper.decompressBytes(tempBuffer, decompressedFileLength);

@@ -16,21 +16,21 @@ public class ScriptElementParallel extends ScriptElement {
 
     @Override
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
-        int scriptConditionCheckerCount = scriptElements.size();
+        final int scriptConditionCheckerCount = scriptElements.size();
 
-        FrameworkException[] threadFrameworkExceptions = new FrameworkException[scriptConditionCheckerCount];
+        final FrameworkException[] threadFrameworkExceptions = new FrameworkException[scriptConditionCheckerCount];
 
-        Thread[] threads = new Thread[scriptConditionCheckerCount];
+        final Thread[] threads = new Thread[scriptConditionCheckerCount];
 
         for (int i = 0; i < threads.length; i++) {
-            int finalI = i;
+            final int finalI = i;
 
             threads[i] = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         scriptElements.get(finalI).execute(scriptContext);
-                    } catch (FrameworkException e) {
+                    } catch (final FrameworkException e) {
                         threadFrameworkExceptions[finalI] = e;
                     }
                 }
@@ -41,7 +41,7 @@ public class ScriptElementParallel extends ScriptElement {
         for (int i = 0; i < threads.length; i++) {
             try {
                 threads[i].join(); //wait for all threads to finish
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 throw new FrameworkException(e);
             }
         }

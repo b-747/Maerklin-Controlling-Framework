@@ -43,7 +43,7 @@ public class View {
     public View() {
         $$$setupUI$$$();
         //only one radio button can be selected at a time in the group
-        ButtonGroup buttonGroup = new ButtonGroup();
+        final ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(radioButtonEthernet);
         buttonGroup.add(radioButtonSerialPort);
 
@@ -105,10 +105,10 @@ public class View {
         sliderVelocity.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(final ChangeEvent changeEvent) {
-                Object source = changeEvent.getSource();
+                final Object source = changeEvent.getSource();
 
                 if (source instanceof JSlider) {
-                    int velocity = sliderVelocity.getValue();
+                    final int velocity = sliderVelocity.getValue();
                     sliderVelocity.setToolTipText(Integer.toString(velocity));
 
                     if (!sliderVelocity.getValueIsAdjusting()) { //todo try without this line
@@ -189,7 +189,7 @@ public class View {
     private void createUIComponents() {
         try {
             formattedTextFieldIpAddress = new JFormattedTextField(new MaskFormatter("###.###.###.###"));
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             //never happens
         }
     }

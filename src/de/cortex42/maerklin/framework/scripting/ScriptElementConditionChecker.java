@@ -17,8 +17,8 @@ public class ScriptElementConditionChecker extends ScriptElement {
     }
 
     @Override
-    public void executeElement(ScriptContext scriptContext) throws FrameworkException {
-        boolean conditionMet = check();
+    public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
+        final boolean conditionMet = check();
 
         if (!conditionMet) {
             next = null; //condition not met -> do not execute the next element

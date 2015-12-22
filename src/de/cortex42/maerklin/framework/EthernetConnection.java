@@ -20,7 +20,7 @@ public class EthernetConnection implements Connection {
 
     private final ArrayList<PacketListener> packetListeners = new ArrayList<>();
     private final ArrayList<ExceptionListener> exceptionListeners = new ArrayList<>();
-    private boolean isListening = false;
+    private volatile boolean isListening = false; //volatile for listening thread
 
     public EthernetConnection(final int localPort, final int targetPort, final String targetAddress) throws FrameworkException {
         this.targetPort = targetPort;
@@ -29,7 +29,7 @@ public class EthernetConnection implements Connection {
             this.targetAddress = InetAddress.getByName(targetAddress);
 
             datagramSocket = new DatagramSocket(localPort);
-        } catch (SocketException | UnknownHostException e) {
+        } catch (final SocketException | UnknownHostException e) {
             throw new FrameworkException(e);
         }
     }
@@ -41,13 +41,13 @@ public class EthernetConnection implements Connection {
     }
 
     synchronized public void writeCANPacket(final CANPacket canPacket) throws FrameworkException {
-        byte[] bytes = canPacket.getBytes();
+        final byte[] bytes = canPacket.getBytes();
 
-        DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, targetAddress, targetPort);
+        final DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, targetAddress, targetPort);
 
         try {
             datagramSocket.send(datagramPacket);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new FrameworkException(e);
         }
     }
@@ -82,15 +82,15 @@ public class EthernetConnection implements Connection {
         if (!isListening) {
             isListening = true;
 
-            Thread thread = new Thread(new Runnable() {
+            final Thread thread = new Thread(new Runnable() {
                 public void run() {
                     while (isListening) {
-                        DatagramPacket datagramPacket = new DatagramPacket(new byte[CANPacket.CAN_PACKET_SIZE], CANPacket.CAN_PACKET_SIZE);
+                        final DatagramPacket datagramPacket = new DatagramPacket(new byte[CANPacket.CAN_PACKET_SIZE], CANPacket.CAN_PACKET_SIZE);
 
                         try {
                             datagramSocket.receive(datagramPacket);
-                        } catch (IOException e) {
-                            FrameworkException frameworkException = new FrameworkException(e);
+                        } catch (final IOException e) {
+                            final FrameworkException frameworkException = new FrameworkException(e);
 
                             //call exception handlers
                             for (int i = 0; i < exceptionListeners.size(); i++) {
@@ -100,7 +100,7 @@ public class EthernetConnection implements Connection {
                             break;
                         }
 
-                        CANPacket canPacket = new CANPacket(datagramPacket.getData());
+                        final CANPacket canPacket = new CANPacket(datagramPacket.getData());
 
                         for (int i = 0; i < packetListeners.size(); i++) {
                             packetListeners.get(i).onPacketEvent(new PacketEvent(canPacket));

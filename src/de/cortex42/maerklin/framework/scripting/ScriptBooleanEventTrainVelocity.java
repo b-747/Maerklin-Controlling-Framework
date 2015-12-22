@@ -32,13 +32,13 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
     }
 
     private boolean check() throws FrameworkException {
-        WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
+        final ThreadExchangeObject threadExchangeObject = new ThreadExchangeObject();
 
-        VelocityPacketListener velocityPacketListener = new VelocityPacketListener() {
+        final VelocityPacketListener velocityPacketListener = new VelocityPacketListener() {
             @Override
             public void onSuccess() {
                 if (getVelocity() == velocity) {
-                    waitingThreadExchangeObject.value = true;
+                    threadExchangeObject.value = true;
                 }
             }
         };
@@ -46,7 +46,7 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
         scriptContext.addPacketListener(velocityPacketListener);
 
         long counter = 0L;
-        while (!waitingThreadExchangeObject.value) {
+        while (!threadExchangeObject.value) {
             scriptContext.writeCANPacket(CS2CANCommands.queryVelocity(locId));
 
             try {
@@ -57,13 +57,13 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
                     //timeout
                     return false;
                 }
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 throw new FrameworkException(e);
             } finally {
                 scriptContext.removePacketListener(velocityPacketListener);
             }
         }
 
-        return waitingThreadExchangeObject.value;
+        return threadExchangeObject.value;
     }
 }

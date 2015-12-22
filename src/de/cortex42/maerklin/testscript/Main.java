@@ -10,14 +10,14 @@ import de.cortex42.maerklin.framework.scripting.ScriptContext;
  */
 public class Main {
     public static void main(String[] args) {
-        int PC_PORT = 15730;
-        int CS2_PORT = 15731;
-        String CS2_IP_ADDRESS = "192.168.16.2";
+        final int PC_PORT = 15730;
+        final int CS2_PORT = 15731;
+        final String CS2_IP_ADDRESS = "192.168.16.2";
 
         try (EthernetConnection ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, CS2_IP_ADDRESS)) { //todo mit gleisbox testen
-            Script script = TestScript.getTestScript(new ScriptContext(ethernetConnection));
+            final Script script = TestScript.getTestScript(new ScriptContext(ethernetConnection));
             script.execute();
-        } catch (FrameworkException e) {
+        } catch (final FrameworkException e) {
             e.printStackTrace();
         }
     }

@@ -30,10 +30,10 @@ public class SerialPortConnection implements Connection {
     }
 
     public static ArrayList<String> getAvailableSerialPorts() {
-        SerialPort[] serialPorts = SerialPort.getCommPorts();
-        ArrayList<String> portNames = new ArrayList<>();
+        final SerialPort[] serialPorts = SerialPort.getCommPorts();
+        final ArrayList<String> portNames = new ArrayList<>();
 
-        for (SerialPort serialPort : serialPorts) {
+        for (final SerialPort serialPort : serialPorts) {
             portNames.add(serialPort.getSystemPortName());
         }
 
@@ -61,9 +61,9 @@ public class SerialPortConnection implements Connection {
     }
 
     synchronized public void writeCANPacket(final CANPacket canPacket) throws SerialPortException {
-        byte[] bytesToWrite = canPacket.getBytes();
+        final byte[] bytesToWrite = canPacket.getBytes();
 
-        int bytesWritten = serialPort.writeBytes(bytesToWrite, bytesToWrite.length);
+        final int bytesWritten = serialPort.writeBytes(bytesToWrite, bytesToWrite.length);
 
         if (bytesWritten != bytesToWrite.length) {
             throw new SerialPortException("Not all bytes were written. Check serial port connection.");
@@ -92,8 +92,8 @@ public class SerialPortConnection implements Connection {
                 return;
             }
 
-            byte[] data = serialPortEvent.getReceivedData();
-            CANPacket canPacket = new CANPacket(data);
+            final byte[] data = serialPortEvent.getReceivedData();
+            final CANPacket canPacket = new CANPacket(data);
 
             for (int i = 0; i < packetListeners.size(); i++) {
                 packetListeners.get(i).onPacketEvent(new PacketEvent(canPacket));

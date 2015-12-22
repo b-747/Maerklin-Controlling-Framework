@@ -38,15 +38,15 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
     }
 
     private boolean check() throws FrameworkException {
-        WaitingThreadExchangeObject waitingThreadExchangeObject = new WaitingThreadExchangeObject();
-
         S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, false) {
             @Override
             public void onSuccess() { //contact free
                 lock.lock();
-                waitingThreadExchangeObject.value = true;
-                condition.signal();
-                lock.unlock();
+                try {
+                    condition.signal();
+                } finally {
+                    lock.unlock();
+                }
             }
         };
 
@@ -59,19 +59,19 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
                 //timeout
                 return false;
             }
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new FrameworkException(e);
         } finally {
             lock.unlock();
             scriptContext.removePacketListener(s88EventPacketListener);
         }
 
-        waitingThreadExchangeObject.value = false; //reset and add another listener
+        final ThreadExchangeObject threadExchangeObject = new ThreadExchangeObject();
 
         s88EventPacketListener = new S88EventPacketListener(contactId) { //here the position does not matter, so use the second constructor
             @Override
             public void onSuccess() {
-                waitingThreadExchangeObject.value = true;
+                threadExchangeObject.value = true;
             }
         };
 
@@ -79,13 +79,13 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
 
         try {
             Thread.sleep(freeTime); //now wait
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new FrameworkException(e);
         } finally {
             scriptContext.removePacketListener(s88EventPacketListener);
         }
 
-        //if no S88 event occured until now (value is false), then the contact remained free
-        return !waitingThreadExchangeObject.value;
+        //if no S88 event occurred until now (value is false), then the contact remained free
+        return !threadExchangeObject.value;
     }
 }

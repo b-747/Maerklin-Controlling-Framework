@@ -12,11 +12,11 @@ public abstract class VelocityPacketListener extends PacketListener {
 
     @Override
     public void onPacketEvent(final PacketEvent packetEvent) {
-        CANPacket canPacket = packetEvent.getCANPacket();
+        final CANPacket canPacket = packetEvent.getCANPacket();
 
         if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.VELOCITY
                 && (canPacket.getDlc() == CS2CANCommands.VELOCITY_SET_DLC)) {
-            byte[] data = canPacket.getData();
+            final byte[] data = canPacket.getData();
 
             velocity = ((data[4] & 0xFF) << 8 | (data[5] & 0xFF));
 
