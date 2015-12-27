@@ -55,7 +55,7 @@ public abstract class ConfigDataStreamPacketListener extends PacketListener {
 
                     compressedBytes = new byte[compressedFileLength];
 
-                    byte[] crcBytes = new byte[]{dataBytes[4], dataBytes[5]};
+                    final byte[] crcBytes = new byte[]{dataBytes[4], dataBytes[5]};
                     crc = (((crcBytes[0] & 0xFF) << 8) | (crcBytes[1] & 0xFF));
 
                     break;
@@ -85,7 +85,11 @@ public abstract class ConfigDataStreamPacketListener extends PacketListener {
                             final byte[] tempBuffer = new byte[compressedFileLength - 4];
                             System.arraycopy(compressedBytes, 4, tempBuffer, 0, tempBuffer.length); //Skip decompressed file length bytes
 
-                            decompressedBytes = ConfigDataHelper.decompressBytes(tempBuffer, decompressedFileLength);
+                            try {
+                                decompressedBytes = ConfigDataHelper.decompressBytes(tempBuffer, decompressedFileLength);
+                            } catch (final ConfigDataDecompressException e) {
+                                onException(e);
+                            }
                         }
                     } else {
                         onException(new ConfigDataMissingRequestResponseException("Config data stream packet received without previous request response packet."));

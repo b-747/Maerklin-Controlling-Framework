@@ -1,7 +1,8 @@
 package de.cortex42.maerklin.framework.packetlistener;
 
-import com.jcraft.jzlib.Inflater;
-import com.jcraft.jzlib.JZlib;
+
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 
 
 /**
@@ -11,25 +12,34 @@ public final class ConfigDataHelper {
     private ConfigDataHelper() {
     }
 
-    //zlib inflate
-    public static byte[] decompressBytes(final byte[] compressedBytes, final int decompressedBytesLength) {
+    /*
+    Test with:
+        final String compressedDataString= "789CCD944B6E83301445E7AC820D24F51F32F0A05D42A6550794181525E00A08A5BBAF0DC14DD21B1529AAD4919FEFFB9B239E0F766F2BDB95BD79897AD3B4A5ADA3785D95B56D348F5AD39E9472A765F41DEC943AAB8CA6A98C494256C40947174306418874976CD7B85CE3047FEB3EDF75550CCE6AC720AFB9FB9491E445C1A5D9F82EB9ADF5D33676657D8D5E537FBE9ECEDE1E8EBEA737AB6CD08C8FAA1B56B3A9A0EF9338B338D6FBCE0D6EFCE8EBBAD17EBE710A9FBCFE304D375A3FE2A0C890C89128429B14B92512D59C236073B84E1A72E06C1BB81A812A7E065896C29DA9802AA2656B62A1880346ADF83930EA0218058051D7C064D2D01998A9EC6D6098940119496664D4BD9C8C71F049D8EC65D0CD43130E315940D1541D7ED1053C4DD9909205644DEE7F8AD8A389D5838A29154C9C23965C209600C4926BC4D254143362BEEC4AFD865897E56FD66346026F22F00677B8FBBFB40833F8D4F753769B2DCAE144B051408AE14E34BC1126F60FF1FA02218615D60000";
+
+        byte[] decompressed = new byte[0];
+        try {
+            decompressed = ConfigDataHelper.decompressBytes(DatatypeConverter.parseHexBinary(compressedDataString), 1822);
+        } catch (ConfigDataDecompressException e) {
+            e.printStackTrace();
+        }
+        for(int i= 0; i<decompressed.length; i++){
+            System.out.print((char)decompressed[i]);
+        }
+     */
+
+    public static byte[] decompressBytes(final byte[] compressedBytes, final int decompressedBytesLength) throws ConfigDataDecompressException {
         final byte[] decompressedBytes = new byte[decompressedBytesLength];
 
         final Inflater inflater = new Inflater();
         inflater.setInput(compressedBytes);
-        inflater.setOutput(decompressedBytes);
 
-        inflater.init();
-
-        while (inflater.total_in < decompressedBytes.length && inflater.total_in < compressedBytes.length) {
-
-            if (inflater.inflate(JZlib.Z_NO_FLUSH) == JZlib.Z_STREAM_END) {
-                break;
-            }
-
+        try {
+            inflater.inflate(decompressedBytes);
+        } catch (final DataFormatException e) {
+            throw new ConfigDataDecompressException(e);
+        } finally {
+            inflater.end();
         }
-
-        inflater.end();
 
         return decompressedBytes;
     }
