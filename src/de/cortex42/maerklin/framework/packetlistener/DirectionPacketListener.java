@@ -7,7 +7,7 @@ import de.cortex42.maerklin.framework.FrameworkException;
 /**
  * Created by ivo on 19.12.15.
  */
-public abstract class DirectionPacketListener extends PacketListener {
+public abstract class DirectionPacketListener implements PacketListener {
     public enum DIRECTION {
         MAINTAIN,
         FORWARD,

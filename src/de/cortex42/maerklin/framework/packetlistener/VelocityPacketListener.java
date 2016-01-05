@@ -7,7 +7,7 @@ import de.cortex42.maerklin.framework.FrameworkException;
 /**
  * Created by ivo on 16.12.15.
  */
-public abstract class VelocityPacketListener extends PacketListener {
+public abstract class VelocityPacketListener implements PacketListener {
     private int velocity;
 
     @Override

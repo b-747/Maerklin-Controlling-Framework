@@ -7,7 +7,7 @@ import de.cortex42.maerklin.framework.FrameworkException;
 /**
  * Created by ivo on 17.12.15.
  */
-public abstract class S88EventPacketListener extends PacketListener {
+public abstract class S88EventPacketListener implements PacketListener {
     private final int contactId;
     private final boolean positionOn;
     private final boolean positionDoesNotMatter;

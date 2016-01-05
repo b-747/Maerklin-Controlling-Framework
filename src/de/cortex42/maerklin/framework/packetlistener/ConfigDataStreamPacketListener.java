@@ -6,7 +6,7 @@ import de.cortex42.maerklin.framework.CS2CANCommands;
 /**
  * Created by ivo on 04.12.15.
  */
-public abstract class ConfigDataStreamPacketListener extends PacketListener {
+public abstract class ConfigDataStreamPacketListener implements PacketListener {
     private int compressedFileLength = -1;
     private int decompressedFileLength = -1;
     private int crc = -1;

@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 
-//todo add documentation
-
 /**
  * Created by ivo on 06.11.15.
  */
@@ -52,13 +50,13 @@ public class EthernetConnection implements Connection {
         }
     }
 
-    synchronized public void addExceptionHandler(final ExceptionListener exceptionListener) {
+    synchronized public void addExceptionListener(final ExceptionListener exceptionListener) {
         if (!exceptionListeners.contains(exceptionListener)) {
             exceptionListeners.add(exceptionListener);
         }
     }
 
-    synchronized public void removeExceptionHandler(final ExceptionListener exceptionListener) {
+    synchronized public void removeExceptionListener(final ExceptionListener exceptionListener) {
         exceptionListeners.remove(exceptionListener);
     }
 
@@ -92,7 +90,7 @@ public class EthernetConnection implements Connection {
                         } catch (final IOException e) {
                             final FrameworkException frameworkException = new FrameworkException(e);
 
-                            //call exception handlers
+                            //call exception listeners
                             for (int i = 0; i < exceptionListeners.size(); i++) {
                                 exceptionListeners.get(i).onException(frameworkException);
                             }

@@ -7,10 +7,10 @@ import java.util.EventListener;
 /**
  * Created by ivo on 02.11.15.
  */
-public abstract class PacketListener implements EventListener {
-    public abstract void onPacketEvent(PacketEvent packetEvent);
+public interface PacketListener extends EventListener {
+    void onPacketEvent(PacketEvent packetEvent);
 
-    public abstract void onSuccess();
+    void onSuccess();
 
-    public abstract void onException(FrameworkException frameworkException);
+    void onException(FrameworkException frameworkException);
 }
