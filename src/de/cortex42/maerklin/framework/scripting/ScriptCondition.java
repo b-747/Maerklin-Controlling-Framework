@@ -12,7 +12,7 @@ public class ScriptCondition {
     private boolean isAnd = false;
     private boolean isXor = false;
 
-    public ScriptCondition(final BooleanEvent booleanEvent) {
+    public ScriptCondition(final BooleanEvent booleanEvent) { //todo ScriptCondition as argument?
         this.booleanEvent = booleanEvent;
     }
 

@@ -101,7 +101,7 @@ public final class CS2CANCommands {
         /* ... */
     }
 
-    //todo wait 400ms after sending bootloader go!
+    //wait 400ms after sending bootloader go!
     public static CANPacket bootloaderGo() {
         return new CANPacket(
                 PRIORITY,
@@ -131,13 +131,6 @@ public final class CS2CANCommands {
         );
     }
 
-    /**
-     * //todo
-     *
-     * @param locId consists of the basic address (defines the protocol) and the number of the loc (see page 8 for details).
-     *              (example: MFX loc with number 3: MFX=0x4000 + 3 = 0x4003; upper two bytes are always 0!)
-     * @return
-     */
     public static CANPacket queryDirection(final int locId) {
         return new CANPacket(
                 PRIORITY,

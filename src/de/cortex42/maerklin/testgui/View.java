@@ -69,7 +69,11 @@ public class View {
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
                 if (actionEvent.getActionCommand().equals("comboBoxChanged")) { //handle selection only
-                    presenter.setSerialPort((String) comboBoxSerialPort.getSelectedItem());
+                    final Object selectedItem = comboBoxSerialPort.getSelectedItem();
+
+                    if (selectedItem != null) {
+                        presenter.setSerialPort((String) selectedItem);
+                    }
                 }
             }
         });
@@ -111,7 +115,7 @@ public class View {
                     final int velocity = sliderVelocity.getValue();
                     sliderVelocity.setToolTipText(Integer.toString(velocity));
 
-                    if (!sliderVelocity.getValueIsAdjusting()) { //todo try without this line
+                    if (!sliderVelocity.getValueIsAdjusting()) {
                         presenter.sendVelocity(velocity);
                     }
                 }

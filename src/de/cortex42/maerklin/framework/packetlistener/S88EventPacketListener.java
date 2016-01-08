@@ -30,7 +30,7 @@ public abstract class S88EventPacketListener implements PacketListener {
 
         if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT
                 && canPacket.getDlc() == CS2CANCommands.S88_EVENT_RESPONSE_DLC
-                && canPacket.getID() == contactId
+                && canPacket.getUid() == contactId
                 && (positionDoesNotMatter || (canPacket.getData()[5] == (positionOn ? CS2CANCommands.EQUIPMENT_POSITION_ON : CS2CANCommands.EQUIPMENT_POSITION_OFF)))) {
             onSuccess();
         }

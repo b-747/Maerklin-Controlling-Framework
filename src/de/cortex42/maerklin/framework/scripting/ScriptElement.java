@@ -2,6 +2,8 @@ package de.cortex42.maerklin.framework.scripting;
 
 import de.cortex42.maerklin.framework.FrameworkException;
 
+//todo is template method S.68
+
 /**
  * Created by ivo on 13.11.15.
  */

@@ -42,6 +42,27 @@ public final class TestScript {
     private TestScript() {
     }
 
+    public static Script getGleisboxTestScript(final ScriptContext scriptContext) {
+        ScriptElement last;
+        final Script s = new Script(scriptContext);
+
+        last = s.first = new ScriptElementSetDirection(LOCO_6, CS2CANCommands.DIRECTION_FORWARD);
+        last = last.next = new ScriptElementWait(10L); //todo 10ms reichen auch bei der Gleisbox
+        last = last.next= new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST);
+        last = last.next = new ScriptElementWait(17000L);
+        last = last.next = new ScriptElementSetDirection(LOCO_6, CS2CANCommands.DIRECTION_BACKWARD);
+        last = last.next = new ScriptElementWait(10L);
+        last = last.next = new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST);
+        last = last.next = new ScriptElementWait(10L);
+        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, 1); //loco 6 whistle
+        last = last.next = new ScriptElementWait(1400L); //wait 1.4s
+        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, 0); //loco 6 stop whistle
+        last = last.next = new ScriptElementWait(17000L);
+        last.next = new ScriptElementSetVelocity(LOCO_6, STOP);
+
+        return s;
+    }
+
     public static Script getTestScript(final ScriptContext scriptContext) throws FrameworkException {
         ScriptElement last;
         final Script s = new Script(scriptContext);
@@ -102,7 +123,7 @@ public final class TestScript {
         final ScriptElementConditionChecker scriptElementConditionChecker = new ScriptElementConditionChecker(
                 new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, CONTACT_1001)) //when reaching contact 1001
                         .or((new ScriptCondition(new ScriptBooleanEventContactReached(scriptContext, CONTACT_1))) //or ((reaching contact 1)
-                                .and(new ScriptCondition(new ScriptBooleanEventContactFree(scriptContext, CONTACT_1, 200L)))) //and contact 1 remains free for 200ms) //todo vertauschen und testen
+                                .and(new ScriptCondition(new ScriptBooleanEventContactFree(scriptContext, CONTACT_1, 200L)))) //and contact 1 remains free for 200ms)
         );
         scriptElementConditionChecker.next = new ScriptElementSetVelocity(LOCO_5, STOP); //then stop loco 5
 

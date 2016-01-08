@@ -4,7 +4,8 @@ import de.cortex42.maerklin.framework.*;
 import de.cortex42.maerklin.framework.packetlistener.ConfigDataStreamPacketListener;
 import de.cortex42.maerklin.framework.packetlistener.DirectionPacketListener;
 import de.cortex42.maerklin.framework.packetlistener.PacketListener;
-import de.cortex42.maerklin.framework.packetlistener.VelocityPacketListener;
+
+import java.util.ArrayList;
 
 /**
  * Created by ivo on 21.10.15.
@@ -47,12 +48,17 @@ public class Presenter {
     private static final int PC_PORT = 15730;
     private static final int CS2_PORT = 15731;
 
-    private static final long DEFAULT_DELAY = 250L; //todo check this delay! (10ms should be enough)
+    private static final long DEFAULT_DELAY = 10L; //todo 10ms are enough
 
     public Presenter(final View view) {
         this.view = view;
 
-        this.view.addSerialPorts(SerialPortConnection.getAvailableSerialPorts());
+        final ArrayList<String> serialPorts = SerialPortConnection.getAvailableSerialPorts();
+
+        this.view.addSerialPorts(serialPorts);
+        if (!serialPorts.isEmpty()) {
+            this.serialPort = serialPorts.get(0);
+        }
 
         ipAddress = DEFAULT_IP_ADDRESS;
         this.view.setDefaultIpAddress(ipAddress);
@@ -114,7 +120,7 @@ public class Presenter {
     }
 
     public void sendToggleDirection() {
-        final int[] velocity = new int[1];
+        /*final int[] velocity = new int[1];
 
         addPacketListener(
                 new VelocityPacketListener() {
@@ -124,10 +130,10 @@ public class Presenter {
                         removePacketListener(this);
                     }
                 }
-        );
+        );*/
 
-        sendPacket(CS2CANCommands.queryVelocity(loc));
-        pause(DEFAULT_DELAY);
+        //sendPacket(CS2CANCommands.queryVelocity(loc));
+        //pause(DEFAULT_DELAY);
 
         sendPacket(CS2CANCommands.setDirection(loc, CS2CANCommands.DIRECTION_TOGGLE));
         pause(DEFAULT_DELAY);
@@ -136,17 +142,19 @@ public class Presenter {
                 new DirectionPacketListener() {
                     @Override
                     public void onSuccess() {
-                        view.setDirection(getDirection().name());
-                        removePacketListener(this);
+                        if (getDirection() != DIRECTION.TOGGLE) {
+                            view.setDirection(getDirection().name());
+                            removePacketListener(this);
+                        }
                     }
                 }
         );
 
-        sendVelocity(velocity[0]);
-        pause(DEFAULT_DELAY);
+        //sendVelocity(velocity[0]);
+        //pause(DEFAULT_DELAY);
 
-        sendStart();
-        pause(DEFAULT_DELAY);
+        //sendStart();
+        //pause(DEFAULT_DELAY);
 
         sendPacket(CS2CANCommands.queryDirection(loc)); //query new direction
     }

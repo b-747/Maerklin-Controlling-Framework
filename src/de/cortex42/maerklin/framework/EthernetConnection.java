@@ -33,7 +33,7 @@ public class EthernetConnection implements Connection {
     }
 
     @Override
-    synchronized public void close() { //todo https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
+    synchronized public void close() {
         stopListening();
         datagramSocket.close();
     }

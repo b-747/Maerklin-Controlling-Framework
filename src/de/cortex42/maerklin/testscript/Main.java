@@ -14,11 +14,19 @@ public final class Main {
         final int CS2_PORT = 15731;
         final String CS2_IP_ADDRESS = "192.168.16.2";
 
-        try (EthernetConnection ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, CS2_IP_ADDRESS)) { //todo mit gleisbox testen
+        try (EthernetConnection ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, CS2_IP_ADDRESS)) {
             final Script script = TestScript.getTestScript(new ScriptContext(ethernetConnection));
             script.execute();
         } catch (final FrameworkException e) {
             e.printStackTrace();
         }
+
+        /*try(Connection connection = new SerialPortConnection(SerialPortConnection.getAvailableSerialPorts().get(0), 500000, 8, 1, 0)){
+            //connection.writeCANPacket(CS2CANCommands.go());
+            final Script script = TestScript.getGleisboxTestScript(new ScriptContext(connection));
+            script.execute();
+        } catch (final FrameworkException e) {
+            e.printStackTrace();
+        }*/
     }
 }

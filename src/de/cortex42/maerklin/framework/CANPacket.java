@@ -92,7 +92,7 @@ public class CANPacket {
         return data;
     }
 
-    public int getID() {
+    public int getUid() {
         return ((data[0] & 0xFF) << 24)
                 | ((data[1] & 0xFF) << 16)
                 | ((data[2] & 0xFF) << 8)
