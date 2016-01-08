@@ -18,11 +18,6 @@ public class Presenter {
     private String serialPort;
     private final static String DEFAULT_IP_ADDRESS = "192.168.016.002";
 
-    private final static int BAUD = 500000;
-    private final static int DATA_BITS = 8;
-    private final static int STOP_BITS = 1;
-    private final static int PARITY_BIT = 0;
-
 /* //todo
     private static final int MFX_RANGE = 16384; //new byte[]{0x00, 0x00, 0x40, 0x00};
     private static final int MM_RANGE = 0; //new byte[]{0x00, 0x00, 0x00, 0x00};
@@ -74,7 +69,7 @@ public class Presenter {
             if (use) {
                 connection = new EthernetConnection(PC_PORT, CS2_PORT, ipAddress);
             } else {
-                connection = new SerialPortConnection(serialPort, BAUD, DATA_BITS, STOP_BITS, PARITY_BIT);
+                connection = new SerialPortConnection(serialPort);
             }
         } catch (final FrameworkException e) {
             view.showException(e);

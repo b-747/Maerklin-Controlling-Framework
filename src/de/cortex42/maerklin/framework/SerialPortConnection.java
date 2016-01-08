@@ -13,16 +13,25 @@ import java.util.ArrayList;
  */
 //Konkrete Strategie
 public class SerialPortConnection implements Connection {
-
     private final SerialPort serialPort;
-
     private final CANPacketListener canPacketListener = new CANPacketListener();
 
-    public SerialPortConnection(final String systemPortName, final int baud, final int dataBits, final int stopBits, final int parityBit) throws SerialPortException {
+    /*
+    * Settings for CC-Schnitte 2.1
+    * http://can-digital-bahn.com/modul.php?system=sys5&modul=54
+    */
+    private static final int BAUD_RATE = 500000;
+    private static final int DATA_BITS = 8;
+    private static final int STOP_BITS = SerialPort.ONE_STOP_BIT;
+    private static final int PARITY = SerialPort.NO_PARITY;
+    private static final int FLOW_CONTROL = SerialPort.FLOW_CONTROL_CTS_ENABLED | SerialPort.FLOW_CONTROL_RTS_ENABLED;
+
+
+    public SerialPortConnection(final String systemPortName) throws SerialPortException {
         serialPort = SerialPort.getCommPort(systemPortName);
 
-        serialPort.setComPortParameters(baud, dataBits, stopBits, parityBit);
-        serialPort.setFlowControl(SerialPort.FLOW_CONTROL_CTS_ENABLED); //todo
+        serialPort.setComPortParameters(BAUD_RATE, DATA_BITS, STOP_BITS, PARITY);
+        serialPort.setFlowControl(FLOW_CONTROL); //todo test
 
         if (!serialPort.openPort()) {
             throw new SerialPortException("Could not open the serial port.");
