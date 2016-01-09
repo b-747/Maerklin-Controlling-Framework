@@ -14,7 +14,7 @@ import java.util.ArrayList;
 //Konkrete Strategie
 public class SerialPortConnection implements Connection {
     private final SerialPort serialPort;
-    private final CANPacketListener canPacketListener = new CANPacketListener();
+    private final ConcreteSerialPortPacketListener concreteSerialPortPacketListener = new ConcreteSerialPortPacketListener();
 
     /*
     * Settings for CC-Schnitte 2.1
@@ -57,14 +57,14 @@ public class SerialPortConnection implements Connection {
     }
 
     synchronized public void addPacketListener(final PacketListener packetListener) {
-        serialPort.addDataListener(canPacketListener); //happens only once
-        canPacketListener.addPacketListener(packetListener);
+        serialPort.addDataListener(concreteSerialPortPacketListener); //happens only once
+        concreteSerialPortPacketListener.addPacketListener(packetListener);
     }
 
     synchronized public void removePacketListener(final PacketListener packetListener) {
-        canPacketListener.removePacketListener(packetListener);
+        concreteSerialPortPacketListener.removePacketListener(packetListener);
 
-        if (!canPacketListener.packetListenersAvailable()) {
+        if (!concreteSerialPortPacketListener.packetListenersAvailable()) {
             serialPort.removeDataListener();
         }
     }
@@ -79,10 +79,10 @@ public class SerialPortConnection implements Connection {
         }
     }
 
-    private final class CANPacketListener implements SerialPortPacketListener {
+    private final class ConcreteSerialPortPacketListener implements SerialPortPacketListener {
         private final ArrayList<PacketListener> packetListeners = new ArrayList<>();
 
-        public CANPacketListener() {
+        public ConcreteSerialPortPacketListener() {
         }
 
         @Override
