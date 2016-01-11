@@ -24,7 +24,7 @@ public class ScriptElementSwitch extends ScriptElement {
 
     @Override
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
-        scriptContext.writeCANPacket(
+        scriptContext.sendCANPacket(
                 CS2CANCommands.toggleEquipment(equipmentId, position, CS2CANCommands.EQUIPMENT_POWER_ON)
         );
 
@@ -34,7 +34,7 @@ public class ScriptElementSwitch extends ScriptElement {
             throw new FrameworkException(e);
         }
 
-        scriptContext.writeCANPacket(
+        scriptContext.sendCANPacket(
                 CS2CANCommands.toggleEquipment(equipmentId, position, CS2CANCommands.EQUIPMENT_POWER_OFF)
         );
     }

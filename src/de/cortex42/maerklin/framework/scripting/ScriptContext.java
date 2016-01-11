@@ -16,8 +16,8 @@ public class ScriptContext {
         this.connection = connection;
     }
 
-    public void writeCANPacket(final CANPacket canPacket) throws FrameworkException {
-        connection.writeCANPacket(canPacket);
+    public void sendCANPacket(final CANPacket canPacket) throws FrameworkException {
+        connection.sendCANPacket(canPacket);
     }
 
     public void addPacketListener(final PacketListener packetListener) {

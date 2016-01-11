@@ -7,7 +7,7 @@ import de.cortex42.maerklin.framework.packetlistener.PacketListener;
  */
 //Strategie
 public interface Connection extends AutoCloseable {
-    void writeCANPacket(CANPacket canPacket) throws FrameworkException;
+    void sendCANPacket(CANPacket canPacket) throws FrameworkException;
 
     void addPacketListener(PacketListener packetListener);
 

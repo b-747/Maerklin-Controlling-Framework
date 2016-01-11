@@ -4,22 +4,13 @@ package de.cortex42.maerklin.framework;
  * Created by ivo on 19.10.15.
  */
 public final class CS2CANCommands {
-    //todo ist eine konkrete Fabrik (=Factory) (Patterns kompakt, S.28)
+    //todo alles löschen was nicht benötigt wird
     /**
      * BIG ENDIAN
      */
     /*---PRIORITY---*/
     public static final byte PRIORITY = 0x00;
     /*---HASH---*/
-    /* //todo
-    *
-    * Hash 0x0300: wird gebildet aus UID 0x00000000 oder 0xFFFFFFFF (sollte also mit real existierender Hardware nicht kollidieren)
-    *                               Geräte-UID 0x00000000 ist die Broadcastadresse, 0xFFFFFFFF ist ungültig und steht für eine nicht initialisierte UID des Endgerätes.
-    public static int calcHash(int uid) {
-        return ((((uid >> 16) & 0xFFFF) ^ (uid & 0xFFFF)) & 0xFF7F) | 0x0300;
-       (upper 16 bits XOR lower 16 bits) AND Bit7=0 OR Bit8/9=1
-    }
-    */
     public static final byte[] HASH = new byte[]{0x03, 0x00};
     /*---RESPONSE---*/
     public static final byte RESPONSE = 0x01;
@@ -90,9 +81,9 @@ public final class CS2CANCommands {
     /*---FUNCTION---*/
     public static final byte FUNCTION_OFF = 0x00;
     public static final byte FUNCTION_ON = 0x01;
-    /*---EQUIPMENT_POSITION---*/
-    public static final byte EQUIPMENT_POSITION_OFF = 0x00;
-    public static final byte EQUIPMENT_POSITION_ON = 0x01;
+    /*---CONTACT_STATE---*/
+    public static final byte CONTACT_DEACTIVATED = 0x00;
+    public static final byte CONTACT_ACTIVATED = 0x01;
     /*---EQUIPMENT POWER---*/
     public static final byte EQUIPMENT_POWER_OFF = 0x00;
     public static final byte EQUIPMENT_POWER_ON = 0x01;
@@ -504,8 +495,8 @@ public final class CS2CANCommands {
             throw new IllegalArgumentException("max fileName length is 8. Length: " + fileName.length());
         }
 
-        byte[] fileNameBytes = fileName.getBytes();
-        byte[] dataBytes = new byte[8];
+        final byte[] fileNameBytes = fileName.getBytes();
+        final byte[] dataBytes = new byte[8];
 
         System.arraycopy(fileNameBytes, 0, dataBytes, 0, fileNameBytes.length); //copy fileNameBytes to dataBytes array
 

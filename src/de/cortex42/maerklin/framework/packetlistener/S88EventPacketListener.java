@@ -8,20 +8,18 @@ import de.cortex42.maerklin.framework.FrameworkException;
  * Created by ivo on 17.12.15.
  */
 public abstract class S88EventPacketListener implements PacketListener {
-    private final int contactId;
-    private final boolean positionOn;
-    private final boolean positionDoesNotMatter;
-
-    public S88EventPacketListener(final int contactId, final boolean positionOn) {
-        this.contactId = contactId;
-        this.positionOn = positionOn;
-        this.positionDoesNotMatter = false;
+    public enum ContactState {
+        ACTIVATED,
+        DEACTIVATED,
+        IRRELEVANT
     }
 
-    public S88EventPacketListener(final int contactId) {
+    private final int contactId;
+    private final ContactState contactState;
+
+    public S88EventPacketListener(final int contactId, final ContactState contactState) {
         this.contactId = contactId;
-        this.positionOn = false;
-        this.positionDoesNotMatter = true;
+        this.contactState = contactState;
     }
 
     @Override
@@ -31,7 +29,7 @@ public abstract class S88EventPacketListener implements PacketListener {
         if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT
                 && canPacket.getDlc() == CS2CANCommands.S88_EVENT_RESPONSE_DLC
                 && canPacket.getUid() == contactId
-                && (positionDoesNotMatter || (canPacket.getData()[5] == (positionOn ? CS2CANCommands.EQUIPMENT_POSITION_ON : CS2CANCommands.EQUIPMENT_POSITION_OFF)))) {
+                && (contactState == ContactState.IRRELEVANT || (canPacket.getData()[5] == (contactState == ContactState.ACTIVATED ? CS2CANCommands.CONTACT_ACTIVATED : CS2CANCommands.CONTACT_DEACTIVATED)))) {
             onSuccess();
         }
     }

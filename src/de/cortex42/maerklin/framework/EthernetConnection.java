@@ -33,12 +33,12 @@ public class EthernetConnection implements Connection {
     }
 
     @Override
-    synchronized public void close() {
+    synchronized public void close() { //todo nötig
         stopListening();
         datagramSocket.close();
     }
 
-    synchronized public void writeCANPacket(final CANPacket canPacket) throws FrameworkException {
+    public void sendCANPacket(final CANPacket canPacket) throws FrameworkException { //todo synchronized hier nicht nötig (wird intern verwendet)
         final byte[] bytes = canPacket.getBytes();
 
         final DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, targetAddress, targetPort);
@@ -50,33 +50,29 @@ public class EthernetConnection implements Connection {
         }
     }
 
-    synchronized public void addExceptionListener(final ExceptionListener exceptionListener) {
-        if (!exceptionListeners.contains(exceptionListener)) {
-            exceptionListeners.add(exceptionListener);
-        }
+    public void addExceptionListener(final ExceptionListener exceptionListener) {
+        exceptionListeners.add(exceptionListener);
     }
 
-    synchronized public void removeExceptionListener(final ExceptionListener exceptionListener) {
+    public void removeExceptionListener(final ExceptionListener exceptionListener) {
         exceptionListeners.remove(exceptionListener);
     }
 
-    synchronized public void addPacketListener(final PacketListener packetListener) {
-        if (!packetListeners.contains(packetListener)) {
-            packetListeners.add(packetListener);
-        }
+    synchronized public void addPacketListener(final PacketListener packetListener) { //todo nötig aufgrund removePacketListener (während remove keine andere synchronized-Methode aufrufbar)
+        packetListeners.add(packetListener);
 
         startListening();
     }
 
-    synchronized public void removePacketListener(final PacketListener packetListener) {
+    synchronized public void removePacketListener(final PacketListener packetListener) { //todo nötig
         packetListeners.remove(packetListener);
 
-        if (packetListeners.isEmpty()) {
+        if (packetListeners.isEmpty()) { //todo deswegen: erster Thread entfernt Listener, stellt fest, dass kein Listener mehr da ist => switch => anderer Thread fügt Listener hinzu => switch stopListening() obwohl noch ein anderer vorhanden ist
             stopListening();
         }
     }
 
-    private void startListening() {
+    private void startListening() { //todo nicht nötig (wird nur von synchronized addPacketListener aufgerufen)
         if (!isListening) {
             isListening = true;
 
@@ -113,7 +109,7 @@ public class EthernetConnection implements Connection {
 
     private void stopListening() {
         isListening = false;
-    }
+    } //todo nicht nötig (auch nur von synchronized)
 
 
 }

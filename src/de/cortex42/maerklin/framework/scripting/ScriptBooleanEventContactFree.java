@@ -38,7 +38,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
     }
 
     private boolean check() throws FrameworkException {
-        S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, false) {
+        S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, S88EventPacketListener.ContactState.DEACTIVATED) {
             @Override
             public void onSuccess() { //contact free
                 lock.lock();
@@ -68,7 +68,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
 
         final ThreadExchangeObject threadExchangeObject = new ThreadExchangeObject();
 
-        s88EventPacketListener = new S88EventPacketListener(contactId) { //here the position does not matter, so use the second constructor
+        s88EventPacketListener = new S88EventPacketListener(contactId, S88EventPacketListener.ContactState.IRRELEVANT) { //here the position does not matter
             @Override
             public void onSuccess() {
                 threadExchangeObject.value = true;

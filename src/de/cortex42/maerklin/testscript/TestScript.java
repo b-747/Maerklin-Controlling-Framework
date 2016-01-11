@@ -72,29 +72,29 @@ public final class TestScript {
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_3, 0); //railway switch 3 right
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_4, 1); //railway switch 4 right
         last = last.next = new ScriptElementSetVelocity(LOCO_5, SLOW); //loco 5 slow
-        last = last.next = new ScriptElementWaitForContact(CONTACT_10, true); //reach contact 10
+        last = last.next = new ScriptElementWaitForContact(CONTACT_10); //reach contact 10
         last = last.next = new ScriptElementSetVelocity(LOCO_5, MEDIUM_FAST); //loco 5 medium fast
-        last = last.next = new ScriptElementWaitForContact(CONTACT_12, true); //reach contact 12
+        last = last.next = new ScriptElementWaitForContact(CONTACT_12); //reach contact 12
         last = last.next = new ScriptElementSetVelocity(LOCO_5, SLOW); //loco 5 slow
-        last = last.next = new ScriptElementWaitForContact(CONTACT_1008, true); //reach contact 1008
+        last = last.next = new ScriptElementWaitForContact(CONTACT_1008); //reach contact 1008
         last = last.next = new ScriptElementSetVelocity(LOCO_5, STOP); //loco 5 stop
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_2, 1); //railway switch 2 left
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_4, 0); //railway switch 4 left
         last = last.next = new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST); //loco 6 medium fast
-        last = last.next = new ScriptElementWaitForContact(CONTACT_9, true); //reach contact 9
+        last = last.next = new ScriptElementWaitForContact(CONTACT_9); //reach contact 9
         last = last.next = new ScriptElementSetVelocity(LOCO_6, FAST); //loco 6 fast
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_5, 0); //railway switch 5 right
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_6, 0); //railway switch 6 left
-        last = last.next = new ScriptElementWaitForContact(CONTACT_1003, true); //reach contact 1003
+        last = last.next = new ScriptElementWaitForContact(CONTACT_1003); //reach contact 1003
         last = last.next = new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST); //loco 6 medium fast
-        last = last.next = new ScriptElementWaitForContact(CONTACT_7, true); //reach contact 7
+        last = last.next = new ScriptElementWaitForContact(CONTACT_7); //reach contact 7
         last = last.next = new ScriptElementSetVelocity(LOCO_6, SLOW); //loco 6 slow
-        last = last.next = new ScriptElementWaitForContact(CONTACT_3, true); //reach contact 3
+        last = last.next = new ScriptElementWaitForContact(CONTACT_3); //reach contact 3
         last = last.next = new ScriptElementSetVelocity(LOCO_6, STOP); //loco 6 stop
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_3, 1); //railway switch 3 left
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_6, 1); //railway switch 6 right
         last = last.next = new ScriptElementSetVelocity(LOCO_7, MEDIUM_FAST); //loco 7 medium fast
-        last = last.next = new ScriptElementWaitForContact(CONTACT_1007, true); //reach contact 1007
+        last = last.next = new ScriptElementWaitForContact(CONTACT_1007); //reach contact 1007
         last = last.next = new ScriptElementSetFunction(LOCO_7, 3, 1); //loco 7 whistle
         last = last.next = new ScriptElementSetDirection(LOCO_5, CS2CANCommands.DIRECTION_BACKWARD); //loco 5 backward
         last = last.next = new ScriptElementSetVelocity(LOCO_5, SLOW); //loco 5 slow
@@ -151,13 +151,13 @@ public final class TestScript {
         last = last.next = new ScriptElementWait(1400L); //wait 1.4s
         last = last.next = new ScriptElementSetFunction(LOCO_6, 3, 0); //loco 6 stop whistle
         last = last.next = new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST); //loco 6 medium fast
-        last = last.next = new ScriptElementWaitForContact(CONTACT_10, true); //reach contact 10
+        last = last.next = new ScriptElementWaitForContact(CONTACT_10); //reach contact 10
         last = last.next = new ScriptElementSetVelocity(LOCO_6, FAST); //loco 6 fast
-        last = last.next = new ScriptElementWaitForContact(CONTACT_1003, true); //reach contact 1003
+        last = last.next = new ScriptElementWaitForContact(CONTACT_1003); //reach contact 1003
         last = last.next = new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST); //loco 6 medium fast
-        last = last.next = new ScriptElementWaitForContact(CONTACT_7, true); //reach contact 7
+        last = last.next = new ScriptElementWaitForContact(CONTACT_7); //reach contact 7
         last = last.next = new ScriptElementSetVelocity(LOCO_6, SLOW); //loco 6 slow
-        last = last.next = new ScriptElementWaitForContact(CONTACT_3, true); //reach contact 3
+        last = last.next = new ScriptElementWaitForContact(CONTACT_3); //reach contact 3
         last.next = new ScriptElementSetVelocity(LOCO_6, STOP); //loco 6 stop
 
         return s;

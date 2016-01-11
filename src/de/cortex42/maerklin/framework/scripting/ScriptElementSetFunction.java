@@ -19,7 +19,7 @@ public class ScriptElementSetFunction extends ScriptElement {
 
     @Override
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
-        scriptContext.writeCANPacket(
+        scriptContext.sendCANPacket(
                 CS2CANCommands.toggleFunction(locId, function, toggle));
     }
 }

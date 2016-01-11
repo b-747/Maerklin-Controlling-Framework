@@ -8,7 +8,7 @@ import de.cortex42.maerklin.framework.FrameworkException;
  * Created by ivo on 19.12.15.
  */
 public abstract class DirectionPacketListener implements PacketListener {
-    public enum DIRECTION {
+    public enum Direction {
         MAINTAIN,
         FORWARD,
         BACKWARD,
@@ -16,7 +16,7 @@ public abstract class DirectionPacketListener implements PacketListener {
         UNKNOWN
     }
 
-    private DIRECTION direction;
+    private Direction direction;
 
     @Override
     public void onPacketEvent(final PacketEvent packetEvent) {
@@ -28,23 +28,23 @@ public abstract class DirectionPacketListener implements PacketListener {
 
             switch (directionByte) {
                 case CS2CANCommands.DIRECTION_MAINTAIN:
-                    direction = DIRECTION.MAINTAIN;
+                    direction = Direction.MAINTAIN;
                     break;
 
                 case CS2CANCommands.DIRECTION_FORWARD:
-                    direction = DIRECTION.FORWARD;
+                    direction = Direction.FORWARD;
                     break;
 
                 case CS2CANCommands.DIRECTION_BACKWARD:
-                    direction = DIRECTION.BACKWARD;
+                    direction = Direction.BACKWARD;
                     break;
 
                 case CS2CANCommands.DIRECTION_TOGGLE:
-                    direction = DIRECTION.TOGGLE;
+                    direction = Direction.TOGGLE;
                     break;
 
                 default:
-                    direction = DIRECTION.UNKNOWN;
+                    direction = Direction.UNKNOWN;
                     break;
             }
 
@@ -57,7 +57,7 @@ public abstract class DirectionPacketListener implements PacketListener {
         //never happens
     }
 
-    public DIRECTION getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 }

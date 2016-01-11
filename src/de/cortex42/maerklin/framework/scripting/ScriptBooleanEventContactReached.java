@@ -38,7 +38,7 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
     private boolean check() throws FrameworkException {
         final ThreadExchangeObject threadExchangeObject = new ThreadExchangeObject();
 
-        final S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, true) {
+        final S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, S88EventPacketListener.ContactState.ACTIVATED) {
             @Override
             public void onSuccess() {
                 lock.lock();

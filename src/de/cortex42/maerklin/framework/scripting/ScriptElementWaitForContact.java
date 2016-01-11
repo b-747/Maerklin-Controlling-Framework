@@ -13,19 +13,17 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ScriptElementWaitForContact extends ScriptElement {
     private final int contactId;
-    private final boolean positionOn;
     private final long timeout;
     private final static long DEFAULT_TIMEOUT = 60000L; //60s
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
-    public ScriptElementWaitForContact(final int contactId, final boolean positionOn) {
-        this(contactId, positionOn, DEFAULT_TIMEOUT);
+    public ScriptElementWaitForContact(final int contactId) {
+        this(contactId, DEFAULT_TIMEOUT);
     }
 
-    public ScriptElementWaitForContact(final int contactId, final boolean positionOn, final long timeout) {
+    public ScriptElementWaitForContact(final int contactId, final long timeout) {
         this.contactId = contactId;
-        this.positionOn = positionOn;
         this.timeout = timeout;
         condition = lock.newCondition();
     }
@@ -33,7 +31,7 @@ public class ScriptElementWaitForContact extends ScriptElement {
     @Override
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
 
-        final S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, positionOn) {
+        final S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, S88EventPacketListener.ContactState.ACTIVATED) {
             @Override
             public void onSuccess() {
                 lock.lock();

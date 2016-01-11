@@ -22,7 +22,7 @@ public final class Main {
         }
 
         /*try(Connection connection = new SerialPortConnection(SerialPortConnection.getAvailableSerialPorts().get(0), 500000, 8, 1, 0)){
-            //connection.writeCANPacket(CS2CANCommands.go());
+            //connection.sendCANPacket(CS2CANCommands.go());
             final Script script = TestScript.getGleisboxTestScript(new ScriptContext(connection));
             script.execute();
         } catch (final FrameworkException e) {

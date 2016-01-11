@@ -17,7 +17,7 @@ public class ScriptElementSetDirection extends ScriptElement {
 
     @Override
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
-        scriptContext.writeCANPacket(
+        scriptContext.sendCANPacket(
                 CS2CANCommands.setDirection(locId, direction)
         );
     }

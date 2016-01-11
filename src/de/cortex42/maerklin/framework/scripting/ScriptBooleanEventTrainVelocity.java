@@ -47,7 +47,7 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
 
         long counter = 0L;
         while (!threadExchangeObject.value) {
-            scriptContext.writeCANPacket(CS2CANCommands.queryVelocity(locId));
+            scriptContext.sendCANPacket(CS2CANCommands.queryVelocity(locId));
 
             try {
                 Thread.sleep(DELAY);

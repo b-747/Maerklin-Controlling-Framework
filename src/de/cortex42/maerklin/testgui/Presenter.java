@@ -137,7 +137,7 @@ public class Presenter {
                 new DirectionPacketListener() {
                     @Override
                     public void onSuccess() {
-                        if (getDirection() != DIRECTION.TOGGLE) {
+                        if (getDirection() != Direction.TOGGLE) {
                             view.setDirection(getDirection().name());
                             removePacketListener(this);
                         }
@@ -186,7 +186,7 @@ public class Presenter {
 
     private void sendPacket(final CANPacket canPacket) {
         try {
-            connection.writeCANPacket(canPacket);
+            connection.sendCANPacket(canPacket);
         } catch (final FrameworkException e) {
             view.showException(e);
         }
