@@ -16,11 +16,11 @@ public class ScriptElementParallel extends ScriptElement {
 
     @Override
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
-        final int scriptConditionCheckerCount = scriptElements.size();
+        final int scriptElementCount = scriptElements.size();
 
-        final FrameworkException[] threadFrameworkExceptions = new FrameworkException[scriptConditionCheckerCount];
+        final FrameworkException[] threadFrameworkExceptions = new FrameworkException[scriptElementCount];
 
-        final Thread[] threads = new Thread[scriptConditionCheckerCount];
+        final Thread[] threads = new Thread[scriptElementCount];
 
         for (int i = 0; i < threads.length; i++) {
             final int finalI = i;
