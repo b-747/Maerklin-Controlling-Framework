@@ -13,6 +13,10 @@ public class ScriptContext {
     private final Connection connection;
 
     public ScriptContext(final Connection connection) {
+        if(connection == null){
+            throw new IllegalArgumentException("connection must not be null.");
+        }
+
         this.connection = connection;
     }
 

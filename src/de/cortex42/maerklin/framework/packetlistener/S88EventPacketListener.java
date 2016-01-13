@@ -17,6 +17,7 @@ public abstract class S88EventPacketListener implements PacketListener {
     private final int contactId;
     private final ContactState contactState;
 
+    //todo rename Id to Uid
     public S88EventPacketListener(final int contactId, final ContactState contactState) {
         this.contactId = contactId;
         this.contactState = contactState;

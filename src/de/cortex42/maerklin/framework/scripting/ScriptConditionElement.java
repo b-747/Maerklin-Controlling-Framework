@@ -13,7 +13,7 @@ public class ScriptConditionElement extends ScriptElement {
     private boolean isAnd = false;
     private boolean isXor = false;
 
-    public ScriptConditionElement(final ScriptConditionElement scriptConditionElement) { //todo check ALL parameters for null!
+    public ScriptConditionElement(final ScriptConditionElement scriptConditionElement) {
         if (scriptConditionElement == null) {
             throw new IllegalArgumentException("scriptConditionElement must not be null.");
         }
