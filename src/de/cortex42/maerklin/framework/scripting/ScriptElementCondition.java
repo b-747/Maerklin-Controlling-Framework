@@ -5,57 +5,57 @@ import de.cortex42.maerklin.framework.FrameworkException;
 /**
  * Created by ivo on 18.11.15.
  */
-public class ScriptConditionElement extends ScriptElement {
+public class ScriptElementCondition extends ScriptElement {
     private final BooleanEvent booleanEvent;
-    private final ScriptConditionElement innerScriptConditionElement;
-    private ScriptConditionElement otherScriptConditionElement = null;
+    private final ScriptElementCondition innerScriptElementCondition;
+    private ScriptElementCondition otherScriptElementCondition = null;
     private boolean isOr = false;
     private boolean isAnd = false;
     private boolean isXor = false;
 
-    public ScriptConditionElement(final ScriptConditionElement scriptConditionElement) {
-        if (scriptConditionElement == null) {
-            throw new IllegalArgumentException("scriptConditionElement must not be null.");
+    public ScriptElementCondition(final ScriptElementCondition scriptElementCondition) {
+        if (scriptElementCondition == null) {
+            throw new IllegalArgumentException("scriptElementCondition must not be null.");
         }
 
-        this.innerScriptConditionElement = scriptConditionElement;
+        this.innerScriptElementCondition = scriptElementCondition;
         this.booleanEvent = null;
     }
 
-    public ScriptConditionElement(final BooleanEvent booleanEvent) {
+    public ScriptElementCondition(final BooleanEvent booleanEvent) {
         if (booleanEvent == null) {
             throw new IllegalArgumentException("booleanEvent must not be null.");
         }
 
         this.booleanEvent = booleanEvent;
-        this.innerScriptConditionElement = null;
+        this.innerScriptElementCondition = null;
     }
 
     private boolean checkCondition() throws FrameworkException {
         boolean returnValue;
 
-        if (innerScriptConditionElement != null) {
-            returnValue = innerScriptConditionElement.checkCondition();
+        if (innerScriptElementCondition != null) {
+            returnValue = innerScriptElementCondition.checkCondition();
         } else {
             returnValue = booleanEvent.getAsBoolean();
         }
 
-        if (otherScriptConditionElement != null) {
+        if (otherScriptElementCondition != null) {
             if (isOr) {
-                returnValue = returnValue || otherScriptConditionElement.checkCondition();
+                returnValue = returnValue || otherScriptElementCondition.checkCondition();
             } else if (isAnd) {
-                returnValue = returnValue && otherScriptConditionElement.checkCondition();
+                returnValue = returnValue && otherScriptElementCondition.checkCondition();
             } else {
-                returnValue = returnValue ^ otherScriptConditionElement.checkCondition();
+                returnValue = returnValue ^ otherScriptElementCondition.checkCondition();
             }
         }
 
         return returnValue;
     }
 
-    public ScriptConditionElement or(final ScriptConditionElement scriptConditionElement) throws ScriptConditionBooleanOperatorException {
+    public ScriptElementCondition or(final ScriptElementCondition scriptElementCondition) throws ScriptConditionBooleanOperatorException {
         if (!(isOr || isAnd || isXor)) {
-            otherScriptConditionElement = scriptConditionElement;
+            otherScriptElementCondition = scriptElementCondition;
             isOr = true;
 
             return this;
@@ -64,9 +64,9 @@ public class ScriptConditionElement extends ScriptElement {
         }
     }
 
-    public ScriptConditionElement and(final ScriptConditionElement scriptConditionElement) throws ScriptConditionBooleanOperatorException {
+    public ScriptElementCondition and(final ScriptElementCondition scriptElementCondition) throws ScriptConditionBooleanOperatorException {
         if (!(isOr || isAnd || isXor)) {
-            otherScriptConditionElement = scriptConditionElement;
+            otherScriptElementCondition = scriptElementCondition;
             isAnd = true;
 
             return this;
@@ -75,9 +75,9 @@ public class ScriptConditionElement extends ScriptElement {
         }
     }
 
-    public ScriptConditionElement xor(final ScriptConditionElement scriptConditionElement) throws ScriptConditionBooleanOperatorException {
+    public ScriptElementCondition xor(final ScriptElementCondition scriptElementCondition) throws ScriptConditionBooleanOperatorException {
         if (!(isOr || isAnd || isXor)) {
-            otherScriptConditionElement = scriptConditionElement;
+            otherScriptElementCondition = scriptElementCondition;
             isXor = true;
 
             return this;

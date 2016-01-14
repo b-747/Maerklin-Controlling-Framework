@@ -45,7 +45,7 @@ public final class ConfigDataHelper {
     }
 
     /**
-     * Calculates the calcCRC over all config data packets (including the last with the null bytes at the end)
+     * Calculates the CRC over all config data packets (including the last with the null bytes at the end)
      * (see page 49)
      *
      * @param data

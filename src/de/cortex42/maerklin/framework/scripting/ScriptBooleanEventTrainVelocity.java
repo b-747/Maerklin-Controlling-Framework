@@ -45,6 +45,12 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
 
         scriptContext.addPacketListener(velocityPacketListener);
 
+        //todo replace
+        /*
+        long start = System.nanoTime();
+        methodToBeTimed();
+        long elapsedTime = System.nanoTime() - start;
+         */
         long counter = 0L;
         while (!threadExchangeObject.value) {
             scriptContext.sendCANPacket(CS2CANCommands.queryVelocity(locId));

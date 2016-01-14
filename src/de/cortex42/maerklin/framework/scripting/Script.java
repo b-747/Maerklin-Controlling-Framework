@@ -9,7 +9,7 @@ public class Script {
     private final ScriptContext scriptContext;
     public ScriptElement first;
 
-    public Script(final ScriptContext scriptContext) {
+    public Script(final ScriptContext scriptContext) { //todo check for null
         this.scriptContext = scriptContext;
     }
 
