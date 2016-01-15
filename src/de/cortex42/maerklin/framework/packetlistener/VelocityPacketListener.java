@@ -19,7 +19,6 @@ public abstract class VelocityPacketListener implements PacketListener {
             final byte[] data = canPacket.getData();
 
             velocity = ((data[4] & 0xFF) << 8 | (data[5] & 0xFF));
-
             onSuccess();
         }
     }

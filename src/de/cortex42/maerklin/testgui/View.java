@@ -30,6 +30,7 @@ public class View {
     private JComboBox<String> comboBoxLoc;
     private JFormattedTextField formattedTextFieldIpAddress;
 
+    //todo lok id dezimal eingeben!!
     public JPanel getPanel() {
         return panel;
     }
@@ -68,7 +69,7 @@ public class View {
         comboBoxSerialPort.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
-                if (actionEvent.getActionCommand().equals("comboBoxChanged")) { //handle selection only
+                if (!actionEvent.getActionCommand().equals("comboBoxChanged")) { //handle selection only
                     final Object selectedItem = comboBoxSerialPort.getSelectedItem();
 
                     if (selectedItem != null) {
