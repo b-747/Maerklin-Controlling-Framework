@@ -69,7 +69,7 @@ public class View {
         comboBoxSerialPort.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
-                if (!actionEvent.getActionCommand().equals("comboBoxChanged")) { //handle selection only
+                if (!actionEvent.getActionCommand().equals("comboBoxChanged")) {
                     final Object selectedItem = comboBoxSerialPort.getSelectedItem();
 
                     if (selectedItem != null) {
