@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ScriptElementWaitForContact extends ScriptElement {
     private final int contactId;
     private final long timeout;
-    private final static long DEFAULT_TIMEOUT = 60000L; //60s
+    private final static long DEFAULT_TIMEOUT = 30000L; //30s
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
@@ -36,6 +36,7 @@ public class ScriptElementWaitForContact extends ScriptElement {
             public void onSuccess() {
                 lock.lock();
                 try {
+                    scriptContext.removePacketListener(this);
                     condition.signal();
                 } finally {
                     lock.unlock();
@@ -55,7 +56,6 @@ public class ScriptElementWaitForContact extends ScriptElement {
             throw new FrameworkException(e);
         } finally {
             lock.unlock();
-            scriptContext.removePacketListener(s88EventPacketListener);
         }
     }
 }

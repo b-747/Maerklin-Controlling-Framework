@@ -9,7 +9,10 @@ public class Script {
     private final ScriptContext scriptContext;
     public ScriptElement first;
 
-    public Script(final ScriptContext scriptContext) { //todo check for null
+    public Script(final ScriptContext scriptContext) {
+        if (scriptContext == null) {
+            throw new IllegalArgumentException("scriptContext must not be null.");
+        }
         this.scriptContext = scriptContext;
     }
 

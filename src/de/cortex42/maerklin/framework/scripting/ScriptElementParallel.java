@@ -11,6 +11,9 @@ public class ScriptElementParallel extends ScriptElement {
     private final ArrayList<ScriptElement> scriptElements;
 
     public ScriptElementParallel(final ArrayList<ScriptElement> scriptElements) {
+        if (scriptElements == null) {
+            throw new IllegalArgumentException("scriptElements must not be null.");
+        }
         this.scriptElements = scriptElements;
     }
 
