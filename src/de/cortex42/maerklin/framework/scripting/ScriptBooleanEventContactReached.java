@@ -15,7 +15,7 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
     private final ScriptContext scriptContext;
     private final int contactId;
     private final long timeout;
-    private final static long DEFAULT_TIMEOUT = 60000L; //60s
+    private final static long DEFAULT_TIMEOUT = 30000L; //30s
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
@@ -44,6 +44,7 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
                 lock.lock();
                 try {
                     threadExchangeObject.value = true;
+                    scriptContext.removePacketListener(this);
                     condition.signal();
                 } finally {
                     lock.unlock();
@@ -63,7 +64,6 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
             throw new FrameworkException(e);
         } finally {
             lock.unlock();
-            scriptContext.removePacketListener(s88EventPacketListener);
         }
 
         return threadExchangeObject.value;

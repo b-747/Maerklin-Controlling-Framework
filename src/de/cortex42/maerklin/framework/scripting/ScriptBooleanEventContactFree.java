@@ -16,7 +16,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
     private final int contactId;
     private final long freeTime;
     private final long timeout;
-    private final static long DEFAULT_TIMEOUT = 60000L; //60s
+    private final static long DEFAULT_TIMEOUT = 30000L; //30s
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
@@ -43,6 +43,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
             public void onSuccess() { //contact free
                 lock.lock();
                 try {
+                    scriptContext.removePacketListener(this);
                     condition.signal();
                 } finally {
                     lock.unlock();
@@ -63,7 +64,6 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
             throw new FrameworkException(e);
         } finally {
             lock.unlock();
-            scriptContext.removePacketListener(s88EventPacketListener);
         }
 
         final ThreadExchangeObject threadExchangeObject = new ThreadExchangeObject();
@@ -72,6 +72,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
             @Override
             public void onSuccess() {
                 threadExchangeObject.value = true;
+                scriptContext.removePacketListener(this);
             }
         };
 
@@ -81,8 +82,6 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
             Thread.sleep(freeTime); //now wait
         } catch (final InterruptedException e) {
             throw new FrameworkException(e);
-        } finally {
-            scriptContext.removePacketListener(s88EventPacketListener);
         }
 
         //if no S88 event occurred until now (value is false), then the contact remained free

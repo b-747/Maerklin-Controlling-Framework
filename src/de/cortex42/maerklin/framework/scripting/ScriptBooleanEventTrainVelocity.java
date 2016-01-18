@@ -21,7 +21,7 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
     private final int velocity;
     private final long timeout;
     private final long DELAY = 250L;
-    private final static long DEFAULT_TIMEOUT = 60000L; //60s
+    private final static long DEFAULT_TIMEOUT = 30000L; //30s
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
@@ -53,6 +53,7 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
                     lock.lock();
                     try {
                         threadExchangeObject.value = true;
+                        scriptContext.removePacketListener(this);
                         condition.signal();
                     } finally {
                         lock.unlock();
@@ -62,7 +63,7 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
         };
         scriptContext.addPacketListener(velocityPacketListener);
 
-        final FrameworkException[] frameworkException = new FrameworkException[1];
+        final FrameworkException[] threadFrameworkException = new FrameworkException[1];
         final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
         final ScheduledFuture[] scheduledFuture = new ScheduledFuture[1];
@@ -70,11 +71,9 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
             @Override
             public void run() {
                 try {
-                    //if(!threadExchangeObject.value) {
                     scriptContext.sendCANPacket(CS2CANCommands.queryVelocity(locId));
-                    //}
                 } catch (final FrameworkException e) {
-                    frameworkException[0] = e;
+                    threadFrameworkException[0] = e;
                 }
             }
         }, 0L, DELAY, TimeUnit.MILLISECONDS);
@@ -86,10 +85,10 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
                 return false;
             }
         } catch (final InterruptedException e) {
-            if (frameworkException[0] != null) {
+            if (threadFrameworkException[0] != null) {
                 final FrameworkException[] frameworkExceptions = new FrameworkException[2];
-                frameworkException[0] = frameworkException[0];
-                frameworkException[1] = new FrameworkException(e);
+                frameworkExceptions[0] = threadFrameworkException[0];
+                frameworkExceptions[1] = new FrameworkException(e);
                 throw new FrameworkException(frameworkExceptions);
             } else {
                 throw new FrameworkException(e);
@@ -98,21 +97,10 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
             lock.unlock();
             scheduledFuture[0].cancel(true);
             scheduledExecutorService.shutdown();
-            scriptContext.removePacketListener(velocityPacketListener);
         }
 
-      /*  try {
-            final Object scheduledFutureResult = scheduledFuture[0].get(timeout, TimeUnit.MILLISECONDS); //blocking operation (synchronous)
-        } catch (final InterruptedException | ExecutionException | TimeoutException e) {
-            throw new FrameworkException(e);
-        } finally {
-            scheduledFuture[0].cancel(true);
-            scheduledExecutorService.shutdown();
-            scriptContext.removePacketListener(velocityPacketListener);
-        }*/
-
-        if (frameworkException[0] != null) {
-            throw frameworkException[0];
+        if (threadFrameworkException[0] != null) {
+            throw threadFrameworkException[0];
         }
 
         return threadExchangeObject.value;
