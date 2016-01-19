@@ -9,7 +9,7 @@ import de.cortex42.maerklin.framework.FrameworkException;
 public class ScriptElementSetFunction extends ScriptElement {
     private final int locId;
     private final int function;
-    private final int toggle;
+    private final int toggle; //todo add enum ON/OFF
 
     public ScriptElementSetFunction(final int locId, final int function, final int toggle) {
         this.locId = locId;

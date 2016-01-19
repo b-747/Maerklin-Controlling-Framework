@@ -8,8 +8,10 @@ import de.cortex42.maerklin.framework.FrameworkException;
 public class ScriptElementWait extends ScriptElement {
     private final long milliseconds;
 
-    //todo check if negative
     public ScriptElementWait(final long milliseconds) {
+        if (milliseconds < 0L) {
+            throw new IllegalArgumentException("milliseconds must be positive.");
+        }
         this.milliseconds = milliseconds;
     }
 

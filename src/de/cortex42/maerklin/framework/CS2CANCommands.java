@@ -51,7 +51,7 @@ public final class CS2CANCommands {
     /*---SYSTEM_MFX_REGISTRATION_COUNTER_VALUE---*/
     public static final byte[] SYSTEM_MFX_REGISTRATION_COUNTER_VALUE = new byte[]{0x00, 0x02};
     /**
-     * Public flags for the commands.
+     * Command flags.
      */
     /*---DIRECTION---*/
     public static final byte DIRECTION_MAINTAIN = 0x00;
@@ -67,6 +67,9 @@ public final class CS2CANCommands {
     /*---EQUIPMENT POWER---*/
     public static final byte EQUIPMENT_POWER_OFF = 0x00;
     public static final byte EQUIPMENT_POWER_ON = 0x01;
+    /*---SWITCH POSITION---*/
+    public static final byte SWITCH_POSITION_ROUND = 0x00;
+    public static final byte SWITCH_POSITION_STRAIGHT = 0x01;
 
     private CS2CANCommands() {
         /* ... */
