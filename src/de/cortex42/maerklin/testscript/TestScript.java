@@ -53,9 +53,9 @@ public final class TestScript {
         last = last.next = new ScriptElementWait(10L);
         last = last.next = new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST);
         last = last.next = new ScriptElementWait(10L);
-        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, 1); //loco 6 whistle
+        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, ScriptElementSetFunction.ToggleState.ON); //loco 6 whistle
         last = last.next = new ScriptElementWait(1400L); //wait 1.4s
-        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, 0); //loco 6 stop whistle
+        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, ScriptElementSetFunction.ToggleState.OFF); //loco 6 stop whistle
         last = last.next = new ScriptElementWait(17000L);
         last.next = new ScriptElementSetVelocity(LOCO_6, STOP);
 
@@ -94,11 +94,11 @@ public final class TestScript {
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_6, ScriptElementSwitch.SwitchPosition.STRAIGHT); //railway switch 6 right
         last = last.next = new ScriptElementSetVelocity(LOCO_7, MEDIUM_FAST); //loco 7 medium fast
         last = last.next = new ScriptElementWaitForContact(CONTACT_1007); //reach contact 1007
-        last = last.next = new ScriptElementSetFunction(LOCO_7, 3, 1); //loco 7 whistle
+        last = last.next = new ScriptElementSetFunction(LOCO_7, 3, ScriptElementSetFunction.ToggleState.ON); //loco 7 whistle
         last = last.next = new ScriptElementSetDirection(LOCO_5, ScriptElementSetDirection.Direction.BACKWARD); //loco 5 backward
         last = last.next = new ScriptElementSetVelocity(LOCO_5, SLOW); //loco 5 slow
         last = last.next = new ScriptElementWait(1400L); //wait 1.4 s
-        last = last.next = new ScriptElementSetFunction(LOCO_7, 3, 0); //loco 7 stop whistle
+        last = last.next = new ScriptElementSetFunction(LOCO_7, 3, ScriptElementSetFunction.ToggleState.OFF); //loco 7 stop whistle
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_4, ScriptElementSwitch.SwitchPosition.STRAIGHT); //railway switch 4 right
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_3, ScriptElementSwitch.SwitchPosition.ROUND); //railway switch 3 right
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_2, ScriptElementSwitch.SwitchPosition.ROUND); //railway switch 2 right
@@ -142,9 +142,9 @@ public final class TestScript {
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_2, ScriptElementSwitch.SwitchPosition.STRAIGHT); //railway switch 2 straight
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_5, ScriptElementSwitch.SwitchPosition.STRAIGHT); //railway switch 5 left
         last = last.next = new ScriptElementSwitch(RAILWAY_SWITCH_6, ScriptElementSwitch.SwitchPosition.ROUND); //railway switch 6 left
-        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, 1); //loco 6 whistle
+        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, ScriptElementSetFunction.ToggleState.ON); //loco 6 whistle
         last = last.next = new ScriptElementWait(1400L); //wait 1.4s
-        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, 0); //loco 6 stop whistle
+        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, ScriptElementSetFunction.ToggleState.OFF); //loco 6 stop whistle
         last = last.next = new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST); //loco 6 medium fast
         last = last.next = new ScriptElementWaitForContact(CONTACT_10); //reach contact 10
         last = last.next = new ScriptElementSetVelocity(LOCO_6, FAST); //loco 6 fast
