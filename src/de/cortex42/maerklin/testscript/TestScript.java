@@ -120,15 +120,15 @@ public final class TestScript {
         scriptElementConditionReach1001Or1.next = new ScriptElementSetVelocity(LOCO_5, STOP); //then stop loco 5
 
 
-        final ScriptElementCondition scriptElementConditionTest =
+       /* final ScriptElementCondition scriptElementConditionTest =
                 new ScriptElementCondition(new ScriptElementCondition(new ScriptBooleanEventContactReached(scriptContext, CONTACT_1)).and(new ScriptElementCondition(new ScriptBooleanEventContactFree(scriptContext, CONTACT_1, 200L))))
                         .or(new ScriptElementCondition(new ScriptBooleanEventContactReached(scriptContext, CONTACT_1001)));
-        scriptElementConditionTest.next = new ScriptElementSetVelocity(LOCO_5, STOP); //then stop loco 5
+        scriptElementConditionTest.next = new ScriptElementSetVelocity(LOCO_5, STOP); //then stop loco 5*/
 
         final ArrayList<ScriptElement> scriptElements = new ArrayList<>(2);
         scriptElements.add(scriptElementConditionReach8);
-        //scriptElements.add(scriptElementConditionReach1001Or1);
-        scriptElements.add(scriptElementConditionTest);
+        scriptElements.add(scriptElementConditionReach1001Or1);
+        //scriptElements.add(scriptElementConditionTest);
 
 
         last = last.next = new ScriptElementParallel(scriptElements);

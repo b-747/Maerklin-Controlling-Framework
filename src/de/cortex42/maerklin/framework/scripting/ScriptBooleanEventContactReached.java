@@ -44,7 +44,6 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
                 lock.lock();
                 try {
                     threadExchangeObject.value = true;
-                    scriptContext.removePacketListener(this);
                     condition.signal();
                 } finally {
                     lock.unlock();
@@ -63,6 +62,7 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
         } catch (final InterruptedException e) {
             throw new FrameworkException(e);
         } finally {
+            scriptContext.removePacketListener(s88EventPacketListener);
             lock.unlock();
         }
 

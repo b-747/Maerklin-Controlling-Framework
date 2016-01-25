@@ -53,7 +53,6 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
                     lock.lock();
                     try {
                         threadExchangeObject.value = true;
-                        scriptContext.removePacketListener(this);
                         condition.signal();
                     } finally {
                         lock.unlock();
@@ -94,6 +93,7 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
                 throw new FrameworkException(e);
             }
         } finally {
+            scriptContext.removePacketListener(velocityPacketListener);
             lock.unlock();
             scheduledFuture[0].cancel(true);
             scheduledExecutorService.shutdown();
