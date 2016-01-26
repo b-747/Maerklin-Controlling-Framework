@@ -34,10 +34,6 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
 
     @Override
     public boolean getAsBoolean() throws FrameworkException {
-        return check();
-    }
-
-    private boolean check() throws FrameworkException {
         S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, S88EventPacketListener.ContactState.DEACTIVATED) {
             @Override
             public void onSuccess() { //contact free
@@ -81,7 +77,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
             Thread.sleep(freeTime); //now wait
         } catch (final InterruptedException e) {
             throw new FrameworkException(e);
-        }finally{
+        } finally {
             scriptContext.removePacketListener(s88EventPacketListener);
         }
 

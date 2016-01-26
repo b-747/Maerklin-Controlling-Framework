@@ -40,10 +40,6 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
 
     @Override
     public boolean getAsBoolean() throws FrameworkException {
-        return check();
-    }
-
-    private boolean check() throws FrameworkException {
         final ThreadExchangeObject threadExchangeObject = new ThreadExchangeObject();
 
         final VelocityPacketListener velocityPacketListener = new VelocityPacketListener() {
@@ -66,7 +62,7 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
         final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
         final ScheduledFuture[] scheduledFuture = new ScheduledFuture[1];
-        scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(new Runnable() { //asynchronous
+        scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 try {

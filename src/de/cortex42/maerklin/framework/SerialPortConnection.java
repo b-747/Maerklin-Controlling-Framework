@@ -31,7 +31,7 @@ public class SerialPortConnection implements Connection {
         serialPort = SerialPort.getCommPort(systemPortName);
 
         serialPort.setComPortParameters(BAUD_RATE, DATA_BITS, STOP_BITS, PARITY);
-        serialPort.setFlowControl(FLOW_CONTROL); //todo test
+        serialPort.setFlowControl(FLOW_CONTROL);
 
         if (!serialPort.openPort()) {
             throw new SerialPortException("Could not open the serial port.");
