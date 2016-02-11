@@ -21,6 +21,9 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
     private final Condition condition;
 
     public ScriptBooleanEventContactFree(final ScriptContext scriptContext, final int contactId, final long freeTime, final long timeout) {
+        if (scriptContext == null) {
+            throw new IllegalArgumentException("scriptContext must not be null.");
+        }
         this.scriptContext = scriptContext;
         this.contactId = contactId;
         this.freeTime = freeTime;

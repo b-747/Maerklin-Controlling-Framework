@@ -20,8 +20,11 @@ public class ScriptBooleanEventContactReached implements BooleanEvent {
     private final Condition condition;
 
     public ScriptBooleanEventContactReached(final ScriptContext scriptContext, final int contactId, final long timeout) {
-        this.contactId = contactId;
+        if (scriptContext == null) {
+            throw new IllegalArgumentException("scriptContext must not be null.");
+        }
         this.scriptContext = scriptContext;
+        this.contactId = contactId;
         this.timeout = timeout;
         condition = lock.newCondition();
     }

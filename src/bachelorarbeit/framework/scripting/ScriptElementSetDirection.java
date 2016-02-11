@@ -7,7 +7,7 @@ import bachelorarbeit.framework.FrameworkException;
  * Created by ivo on 18.11.15.
  */
 public class ScriptElementSetDirection extends ScriptElement {
-    public enum Direction{
+    public enum Direction {
         MAINTAIN,
         FORWARD,
         BACKWARD,
@@ -26,7 +26,7 @@ public class ScriptElementSetDirection extends ScriptElement {
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
         byte directionByte = 0;
 
-        switch(direction){
+        switch (direction) {
             case MAINTAIN:
                 directionByte = CS2CANCommands.DIRECTION_MAINTAIN;
                 break;

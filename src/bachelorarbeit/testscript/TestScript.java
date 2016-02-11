@@ -47,7 +47,7 @@ public final class TestScript {
 
         last = s.first = new ScriptElementSetDirection(LOCO_6, ScriptElementSetDirection.Direction.FORWARD);
         last = last.next = new ScriptElementWait(10L); //todo 10ms reichen auch bei der Gleisbox
-        last = last.next= new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST);
+        last = last.next = new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST);
         last = last.next = new ScriptElementWait(17000L);
         last = last.next = new ScriptElementSetDirection(LOCO_6, ScriptElementSetDirection.Direction.BACKWARD);
         last = last.next = new ScriptElementWait(10L);

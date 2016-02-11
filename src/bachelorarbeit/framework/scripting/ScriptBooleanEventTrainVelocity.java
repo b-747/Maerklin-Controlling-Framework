@@ -27,6 +27,9 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
 
     //timeout in ms
     public ScriptBooleanEventTrainVelocity(final ScriptContext scriptContext, final int locId, final int velocity, final long timeout) {
+        if (scriptContext == null) {
+            throw new IllegalArgumentException("scriptContext must not be null.");
+        }
         this.scriptContext = scriptContext;
         this.locId = locId;
         this.velocity = velocity;

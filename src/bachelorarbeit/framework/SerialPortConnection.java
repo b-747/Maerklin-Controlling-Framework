@@ -50,18 +50,18 @@ public class SerialPortConnection implements Connection {
     }
 
     @Override
-    synchronized public void close() { //todo nötig
+    synchronized public void close() {
         if (serialPort != null) {
             serialPort.closePort();
         }
     }
 
-    synchronized public void addPacketListener(final PacketListener packetListener) { //todo nötig wegen removePacketListener
+    synchronized public void addPacketListener(final PacketListener packetListener) {
         serialPort.addDataListener(concreteSerialPortPacketListener); //happens only once
         concreteSerialPortPacketListener.addPacketListener(packetListener);
     }
 
-    synchronized public void removePacketListener(final PacketListener packetListener) { //todo synchronized nötig (siehe EthernetConnection)
+    synchronized public void removePacketListener(final PacketListener packetListener) {
         concreteSerialPortPacketListener.removePacketListener(packetListener);
 
         if (!concreteSerialPortPacketListener.packetListenersAvailable()) {
@@ -69,7 +69,7 @@ public class SerialPortConnection implements Connection {
         }
     }
 
-    synchronized public void sendCANPacket(final CANPacket canPacket) throws SerialPortException { //todo nötig!! laut Mail
+    synchronized public void sendCANPacket(final CANPacket canPacket) throws SerialPortException {
         final byte[] bytesToWrite = canPacket.getBytes();
 
         final int bytesWritten = serialPort.writeBytes(bytesToWrite, bytesToWrite.length);

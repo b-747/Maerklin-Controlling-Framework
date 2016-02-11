@@ -33,12 +33,12 @@ public class EthernetConnection implements Connection {
     }
 
     @Override
-    synchronized public void close() { //todo nötig
+    synchronized public void close() {
         stopListening();
         datagramSocket.close();
     }
 
-    public void sendCANPacket(final CANPacket canPacket) throws FrameworkException { //todo synchronized hier nicht nötig (wird intern verwendet)
+    public void sendCANPacket(final CANPacket canPacket) throws FrameworkException {
         final byte[] bytes = canPacket.getBytes();
 
         final DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, targetAddress, targetPort);
@@ -58,21 +58,21 @@ public class EthernetConnection implements Connection {
         exceptionListeners.remove(exceptionListener);
     }
 
-    synchronized public void addPacketListener(final PacketListener packetListener) { //todo nötig aufgrund removePacketListener (während remove keine andere synchronized-Methode aufrufbar)
+    synchronized public void addPacketListener(final PacketListener packetListener) {
         packetListeners.add(packetListener);
 
         startListening();
     }
 
-    synchronized public void removePacketListener(final PacketListener packetListener) { //todo nötig
+    synchronized public void removePacketListener(final PacketListener packetListener) {
         packetListeners.remove(packetListener);
 
-        if (packetListeners.isEmpty()) { //todo deswegen: erster Thread entfernt Listener, stellt fest, dass kein Listener mehr da ist => switch => anderer Thread fügt Listener hinzu => switch stopListening() obwohl noch ein anderer vorhanden ist
+        if (packetListeners.isEmpty()) {
             stopListening();
         }
     }
 
-    private void startListening() { //todo nicht nötig (wird nur von synchronized addPacketListener aufgerufen)
+    private void startListening() {
         if (!isListening) {
             isListening = true;
 
@@ -109,7 +109,7 @@ public class EthernetConnection implements Connection {
 
     private void stopListening() {
         isListening = false;
-    } //todo nicht nötig (auch nur von synchronized)
+    }
 
 
 }

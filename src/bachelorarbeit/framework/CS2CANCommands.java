@@ -289,7 +289,7 @@ public final class CS2CANCommands {
      * @param powerToggle
      * @return
      */
-    public static CANPacket toggleEquipment(final int locId, final int position, final int powerToggle) {
+    public static CANPacket toggleEquipment(final int locId, final int position, final int powerToggle) { //todo doku, parameter
         return new CANPacket(
                 PRIORITY,
                 EQUIPMENT,
