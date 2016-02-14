@@ -28,6 +28,9 @@ public abstract class VelocityPacketListener implements PacketListener {
         //never happens
     }
 
+    @Override
+    public abstract void onSuccess();
+
     public int getVelocity() {
         return velocity;
     }

@@ -39,4 +39,7 @@ public abstract class S88EventPacketListener implements PacketListener {
     public void onException(final FrameworkException frameworkException) {
         //never happens
     }
+
+    @Override
+    public abstract void onSuccess(); //todo test this in all concrete packetlisteners (abstract)
 }

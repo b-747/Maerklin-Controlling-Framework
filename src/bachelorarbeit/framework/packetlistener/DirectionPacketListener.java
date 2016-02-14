@@ -57,6 +57,9 @@ public abstract class DirectionPacketListener implements PacketListener {
         //never happens
     }
 
+    @Override
+    public abstract void onSuccess();
+
     public Direction getDirection() {
         return direction;
     }

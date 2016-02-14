@@ -2,6 +2,7 @@ package bachelorarbeit.framework.packetlistener;
 
 import bachelorarbeit.framework.CANPacket;
 import bachelorarbeit.framework.CS2CANCommands;
+import bachelorarbeit.framework.FrameworkException;
 
 /**
  * Created by ivo on 04.12.15.
@@ -30,6 +31,12 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
             decompressedBytes = null;
         }
     }
+
+    @Override
+    public abstract void onSuccess(); //todo test abstract here
+
+    @Override
+    public abstract void onException(final FrameworkException frameworkException);
 
     public byte[] getDecompressedBytes() {
         return decompressedBytes;
