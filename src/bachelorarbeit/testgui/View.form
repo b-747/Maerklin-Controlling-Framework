@@ -57,7 +57,7 @@
             </constraints>
             <properties>
               <labelFor value="2d3e3"/>
-              <text value="Loc-ID"/>
+              <text value="Loc-ID:"/>
             </properties>
           </component>
           <component id="2d3e3" class="javax.swing.JComboBox" binding="comboBoxLocId">
