@@ -17,7 +17,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
     private final ScriptContext scriptContext;
-    private final int locId;
+    private final int trainUid;
     private final int velocity;
     private final long timeout;
     private final long DELAY = 250L;
@@ -26,19 +26,19 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
     private final Condition condition;
 
     //timeout in ms
-    public ScriptBooleanEventTrainVelocity(final ScriptContext scriptContext, final int locId, final int velocity, final long timeout) {
+    public ScriptBooleanEventTrainVelocity(final ScriptContext scriptContext, final int trainUid, final int velocity, final long timeout) {
         if (scriptContext == null) {
             throw new IllegalArgumentException("scriptContext must not be null.");
         }
         this.scriptContext = scriptContext;
-        this.locId = locId;
+        this.trainUid = trainUid;
         this.velocity = velocity;
         this.timeout = timeout;
         condition = lock.newCondition();
     }
 
-    public ScriptBooleanEventTrainVelocity(final ScriptContext scriptContext, final int locId, final int velocity) {
-        this(scriptContext, locId, velocity, DEFAULT_TIMEOUT);
+    public ScriptBooleanEventTrainVelocity(final ScriptContext scriptContext, final int trainUid, final int velocity) {
+        this(scriptContext, trainUid, velocity, DEFAULT_TIMEOUT);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ScriptBooleanEventTrainVelocity implements BooleanEvent {
             @Override
             public void run() {
                 try {
-                    scriptContext.sendCANPacket(CS2CANCommands.queryVelocity(locId));
+                    scriptContext.sendCANPacket(CS2CANCommands.queryVelocity(trainUid));
                 } catch (final FrameworkException e) {
                     threadFrameworkException[0] = e;
                 }

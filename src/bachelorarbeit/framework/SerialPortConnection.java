@@ -11,7 +11,6 @@ import java.util.ArrayList;
 /**
  * Created by ivo on 21.10.15.
  */
-//Konkrete Strategie
 public class SerialPortConnection implements Connection {
     private final SerialPort serialPort;
     private final ConcreteSerialPortPacketListener concreteSerialPortPacketListener = new ConcreteSerialPortPacketListener();

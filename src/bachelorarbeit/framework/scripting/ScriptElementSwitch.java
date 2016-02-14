@@ -13,16 +13,16 @@ public class ScriptElementSwitch extends ScriptElement {
     }
 
     private final static long DELAY = 200L;
-    private final int equipmentId; //todo rename ALL to locId!
+    private final int equipmentUid;
     private final SwitchPosition switchPosition;
     private final long switchDelay;
 
-    public ScriptElementSwitch(final int equipmentId, final SwitchPosition switchPosition) {
-        this(equipmentId, switchPosition, DELAY);
+    public ScriptElementSwitch(final int equipmentUid, final SwitchPosition switchPosition) {
+        this(equipmentUid, switchPosition, DELAY);
     }
 
-    public ScriptElementSwitch(final int equipmentId, final SwitchPosition switchPosition, final long switchDelay) {
-        this.equipmentId = equipmentId;
+    public ScriptElementSwitch(final int equipmentUid, final SwitchPosition switchPosition, final long switchDelay) {
+        this.equipmentUid = equipmentUid;
         this.switchPosition = switchPosition;
         this.switchDelay = switchDelay;
     }
@@ -30,7 +30,7 @@ public class ScriptElementSwitch extends ScriptElement {
     @Override
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
         scriptContext.sendCANPacket(
-                CS2CANCommands.toggleEquipment(equipmentId, switchPosition == SwitchPosition.ROUND ? CS2CANCommands.SWITCH_POSITION_ROUND : CS2CANCommands.SWITCH_POSITION_STRAIGHT, CS2CANCommands.EQUIPMENT_POWER_ON)
+                CS2CANCommands.toggleEquipment(equipmentUid, switchPosition == SwitchPosition.ROUND ? CS2CANCommands.SWITCH_POSITION_ROUND : CS2CANCommands.SWITCH_POSITION_STRAIGHT, CS2CANCommands.EQUIPMENT_POWER_ON)
         );
 
         try {
@@ -40,7 +40,7 @@ public class ScriptElementSwitch extends ScriptElement {
         }
 
         scriptContext.sendCANPacket(
-                CS2CANCommands.toggleEquipment(equipmentId, switchPosition == SwitchPosition.ROUND ? CS2CANCommands.SWITCH_POSITION_ROUND : CS2CANCommands.SWITCH_POSITION_STRAIGHT, CS2CANCommands.EQUIPMENT_POWER_OFF)
+                CS2CANCommands.toggleEquipment(equipmentUid, switchPosition == SwitchPosition.ROUND ? CS2CANCommands.SWITCH_POSITION_ROUND : CS2CANCommands.SWITCH_POSITION_STRAIGHT, CS2CANCommands.EQUIPMENT_POWER_OFF)
         );
     }
 }

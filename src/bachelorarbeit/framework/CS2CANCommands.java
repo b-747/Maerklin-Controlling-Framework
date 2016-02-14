@@ -95,17 +95,17 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket queryDirection(final int locId) {
+    public static CANPacket queryDirection(final int trainUid) {
         return new CANPacket(
                 PRIORITY,
                 DIRECTION,
                 HASH,
                 DIRECTION_QUERY_DLC,
                 new byte[]{
-                        (byte) ((locId >> 24) & 0xFF),
-                        (byte) ((locId >> 16) & 0xFF),
-                        (byte) ((locId >> 8) & 0xFF),
-                        (byte) (locId & 0xFF),
+                        (byte) ((trainUid >> 24) & 0xFF),
+                        (byte) ((trainUid >> 16) & 0xFF),
+                        (byte) ((trainUid >> 8) & 0xFF),
+                        (byte) (trainUid & 0xFF),
                         (byte) 0x00,
                         (byte) 0x00,
                         (byte) 0x00,
@@ -114,7 +114,7 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket setDirection(final int locId, final int direction) {
+    public static CANPacket setDirection(final int trainUid, final int direction) {
         if (direction > 3 || direction < 0) {
             throw new IllegalArgumentException("direction must be between 0 and 3. (Error: " + direction + ").");
         }
@@ -125,10 +125,10 @@ public final class CS2CANCommands {
                 HASH,
                 DIRECTION_SET_DLC,
                 new byte[]{
-                        (byte) ((locId >> 24) & 0xFF),
-                        (byte) ((locId >> 16) & 0xFF),
-                        (byte) ((locId >> 8) & 0xFF),
-                        (byte) (locId & 0xFF),
+                        (byte) ((trainUid >> 24) & 0xFF),
+                        (byte) ((trainUid >> 16) & 0xFF),
+                        (byte) ((trainUid >> 8) & 0xFF),
+                        (byte) (trainUid & 0xFF),
                         (byte) (direction & 0xFF),
                         (byte) 0x00,
                         (byte) 0x00,
@@ -137,7 +137,7 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket toggleFunction(final int locId, final int function, final int toggle) {
+    public static CANPacket toggleFunction(final int trainUid, final int function, final int toggle) {
         if (function > 31 || function < 0) {
             throw new IllegalArgumentException("function must be between 0 and 31. (Error: " + function + ").");
         }
@@ -152,10 +152,10 @@ public final class CS2CANCommands {
                 HASH,
                 FUNCTION_SET_DLC,
                 new byte[]{
-                        (byte) ((locId >> 24) & 0xFF),
-                        (byte) ((locId >> 16) & 0xFF),
-                        (byte) ((locId >> 8) & 0xFF),
-                        (byte) (locId & 0xFF),
+                        (byte) ((trainUid >> 24) & 0xFF),
+                        (byte) ((trainUid >> 16) & 0xFF),
+                        (byte) ((trainUid >> 8) & 0xFF),
+                        (byte) (trainUid & 0xFF),
                         (byte) (function & 0xFF),
                         (byte) (toggle & 0xFF),
                         (byte) 0x00,
@@ -240,17 +240,17 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket queryVelocity(final int locId) {
+    public static CANPacket queryVelocity(final int trainUid) {
         return new CANPacket(
                 PRIORITY,
                 VELOCITY,
                 HASH,
                 VELOCITY_QUERY_DLC,
                 new byte[]{
-                        (byte) ((locId >> 24) & 0xFF),
-                        (byte) ((locId >> 16) & 0xFF),
-                        (byte) ((locId >> 8) & 0xFF),
-                        (byte) (locId & 0xFF),
+                        (byte) ((trainUid >> 24) & 0xFF),
+                        (byte) ((trainUid >> 16) & 0xFF),
+                        (byte) ((trainUid >> 8) & 0xFF),
+                        (byte) (trainUid & 0xFF),
                         (byte) 0x00,
                         (byte) 0x00,
                         (byte) 0x00,
@@ -259,7 +259,7 @@ public final class CS2CANCommands {
         );
     }
 
-    public static CANPacket setVelocity(final int locId, final int velocity) {
+    public static CANPacket setVelocity(final int trainUid, final int velocity) {
         if (velocity < 0 || velocity > 1023) {
             throw new IllegalArgumentException("velocity must be between 0 and 1023. (Error: " + velocity + ").");
         }
@@ -270,10 +270,10 @@ public final class CS2CANCommands {
                 HASH,
                 VELOCITY_SET_DLC,
                 new byte[]{
-                        (byte) ((locId >> 24) & 0xFF),
-                        (byte) ((locId >> 16) & 0xFF),
-                        (byte) ((locId >> 8) & 0xFF),
-                        (byte) (locId & 0xFF),
+                        (byte) ((trainUid >> 24) & 0xFF),
+                        (byte) ((trainUid >> 16) & 0xFF),
+                        (byte) ((trainUid >> 8) & 0xFF),
+                        (byte) (trainUid & 0xFF),
                         //max velocity = 0x03E8 = 1000
                         (byte) ((velocity >> 8) & 0xFF),
                         (byte) (velocity & 0xFF),
@@ -283,23 +283,17 @@ public final class CS2CANCommands {
         );
     }
 
-    /**
-     * @param locId
-     * @param position    1 = straight
-     * @param powerToggle
-     * @return
-     */
-    public static CANPacket toggleEquipment(final int locId, final int position, final int powerToggle) { //todo doku, parameter
+    public static CANPacket toggleEquipment(final int equipmentUid, final int position, final int powerToggle) {
         return new CANPacket(
                 PRIORITY,
                 EQUIPMENT,
                 HASH,
                 EQUIPMENT_DLC,
                 new byte[]{
-                        (byte) ((locId >> 24) & 0xFF),
-                        (byte) ((locId >> 16) & 0xFF),
-                        (byte) ((locId >> 8) & 0xFF),
-                        (byte) (locId & 0xFF),
+                        (byte) ((equipmentUid >> 24) & 0xFF),
+                        (byte) ((equipmentUid >> 16) & 0xFF),
+                        (byte) ((equipmentUid >> 8) & 0xFF),
+                        (byte) (equipmentUid & 0xFF),
                         (byte) (position & 0xFF),
                         (byte) (powerToggle & 0xFF),
                         (byte) 0x00,

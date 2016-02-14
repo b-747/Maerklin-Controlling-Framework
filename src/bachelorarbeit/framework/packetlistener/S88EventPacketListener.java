@@ -14,12 +14,11 @@ public abstract class S88EventPacketListener implements PacketListener {
         IRRELEVANT
     }
 
-    private final int contactId;
+    private final int contactUid;
     private final ContactState contactState;
 
-    //todo rename Id to Uid
-    public S88EventPacketListener(final int contactId, final ContactState contactState) {
-        this.contactId = contactId;
+    public S88EventPacketListener(final int contactUid, final ContactState contactState) {
+        this.contactUid = contactUid;
         this.contactState = contactState;
     }
 
@@ -29,7 +28,7 @@ public abstract class S88EventPacketListener implements PacketListener {
 
         if ((canPacket.getCommand() & 0xFE) == CS2CANCommands.S88_EVENT
                 && canPacket.getDlc() == CS2CANCommands.S88_EVENT_RESPONSE_DLC
-                && canPacket.getUid() == contactId
+                && canPacket.getUid() == contactUid
                 && (contactState == ContactState.IRRELEVANT || (canPacket.getData()[5] == (contactState == ContactState.ACTIVATED ? CS2CANCommands.CONTACT_ACTIVATED : CS2CANCommands.CONTACT_DEACTIVATED)))) {
             onSuccess();
         }
@@ -41,5 +40,5 @@ public abstract class S88EventPacketListener implements PacketListener {
     }
 
     @Override
-    public abstract void onSuccess(); //todo test this in all concrete packetlisteners (abstract)
+    public abstract void onSuccess();
 }

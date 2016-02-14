@@ -20,14 +20,5 @@ public final class Main {
         } catch (final FrameworkException e) {
             e.printStackTrace();
         }
-
-        //todo remove
-        /*try(Connection connection = new SerialPortConnection(SerialPortConnection.getAvailableSerialPorts().get(0), 500000, 8, 1, 0)){
-            //connection.sendCANPacket(CS2CANCommands.go());
-            final Script script = TestScript.getGleisboxTestScript(new ScriptContext(connection));
-            script.execute();
-        } catch (final FrameworkException e) {
-            e.printStackTrace();
-        }*/
     }
 }

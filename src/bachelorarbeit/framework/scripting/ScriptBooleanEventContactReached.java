@@ -13,31 +13,31 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ScriptBooleanEventContactReached implements BooleanEvent {
     private final ScriptContext scriptContext;
-    private final int contactId;
+    private final int contactUid;
     private final long timeout;
     private final static long DEFAULT_TIMEOUT = 30000L; //30s
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
-    public ScriptBooleanEventContactReached(final ScriptContext scriptContext, final int contactId, final long timeout) {
+    public ScriptBooleanEventContactReached(final ScriptContext scriptContext, final int contactUid, final long timeout) {
         if (scriptContext == null) {
             throw new IllegalArgumentException("scriptContext must not be null.");
         }
         this.scriptContext = scriptContext;
-        this.contactId = contactId;
+        this.contactUid = contactUid;
         this.timeout = timeout;
         condition = lock.newCondition();
     }
 
-    public ScriptBooleanEventContactReached(final ScriptContext scriptContext, final int contactId) {
-        this(scriptContext, contactId, DEFAULT_TIMEOUT);
+    public ScriptBooleanEventContactReached(final ScriptContext scriptContext, final int contactUid) {
+        this(scriptContext, contactUid, DEFAULT_TIMEOUT);
     }
 
     @Override
     public boolean getAsBoolean() throws FrameworkException {
         final ThreadExchangeObject threadExchangeObject = new ThreadExchangeObject();
 
-        final S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, S88EventPacketListener.ContactState.ACTIVATED) {
+        final S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactUid, S88EventPacketListener.ContactState.ACTIVATED) {
             @Override
             public void onSuccess() {
                 lock.lock();

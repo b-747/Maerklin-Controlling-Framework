@@ -13,31 +13,31 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ScriptBooleanEventContactFree implements BooleanEvent {
     private final ScriptContext scriptContext;
-    private final int contactId;
+    private final int contactUid;
     private final long freeTime;
     private final long timeout;
     private final static long DEFAULT_TIMEOUT = 30000L; //30s
     private final Lock lock = new ReentrantLock();
     private final Condition condition;
 
-    public ScriptBooleanEventContactFree(final ScriptContext scriptContext, final int contactId, final long freeTime, final long timeout) {
+    public ScriptBooleanEventContactFree(final ScriptContext scriptContext, final int contactUid, final long freeTime, final long timeout) {
         if (scriptContext == null) {
             throw new IllegalArgumentException("scriptContext must not be null.");
         }
         this.scriptContext = scriptContext;
-        this.contactId = contactId;
+        this.contactUid = contactUid;
         this.freeTime = freeTime;
         this.timeout = timeout;
         condition = lock.newCondition();
     }
 
-    public ScriptBooleanEventContactFree(final ScriptContext scriptContext, final int contactId, final long freeTime) {
-        this(scriptContext, contactId, freeTime, DEFAULT_TIMEOUT);
+    public ScriptBooleanEventContactFree(final ScriptContext scriptContext, final int contactUid, final long freeTime) {
+        this(scriptContext, contactUid, freeTime, DEFAULT_TIMEOUT);
     }
 
     @Override
     public boolean getAsBoolean() throws FrameworkException {
-        S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactId, S88EventPacketListener.ContactState.DEACTIVATED) {
+        S88EventPacketListener s88EventPacketListener = new S88EventPacketListener(contactUid, S88EventPacketListener.ContactState.DEACTIVATED) {
             @Override
             public void onSuccess() { //contact free
                 lock.lock();
@@ -67,7 +67,7 @@ public class ScriptBooleanEventContactFree implements BooleanEvent {
 
         final ThreadExchangeObject threadExchangeObject = new ThreadExchangeObject();
 
-        s88EventPacketListener = new S88EventPacketListener(contactId, S88EventPacketListener.ContactState.IRRELEVANT) { //here the position does not matter
+        s88EventPacketListener = new S88EventPacketListener(contactUid, S88EventPacketListener.ContactState.IRRELEVANT) { //here the position does not matter
             @Override
             public void onSuccess() {
                 threadExchangeObject.value = true;

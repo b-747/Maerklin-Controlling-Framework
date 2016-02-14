@@ -41,27 +41,6 @@ public final class TestScript {
     private TestScript() {
     }
 
-    public static Script getGleisboxTestScript(final ScriptContext scriptContext) { //todo remove
-        ScriptElement last;
-        final Script s = new Script(scriptContext);
-
-        last = s.first = new ScriptElementSetDirection(LOCO_6, ScriptElementSetDirection.Direction.FORWARD);
-        last = last.next = new ScriptElementWait(10L); //todo 10ms reichen auch bei der Gleisbox
-        last = last.next = new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST);
-        last = last.next = new ScriptElementWait(17000L);
-        last = last.next = new ScriptElementSetDirection(LOCO_6, ScriptElementSetDirection.Direction.BACKWARD);
-        last = last.next = new ScriptElementWait(10L);
-        last = last.next = new ScriptElementSetVelocity(LOCO_6, MEDIUM_FAST);
-        last = last.next = new ScriptElementWait(10L);
-        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, ScriptElementSetFunction.ToggleState.ON); //loco 6 whistle
-        last = last.next = new ScriptElementWait(1400L); //wait 1.4s
-        last = last.next = new ScriptElementSetFunction(LOCO_6, 3, ScriptElementSetFunction.ToggleState.OFF); //loco 6 stop whistle
-        last = last.next = new ScriptElementWait(17000L);
-        last.next = new ScriptElementSetVelocity(LOCO_6, STOP);
-
-        return s;
-    }
-
     public static Script getTestScript(final ScriptContext scriptContext) throws FrameworkException {
         ScriptElement last;
         final Script script = new Script(scriptContext);
@@ -119,17 +98,9 @@ public final class TestScript {
                                 .and(new ScriptElementCondition(new ScriptBooleanEventContactFree(scriptContext, CONTACT_1, 200L)))); //and contact 1 remains free for 200ms)
         scriptElementConditionReach1001Or1.next = new ScriptElementSetVelocity(LOCO_5, STOP); //then stop loco 5
 
-        //todo remove
-       /* final ScriptElementCondition scriptElementConditionTest =
-                new ScriptElementCondition(new ScriptElementCondition(new ScriptBooleanEventContactReached(scriptContext, CONTACT_1)).and(new ScriptElementCondition(new ScriptBooleanEventContactFree(scriptContext, CONTACT_1, 200L))))
-                        .or(new ScriptElementCondition(new ScriptBooleanEventContactReached(scriptContext, CONTACT_1001)));
-        scriptElementConditionTest.next = new ScriptElementSetVelocity(LOCO_5, STOP); //then stop loco 5*/
-
         final ArrayList<ScriptElement> scriptElements = new ArrayList<>(2);
         scriptElements.add(scriptElementConditionReach8);
         scriptElements.add(scriptElementConditionReach1001Or1);
-        //scriptElements.add(scriptElementConditionTest);
-
 
         last = last.next = new ScriptElementParallel(scriptElements);
 

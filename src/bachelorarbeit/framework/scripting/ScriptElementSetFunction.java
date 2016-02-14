@@ -12,12 +12,12 @@ public class ScriptElementSetFunction extends ScriptElement {
         OFF
     }
 
-    private final int locId;
+    private final int trainUid;
     private final int function;
     private final ToggleState toggleState;
 
-    public ScriptElementSetFunction(final int locId, final int function, final ToggleState toggleState) {
-        this.locId = locId;
+    public ScriptElementSetFunction(final int trainUid, final int function, final ToggleState toggleState) {
+        this.trainUid = trainUid;
         this.function = function;
         this.toggleState = toggleState;
     }
@@ -25,6 +25,6 @@ public class ScriptElementSetFunction extends ScriptElement {
     @Override
     public void executeElement(final ScriptContext scriptContext) throws FrameworkException {
         scriptContext.sendCANPacket(
-                CS2CANCommands.toggleFunction(locId, function, toggleState == ToggleState.ON ? CS2CANCommands.FUNCTION_ON : CS2CANCommands.FUNCTION_OFF));
+                CS2CANCommands.toggleFunction(trainUid, function, toggleState == ToggleState.ON ? CS2CANCommands.FUNCTION_ON : CS2CANCommands.FUNCTION_OFF));
     }
 }

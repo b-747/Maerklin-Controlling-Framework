@@ -33,7 +33,7 @@ public abstract class ConfigDataStreamPacketListener implements PacketListener {
     }
 
     @Override
-    public abstract void onSuccess(); //todo test abstract here
+    public abstract void onSuccess();
 
     @Override
     public abstract void onException(final FrameworkException frameworkException);

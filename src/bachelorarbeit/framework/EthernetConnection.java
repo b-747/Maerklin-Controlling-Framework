@@ -10,7 +10,6 @@ import java.util.ArrayList;
 /**
  * Created by ivo on 06.11.15.
  */
-//Konkrete Strategie
 public class EthernetConnection implements Connection {
     private final DatagramSocket datagramSocket;
     private final int targetPort;

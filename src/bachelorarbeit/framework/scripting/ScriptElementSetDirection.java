@@ -14,11 +14,11 @@ public class ScriptElementSetDirection extends ScriptElement {
         TOGGLE,
     }
 
-    private final int locId;
+    private final int trainUid;
     private final Direction direction;
 
-    public ScriptElementSetDirection(final int locId, final Direction direction) {
-        this.locId = locId;
+    public ScriptElementSetDirection(final int trainUid, final Direction direction) {
+        this.trainUid = trainUid;
         this.direction = direction;
     }
 
@@ -45,7 +45,7 @@ public class ScriptElementSetDirection extends ScriptElement {
         }
 
         scriptContext.sendCANPacket(
-                CS2CANCommands.setDirection(locId, directionByte)
+                CS2CANCommands.setDirection(trainUid, directionByte)
         );
     }
 }

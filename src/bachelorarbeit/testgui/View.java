@@ -27,12 +27,9 @@ public class View {
     private JRadioButton radioButtonSerialPort;
     private JComboBox<String> comboBoxSerialPort;
     private JButton buttonConfigData;
-    private JComboBox<String> comboBoxLoc;
+    private JComboBox<String> comboBoxLocId;
     private JFormattedTextField formattedTextFieldIpAddress;
 
-    //todo Bootloader Go bei Ethernet deaktivieren, Show loks.cs2 bei SerialPort deaktivieren
-
-    //todo lok id dezimal eingeben!!
     public JPanel getPanel() {
         return panel;
     }
@@ -139,18 +136,18 @@ public class View {
             }
         });
 
-        comboBoxLoc.getEditor().addActionListener(new ActionListener() { //handle enter
+        comboBoxLocId.getEditor().addActionListener(new ActionListener() { //handle enter
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
-                comboBoxLoc.addItem((String) comboBoxLoc.getEditor().getItem());
+                comboBoxLocId.addItem((String) comboBoxLocId.getEditor().getItem());
             }
         });
 
-        comboBoxLoc.addActionListener(new ActionListener() {
+        comboBoxLocId.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent actionEvent) {
                 if (actionEvent.getActionCommand().equals("comboBoxChanged")) { //handle selection only
-                    presenter.setLoc((String) comboBoxLoc.getSelectedItem());
+                    presenter.setTrainUid((String) comboBoxLocId.getSelectedItem());
                 }
             }
         });
@@ -230,11 +227,11 @@ public class View {
         panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
         panel.add(panel1, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
-        label2.setText("Loc:");
+        label2.setText("Loc-ID");
         panel1.add(label2, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        comboBoxLoc = new JComboBox();
-        comboBoxLoc.setEditable(true);
-        panel1.add(comboBoxLoc, new com.intellij.uiDesigner.core.GridConstraints(0, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        comboBoxLocId = new JComboBox();
+        comboBoxLocId.setEditable(true);
+        panel1.add(comboBoxLocId, new com.intellij.uiDesigner.core.GridConstraints(0, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         radioButtonEthernet = new JRadioButton();
         radioButtonEthernet.setEnabled(true);
         radioButtonEthernet.setSelected(true);
@@ -276,7 +273,7 @@ public class View {
         buttonStop.setEnabled(true);
         buttonStop.setText("Stop");
         panel.add(buttonStop, new com.intellij.uiDesigner.core.GridConstraints(5, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        label2.setLabelFor(comboBoxLoc);
+        label2.setLabelFor(comboBoxLocId);
     }
 
     /**
