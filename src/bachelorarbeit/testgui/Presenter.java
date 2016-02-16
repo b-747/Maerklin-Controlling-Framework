@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 /**
  * Created by ivo on 21.10.15.
+ *
+ * -----------PROTOTYPE!-----------
  */
 public class Presenter {
     private final View view;

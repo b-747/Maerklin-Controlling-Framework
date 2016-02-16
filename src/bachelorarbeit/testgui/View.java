@@ -13,6 +13,8 @@ import java.util.Arrays;
 
 /**
  * Created by ivo on 10.10.15.
+ *
+ * -----------PROTOTYPE!-----------
  */
 
 public class View {

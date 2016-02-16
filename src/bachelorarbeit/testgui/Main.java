@@ -6,6 +6,8 @@ import java.awt.event.WindowEvent;
 
 /**
  * Created by ivo on 12.10.15.
+ *
+ * -----------PROTOTYPE!-----------
  */
 public class Main {
     public static void main(String[] args) {
