@@ -113,4 +113,8 @@ public class CANPacket {
 
         return bytes;
     }
+
+    public boolean isResponse() {
+        return (command & 1) == 1;
+    }
 }
