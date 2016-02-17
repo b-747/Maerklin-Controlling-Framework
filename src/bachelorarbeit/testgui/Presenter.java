@@ -22,9 +22,6 @@ public class Presenter {
 
     private static final int LIGHT_FUNCTION = 0;
 
-    private static final int PC_PORT = 15730;
-    private static final int CS2_PORT = 15731;
-
     private static final long DEFAULT_DELAY = 10L; //10ms
 
     public Presenter(final View view) {
@@ -49,7 +46,7 @@ public class Presenter {
 
         try {
             if (use) {
-                connection = new EthernetConnection(PC_PORT, CS2_PORT, ipAddress);
+                connection = new EthernetConnection(ipAddress);
             } else {
                 connection = new SerialPortConnection(serialPort);
             }

@@ -10,11 +10,9 @@ import bachelorarbeit.framework.scripting.ScriptContext;
  */
 public final class Main {
     public static void main(final String[] args) {
-        final int PC_PORT = 15730;
-        final int CS2_PORT = 15731;
         final String CS2_IP_ADDRESS = "192.168.16.2";
 
-        try (EthernetConnection ethernetConnection = new EthernetConnection(PC_PORT, CS2_PORT, CS2_IP_ADDRESS)) {
+        try (EthernetConnection ethernetConnection = new EthernetConnection(CS2_IP_ADDRESS)) {
             final Script script = TestScript.getTestScript(new ScriptContext(ethernetConnection));
             script.execute();
         } catch (final FrameworkException e) {

@@ -12,16 +12,15 @@ import java.util.ArrayList;
  */
 public class EthernetConnection implements Connection {
     private final DatagramSocket datagramSocket;
-    private final int targetPort;
+    private static final int localPort = 15730;
+    private static final int targetPort = 15731;
     private final InetAddress targetAddress;
 
     private final ArrayList<PacketListener> packetListeners = new ArrayList<>();
     private final ArrayList<ExceptionListener> exceptionListeners = new ArrayList<>();
     private volatile boolean isListening = false; //volatile for listening thread
 
-    public EthernetConnection(final int localPort, final int targetPort, final String targetAddress) throws FrameworkException {
-        this.targetPort = targetPort;
-
+    public EthernetConnection(final String targetAddress) throws FrameworkException {
         try {
             this.targetAddress = InetAddress.getByName(targetAddress);
 
