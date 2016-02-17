@@ -12,8 +12,8 @@ import java.util.ArrayList;
  */
 public class EthernetConnection implements Connection {
     private final DatagramSocket datagramSocket;
-    private static final int localPort = 15730;
-    private static final int targetPort = 15731;
+    private static final int LOCAL_PORT = 15730;
+    private static final int TARGET_PORT = 15731;
     private final InetAddress targetAddress;
 
     private final ArrayList<PacketListener> packetListeners = new ArrayList<>();
@@ -24,7 +24,7 @@ public class EthernetConnection implements Connection {
         try {
             this.targetAddress = InetAddress.getByName(targetAddress);
 
-            datagramSocket = new DatagramSocket(localPort);
+            datagramSocket = new DatagramSocket(LOCAL_PORT);
         } catch (final SocketException | UnknownHostException e) {
             throw new FrameworkException(e);
         }
@@ -39,7 +39,7 @@ public class EthernetConnection implements Connection {
     public void sendCANPacket(final CANPacket canPacket) throws FrameworkException {
         final byte[] bytes = canPacket.getBytes();
 
-        final DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, targetAddress, targetPort);
+        final DatagramPacket datagramPacket = new DatagramPacket(bytes, bytes.length, targetAddress, TARGET_PORT);
 
         try {
             datagramSocket.send(datagramPacket);
