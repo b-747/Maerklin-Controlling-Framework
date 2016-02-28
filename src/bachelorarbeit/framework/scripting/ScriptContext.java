@@ -8,7 +8,6 @@ import bachelorarbeit.framework.packetlistener.PacketListener;
 /**
  * Created by ivo on 18.11.15.
  */
-//Kontext
 public class ScriptContext {
     private final Connection connection;
 
