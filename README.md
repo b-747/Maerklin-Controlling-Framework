@@ -1,5 +1,4 @@
-# Maerklin
-Maerklin CS2 Controlling Framework
+# Maerklin Controlling Framework
 
 Supported connections:
 - [PC] <---- Ethernet ----> [CS2]
